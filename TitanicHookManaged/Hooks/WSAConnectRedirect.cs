@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Net;
 using System.Runtime.InteropServices;
-using System.Windows.Forms;
 using TitanicHookManaged.MinHook;
 
 namespace TitanicHookManaged.Hooks;
 
 /// <summary>
 /// This hook will redirect all socket openings to Titanic's server IP
-/// TODO: Replace only IPs that peppy used for Bancho
 /// </summary>
 public class WSAConnectRedirect
 {
@@ -25,6 +22,28 @@ public class WSAConnectRedirect
     /// IP to redirect the traffic to, in network order
     /// </summary>
     public static byte[] TITANIC_IP_BE;
+
+    /// <summary>
+    /// List of IPs used for Bancho in osu!
+    /// </summary>
+    private static uint[] originalBanchoIPs =
+    {
+        1565136690,
+        1993635291,
+        1778493632,
+        3801162414,
+        853804760,
+        3624330290,
+        183079749,
+        3416347559,
+        1167321354,
+        2130706433,
+        3624330293,
+        3624330292,
+        3624330291,
+        3624330290,
+        167772311,
+    };
     
     // Hooked WSAConnect implementation
     private static int HookedWSAConnect(
@@ -33,6 +52,12 @@ public class WSAConnectRedirect
         Console.WriteLine("WSAConnect hook triggered");
         
         var sockAddr = (SockaddrIn)Marshal.PtrToStructure(name, typeof(SockaddrIn)); // Get managed struct from native pointer
+        if (Array.IndexOf(originalBanchoIPs, sockAddr.sin_addr) < 0)
+        {
+            Console.WriteLine("Not a Bancho IP, skipping replace");
+            return originalWSAConnectFunc(s, name, namelen, lpCallerData, lpCaleeData, lpSQOS, lpGQOS);
+        }
+        
         sockAddr.sin_addr = BitConverter.ToUInt32(TITANIC_IP_BE, 0); // Replace IP
         
         // Create replaced name
