@@ -21,16 +21,25 @@ public class WSAConnectRedirect
     private static IntPtr originalWSAConnect = IntPtr.Zero; // Pointer to original WSAConnect
     private static WSAConnectDelegate originalWSAConnectFunc; // Delegate to original WSAConnect
 
+    /// <summary>
+    /// IP to redirect the traffic to, in network order
+    /// </summary>
+    public static byte[] TITANIC_IP_BE;
+    
     // Hooked WSAConnect implementation
     private static int HookedWSAConnect(
         IntPtr s, IntPtr name, int namelen, IntPtr lpCallerData, IntPtr lpCaleeData, IntPtr lpSQOS, IntPtr lpGQOS)
     {
-        Console.WriteLine("WSAConnect hook triggered", "Hook trigger");
-        var sockAddr = (SockaddrIn)Marshal.PtrToStructure(name, typeof(SockaddrIn));
-        Console.WriteLine($"Port: {(ushort)IPAddress.NetworkToHostOrder((short)sockAddr.sin_port)}");
-        sockAddr.sin_addr = BitConverter.ToUInt32(IPAddress.Parse("207.180.223.46").GetAddressBytes(), 0);
+        Console.WriteLine("WSAConnect hook triggered");
+        
+        var sockAddr = (SockaddrIn)Marshal.PtrToStructure(name, typeof(SockaddrIn)); // Get managed struct from native pointer
+        sockAddr.sin_addr = BitConverter.ToUInt32(TITANIC_IP_BE, 0); // Replace IP
+        
+        // Create replaced name
         IntPtr newName = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(SockaddrIn)));
         Marshal.StructureToPtr(sockAddr, newName, false);
+        
+        // Call original WSAConnect
         return originalWSAConnectFunc(s, newName, namelen, lpCallerData, lpCaleeData, lpSQOS, lpGQOS);
     }
     

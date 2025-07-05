@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Net;
 using System.Windows.Forms;
 using TitanicHookManaged.Hooks;
 using TitanicHookManaged.MinHook;
@@ -29,6 +30,11 @@ public static class EntryPoint
     {
         InitializeConsole();
         Console.WriteLine("Hello from hook world");
+        
+        Console.WriteLine("Resolving server.titanic.sh IP");
+        IPAddress ip = Dns.GetHostAddresses("server.titanic.sh")[0];
+        WSAConnectRedirect.TITANIC_IP_BE = ip.GetAddressBytes();
+        Console.WriteLine("Titanic IP: " + ip);
         
         var status = MinHook.MinHook.MH_Initialize();
         if (status != MhStatus.MH_OK)
