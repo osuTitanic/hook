@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Windows.Forms;
 using TitanicHookManaged.Hooks;
 using TitanicHookManaged.MinHook;
@@ -7,17 +8,32 @@ namespace TitanicHookManaged;
 
 public static class EntryPoint
 {
-    public static int Start(string args)
+    /// <summary>
+    /// Initializes the console after injecting
+    /// </summary>
+    private static void InitializeConsole()
     {
-        MessageBox.Show("Start hook triggered", "Hook trigger");
         WinApi.AllocConsole();
         
-        Console.WriteLine("Hello World!"); // idk why doesn't show
+        var stdout = WinApi.GetStdHandle(WinApi.STD_OUTPUT_HANDLE);
+        var fs = new FileStream(stdout, FileAccess.Write);
+        var writer = new StreamWriter(fs)
+        {
+            AutoFlush = true
+        };
+        Console.SetOut(writer);
+        Console.SetError(writer);
+    }
+    
+    public static int Start(string args)
+    {
+        InitializeConsole();
+        Console.WriteLine("Hello from hook world");
         
         var status = MinHook.MinHook.MH_Initialize();
         if (status != MhStatus.MH_OK)
         {
-            MessageBox.Show("Failed to initialize MH");
+            Console.WriteLine("Failed to initialize MH");
         }
         
         WSAConnectRedirect.Initialize();
@@ -26,10 +42,10 @@ public static class EntryPoint
         status = MinHook.MinHook.MH_EnableHook(IntPtr.Zero);
         if (status != MhStatus.MH_OK)
         {
-            MessageBox.Show("Failed to enable hook");
+            Console.WriteLine("Failed to enable hooks");
         }
         
-        MessageBox.Show("All done");
+        Console.WriteLine("All done");
         return 0;
     }
 }

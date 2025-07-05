@@ -25,9 +25,9 @@ public class WSAConnectRedirect
     private static int HookedWSAConnect(
         IntPtr s, IntPtr name, int namelen, IntPtr lpCallerData, IntPtr lpCaleeData, IntPtr lpSQOS, IntPtr lpGQOS)
     {
-        MessageBox.Show("WSAConnect hook triggered", "Hook trigger");
+        Console.WriteLine("WSAConnect hook triggered", "Hook trigger");
         var sockAddr = (SockaddrIn)Marshal.PtrToStructure(name, typeof(SockaddrIn));
-        MessageBox.Show($"Port: {(ushort)IPAddress.NetworkToHostOrder((short)sockAddr.sin_port)}");
+        Console.WriteLine($"Port: {(ushort)IPAddress.NetworkToHostOrder((short)sockAddr.sin_port)}");
         sockAddr.sin_addr = BitConverter.ToUInt32(IPAddress.Parse("207.180.223.46").GetAddressBytes(), 0);
         IntPtr newName = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(SockaddrIn)));
         Marshal.StructureToPtr(sockAddr, newName, false);
@@ -45,7 +45,7 @@ public class WSAConnectRedirect
         var status = MinHook.MinHook.MH_CreateHook(WSAConnectHandle, hookPtr, out originalWSAConnect); // Create hook
         if (status != MhStatus.MH_OK)
         {
-            MessageBox.Show($"Failed to create WSAConnect hook {status}");
+            Console.WriteLine($"Failed to create WSAConnect hook {status}");
         }
         
         // Get function from original WSAConnect to call it
