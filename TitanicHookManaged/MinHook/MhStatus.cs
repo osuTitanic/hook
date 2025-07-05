@@ -1,5 +1,8 @@
 ﻿namespace TitanicHookManaged.MinHook;
 
+/// <summary>
+/// Error codes returned by MinHook native functions
+/// </summary>
 public enum MhStatus
 {
     // Unknown error. Should not be returned.

@@ -3,6 +3,9 @@ using System.Runtime.InteropServices;
 
 namespace TitanicHookManaged;
 
+/// <summary>
+/// Helper for accessing some of the native functions of Windows API
+/// </summary>
 public static class WinApi
 {
     [DllImport("kernel32.dll")]
