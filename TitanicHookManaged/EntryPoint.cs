@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using TitanicHookManaged.MinHook;
@@ -18,7 +19,12 @@ public static class EntryPoint
         IntPtr s, IntPtr name, int namelen, IntPtr lpCallerData, IntPtr lpCaleeData, IntPtr lpSQOS, IntPtr lpGQOS)
     {
         MessageBox.Show("WSAConnect hook triggered", "Hook trigger");
-        return originalWSAConnectFunc(s, name, namelen, lpCallerData, lpCaleeData, lpSQOS, lpGQOS);
+        var sockAddr = (SockaddrIn)Marshal.PtrToStructure(name, typeof(SockaddrIn));
+        MessageBox.Show($"Port: {(ushort)IPAddress.NetworkToHostOrder((short)sockAddr.sin_port)}");
+        sockAddr.sin_addr = BitConverter.ToUInt32(IPAddress.Parse("207.180.223.46").GetAddressBytes(), 0);
+        IntPtr newName = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(SockaddrIn)));
+        Marshal.StructureToPtr(sockAddr, newName, false);
+        return originalWSAConnectFunc(s, newName, namelen, lpCallerData, lpCaleeData, lpSQOS, lpGQOS);
     }
     
     public static int Start(string args)
