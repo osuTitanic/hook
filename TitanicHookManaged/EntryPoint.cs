@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Net;
-using System.Windows.Forms;
 using TitanicHookManaged.Hooks;
 using TitanicHookManaged.MinHook;
 
@@ -43,6 +42,7 @@ public static class EntryPoint
         }
         
         WSAConnectRedirect.Initialize();
+        AddrInfoHook.Initialize();
         
         // Enable all hooks
         status = MinHook.MinHook.MH_EnableHook(IntPtr.Zero);
