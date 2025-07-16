@@ -11,6 +11,9 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <Reference Include="0Harmony">
+        <HintPath>0Harmony.dll</HintPath>
+      </Reference>
       <Reference Include="System.Windows.Forms" />
     </ItemGroup>
 

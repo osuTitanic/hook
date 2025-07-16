@@ -43,6 +43,7 @@ public static class EntryPoint
         
         WSAConnectRedirect.Initialize();
         AddrInfoHook.Initialize();
+        AddHeaderFieldHook.Initialize();
         
         // Enable all hooks
         status = MinHook.MinHook.MH_EnableHook(IntPtr.Zero);
