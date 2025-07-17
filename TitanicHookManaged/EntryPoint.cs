@@ -46,6 +46,8 @@ public static class EntryPoint
             Console.WriteLine("Failed to initialize MH");
         }
         
+        Console.WriteLine("Hooking GetACP");
+        ACPHook.Initialize();
         Console.WriteLine("Hooking WSAConnect");
         WSAConnectRedirect.Initialize();
         Console.WriteLine("Hooking GetAddrInfo");
