@@ -87,15 +87,14 @@ public static class AddHeaderFieldHook
     /// <summary>
     /// Hooked AddHeaderField
     /// </summary>
-    /// <param name="source">List of headers</param>
-    /// <param name="name">Name of the header</param>
-    /// <param name="theValue">Value of the header. It's ref here so that we can get it by reference and modify it</param>
-    public static void AddHeaderFieldPrefix(StringCollection source, string name, ref string theValue)
+    /// <param name="__1">Name of the header</param>
+    /// <param name="__2">Value of the header. It's ref here so that we can get it by reference and modify it</param>
+    public static void AddHeaderFieldPrefix(string __1, ref string __2)
     {
-        if (name == "Host" && theValue.Contains("ppy.sh"))
+        if (__1 == "Host" && __2.Contains("ppy.sh"))
         {
-            theValue = theValue.Replace("ppy.sh", "titanic.sh");
+            __2 = __2.Replace("ppy.sh", "titanic.sh");
         }
-        Console.WriteLine($"AddHeaderField hook triggered, {name}: {theValue}");
+        Console.WriteLine($"AddHeaderField hook triggered, {__1}: {__2}");
     }
 }
