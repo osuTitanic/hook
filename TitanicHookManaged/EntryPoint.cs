@@ -29,6 +29,11 @@ public static class EntryPoint
     {
         InitializeConsole();
         Console.WriteLine("Hello from hook world");
+
+        AppDomain.CurrentDomain.UnhandledException += (sender, e) =>
+        {
+            Console.WriteLine("Unhandled exception in injected module " + e.ExceptionObject.ToString());
+        };
         
         Console.WriteLine("Resolving server.titanic.sh IP");
         IPAddress ip = Dns.GetHostAddresses("server.titanic.sh")[0];
@@ -41,9 +46,13 @@ public static class EntryPoint
             Console.WriteLine("Failed to initialize MH");
         }
         
+        Console.WriteLine("Hooking WSAConnect");
         WSAConnectRedirect.Initialize();
+        Console.WriteLine("Hooking GetAddrInfo");
         AddrInfoHook.Initialize();
+        Console.WriteLine("Hooking AddHeaderField");
         AddHeaderFieldHook.Initialize();
+        Console.WriteLine("All hooked");
         
         // Enable all hooks
         status = MinHook.MinHook.MH_EnableHook(IntPtr.Zero);

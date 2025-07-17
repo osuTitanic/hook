@@ -2,6 +2,7 @@
 using System.Collections.Specialized;
 using System.Reflection;
 using Harmony;
+using TitanicHookManaged.Helpers;
 
 namespace TitanicHookManaged.Hooks;
 
@@ -14,36 +15,73 @@ public static class AddHeaderFieldHook
     {
         var harmony = HarmonyInstance.Create("sh.titanic.hook.addheaderfieldhook");
         
-        Assembly targetAssembly = null;
-        foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
+        // Check if osu!common is present
+        Assembly? targetAssembly = AssemblyUtils.GetAssembly("osu!common");
+        if (targetAssembly == null)
         {
-            if (assembly.GetName().Name == "osu!common")
-            {
-                targetAssembly = assembly;
-                break;
-            }
+            // If not, get the osu! assembly
+            targetAssembly = AssemblyUtils.GetAssembly("osu!");
         }
 
         if (targetAssembly == null)
         {
-            throw new Exception("Target assembly not found");
+            Console.WriteLine("Target assembly not found");
+            return;
         }
-        Type type = targetAssembly.GetType("osu_common.Libraries.NetLib.HeaderFieldList");
-        if (type == null)
+
+        MethodInfo? targetMethod = GetTargetMethod(targetAssembly.GetTypes());
+        if (targetMethod == null)
         {
-            throw new Exception("Can't get header field list class");
+            Console.WriteLine("Target method not found");
+            return;
         }
-        
-        MethodInfo? method = type.GetMethod("AddHeaderField", BindingFlags.Static | BindingFlags.Public, null, [typeof(StringCollection), typeof(string), typeof(string)
-        ], null);
-        if (method == null)
-        {
-            throw new Exception("Can't get header field list method");
-        }
+        Console.WriteLine($"Resolved AddHeaderField: {targetMethod.Name}");
         
         var prefix = typeof(AddHeaderFieldHook).GetMethod("AddHeaderFieldPrefix", BindingFlags.Static | BindingFlags.Public);
+
+        try
+        {
+            harmony.Patch(targetMethod, new HarmonyMethod(prefix));
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Hook fail: {e}");
+        }
         
-        harmony.Patch(method, new HarmonyMethod(prefix));
+    }
+
+    /// <summary>
+    /// Find target method to hook
+    /// </summary>
+    /// <param name="types"></param>
+    /// <returns></returns>
+    private static MethodInfo? GetTargetMethod(Type[] types)
+    {
+        foreach (var type in types)
+        {
+            MethodInfo[] methods = type.GetMethods(BindingFlags.Static | BindingFlags.Public);
+
+            foreach (MethodInfo method in methods)
+            {
+                ParameterInfo[] parameters = method.GetParameters();
+
+                if (parameters.Length != 3)
+                    continue;
+                
+                // Not sure why comparing string values is necessary, but otherwise it wouldn't work as expected
+                if (parameters[0].ParameterType.FullName != "System.Collections.Specialized.StringCollection" ||
+                    parameters[1].ParameterType.FullName != "System.String" ||
+                    parameters[2].ParameterType.FullName != "System.String")
+                    continue;
+
+                if (method.ReturnType != typeof(void))
+                    continue;
+
+                return method;
+            }
+        }
+
+        return null;
     }
 
     /// <summary>
