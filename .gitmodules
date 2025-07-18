@@ -2,3 +2,6 @@
 	path = Libraries/Harmony
 	url = https://github.com/Oreeeee/Harmony
 	branch = harmony1-net20
+[submodule "Libraries/ILReader"]
+	path = Libraries/ILReader
+	url = https://github.com/Oreeeee/ClrTest.Reflection.ILReader
