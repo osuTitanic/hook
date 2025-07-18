@@ -94,7 +94,10 @@ public static class NetLibEncodingHook
     {
         var validMethods = types
             .SelectMany(t => t.GetConstructors(BindingFlags.Public | BindingFlags.Instance))
-            .Where(m => m.GetParameters().Length == 2 && UsesStreamWriter(m));
+            .Where(m => m.GetParameters().Length == 2 &&
+                        m.GetParameters()[0].ParameterType.FullName == "System.String" &&
+                        m.GetParameters()[1].ParameterType.FullName == "System.Object[]" &&
+                        UsesStreamWriter(m));
         
         return validMethods.FirstOrDefault();
     }
