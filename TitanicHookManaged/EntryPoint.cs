@@ -56,6 +56,8 @@ public static class EntryPoint
         AddHeaderFieldHook.Initialize();
         Console.WriteLine("Hooking StringStream ctor");
         NetLibEncodingHook.Initialize();
+        Console.WriteLine("Hooking ShellExecuteExW");
+        ShellExecuteHook.Initialize();
         // Console.WriteLine("Hooking DefaultEncoding");
         // DefaultEncodingHook.Initialize();
         Console.WriteLine("All hooked");
