@@ -1,0 +1,4 @@
+[submodule "Libraries/Harmony"]
+	path = Libraries/Harmony
+	url = https://github.com/Oreeeee/Harmony
+	branch = harmony1-net20
