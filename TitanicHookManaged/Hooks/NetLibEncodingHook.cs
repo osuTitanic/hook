@@ -97,7 +97,8 @@ public static class NetLibEncodingHook
             .Where(m => m.GetParameters().Length == 2 &&
                         m.GetParameters()[0].ParameterType.FullName == "System.String" &&
                         m.GetParameters()[1].ParameterType.FullName == "System.Object[]" &&
-                        UsesStreamWriter(m));
+                        (UsesStreamWriter(m) || m.DeclaringType?.Name == "StringStream") // hardcoded name fallback for clients using Confuser (b20131216)
+                        );
         
         return validMethods.FirstOrDefault();
     }
