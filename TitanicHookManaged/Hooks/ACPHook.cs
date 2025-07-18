@@ -5,6 +5,7 @@ using TitanicHookManaged.MinHook;
 namespace TitanicHookManaged.Hooks;
 
 /// <summary>
+/// Unused; dangerous, to be removed
 /// Hook to specify the codepage as 1252 always to fix UTF-8 BOM issues in score submission
 /// Absolutely not sure if this is the correct approach or if it's too low level
 /// If it causes issues, we might switch to hooking StringStream ctor to specify correct encoding only there

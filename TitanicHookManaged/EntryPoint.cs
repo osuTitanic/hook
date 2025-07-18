@@ -46,14 +46,18 @@ public static class EntryPoint
             Console.WriteLine("Failed to initialize MH");
         }
         
-        Console.WriteLine("Hooking GetACP");
-        ACPHook.Initialize();
+        //Console.WriteLine("Hooking GetACP");
+        //ACPHook.Initialize();
         Console.WriteLine("Hooking WSAConnect");
         WSAConnectRedirect.Initialize();
         Console.WriteLine("Hooking GetAddrInfo");
         AddrInfoHook.Initialize();
         Console.WriteLine("Hooking AddHeaderField");
         AddHeaderFieldHook.Initialize();
+        Console.WriteLine("Hooking StringStream ctor");
+        NetLibEncodingHook.Initialize();
+        // Console.WriteLine("Hooking DefaultEncoding");
+        // DefaultEncodingHook.Initialize();
         Console.WriteLine("All hooked");
         
         // Enable all hooks
