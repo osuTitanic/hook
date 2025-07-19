@@ -61,6 +61,8 @@ public static class EntryPoint
 #if NET40
         Console.WriteLine("Hooking CreateWebRequest");
         HostHeaderHook.Initialize();
+        Console.WriteLine("Hooking checkCertificate");
+        CheckCertificateHook.Initialize();
 #endif
         // Console.WriteLine("Hooking DefaultEncoding");
         // DefaultEncodingHook.Initialize();
