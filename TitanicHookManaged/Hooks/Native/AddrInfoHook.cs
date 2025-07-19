@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 using TitanicHookManaged.MinHook;
 
-namespace TitanicHookManaged.Hooks;
+namespace TitanicHookManaged.Hooks.Native;
 
 /// <summary>
 /// This hook hooks GetAddrInfoW and replaces ppy.sh resolves with titanic.sh

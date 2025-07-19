@@ -8,7 +8,7 @@ using ClrTest.Reflection;
 using Harmony;
 using TitanicHookManaged.Helpers;
 
-namespace TitanicHookManaged.Hooks;
+namespace TitanicHookManaged.Hooks.Managed;
 
 public static class NetLibEncodingHook
 {

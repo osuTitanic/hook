@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 using TitanicHookManaged.Helpers;
 using TitanicHookManaged.MinHook;
 
-namespace TitanicHookManaged.Hooks;
+namespace TitanicHookManaged.Hooks.Native;
 
 /// <summary>
 /// This hook will redirect all socket openings to Titanic's server IP

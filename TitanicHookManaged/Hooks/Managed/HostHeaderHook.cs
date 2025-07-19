@@ -9,7 +9,7 @@ using ClrTest.Reflection;
 using Harmony;
 using TitanicHookManaged.Helpers;
 
-namespace TitanicHookManaged.Hooks;
+namespace TitanicHookManaged.Hooks.Managed;
 
 /// <summary>
 /// Hook for Host header in clients using pWebRequest.

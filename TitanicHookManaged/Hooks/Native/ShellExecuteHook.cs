@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 using TitanicHookManaged.Helpers;
 using TitanicHookManaged.MinHook;
 
-namespace TitanicHookManaged.Hooks;
+namespace TitanicHookManaged.Hooks.Native;
 
 /// <summary>
 /// Hook to overwrite ppy.sh url opens to titanic.sh

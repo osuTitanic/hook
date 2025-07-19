@@ -2,7 +2,8 @@
 using System.IO;
 using System.Net;
 using TitanicHookManaged.Helpers;
-using TitanicHookManaged.Hooks;
+using TitanicHookManaged.Hooks.Managed;
+using TitanicHookManaged.Hooks.Native;
 using TitanicHookManaged.MinHook;
 
 namespace TitanicHookManaged;
