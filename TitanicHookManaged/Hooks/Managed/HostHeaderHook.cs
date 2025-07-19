@@ -19,7 +19,7 @@ public static class HostHeaderHook
 {
     public static void Initialize()
     {
-        var harmony = HarmonyInstance.Create("sh.titanic.hook.hostheaderhook");
+        var harmony = HarmonyInstance.Create("sh.Titanic.Hook.HostHeader");
         
         MethodInfo? targetMethod = GetTargetMethod(AssemblyUtils.OsuOrCommonTypes);
         if (targetMethod == null)

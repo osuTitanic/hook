@@ -12,7 +12,7 @@ public static class CheckCertificateHook
 {
     public static void Initialize()
     {
-        var harmony = HarmonyInstance.Create("sh.titanic.hook.hostheaderhook");
+        var harmony = HarmonyInstance.Create("sh.Titanic.Hook.CheckCertificate");
 
         MethodInfo? targetMethod = GetTargetMethod(AssemblyUtils.OsuOrCommonTypes.ToArray());
         if (targetMethod == null)

@@ -14,7 +14,7 @@ public static class NetLibEncodingHook
 {
     public static void Initialize()
     {
-        var harmony = HarmonyInstance.Create("sh.titanic.hook.addheaderfieldhook");
+        var harmony = HarmonyInstance.Create("sh.Titanic.Hook.NetLibEncoding");
 
         ConstructorInfo? targetMethod = GetTargetMethod(AssemblyUtils.OsuOrCommonTypes);
         if (targetMethod == null)

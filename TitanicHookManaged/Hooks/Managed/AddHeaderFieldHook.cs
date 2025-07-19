@@ -12,7 +12,7 @@ public static class AddHeaderFieldHook
 {
     public static void Initialize()
     {
-        var harmony = HarmonyInstance.Create("sh.titanic.hook.addheaderfieldhook");
+        var harmony = HarmonyInstance.Create("sh.Titanic.Hook.AddHeaderField");
 
         MethodInfo? targetMethod = GetTargetMethod(AssemblyUtils.OsuOrCommonTypes);
         if (targetMethod == null)
