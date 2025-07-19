@@ -35,7 +35,7 @@ public static class AddrInfoHook
         IntPtr hWS2 = WinApi.LoadLibrary("ws2_32.dll"); // Load target lib
         IntPtr GetAddrInfoWHandle = WinApi.GetProcAddress(hWS2, "GetAddrInfoW"); // Get the address of function we are hooking
         
-        var status = MinHook.MinHook.MH_CreateHook(GetAddrInfoWHandle, hookPtr, out originalGetAddrInfoW); // Create hook
+        var status = MH.CreateHook(GetAddrInfoWHandle, hookPtr, out originalGetAddrInfoW); // Create hook
         if (status != MhStatus.MH_OK)
         {
             Console.WriteLine($"Failed to create GetAddrInfoW hook {status}");

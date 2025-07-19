@@ -24,7 +24,7 @@ public static class ShellExecuteHook
         IntPtr shell32 = WinApi.LoadLibrary("shell32.dll"); // Load target lib
         IntPtr ShellExecuteExWhandle = WinApi.GetProcAddress(shell32, "ShellExecuteExW"); // Get the address of function we are hooking
         
-        var status = MinHook.MinHook.MH_CreateHook(ShellExecuteExWhandle, hookPtr, out originalShellExecuteExW); // Create hook
+        var status = MH.CreateHook(ShellExecuteExWhandle, hookPtr, out originalShellExecuteExW); // Create hook
         if (status != MhStatus.MH_OK)
         {
             Console.WriteLine($"Failed to create GetACP hook {status}");

@@ -41,10 +41,10 @@ public static class EntryPoint
         WSAConnectRedirect.TITANIC_IP_BE = ip.GetAddressBytes();
         Console.WriteLine("Titanic IP: " + ip);
         
-        var status = MinHook.MinHook.MH_Initialize();
+        var status = MH.Initialize();
         if (status != MhStatus.MH_OK)
         {
-            Console.WriteLine("Failed to initialize MH");
+            Console.WriteLine($"Failed to initialize MH: {status}");
         }
         
         //Console.WriteLine("Hooking GetACP");
@@ -70,10 +70,10 @@ public static class EntryPoint
         Console.WriteLine("All hooked");
         
         // Enable all hooks
-        status = MinHook.MinHook.MH_EnableHook(IntPtr.Zero);
+        status = MH.EnableHook(IntPtr.Zero);
         if (status != MhStatus.MH_OK)
         {
-            Console.WriteLine("Failed to enable hooks");
+            Console.WriteLine($"Failed to enable hooks: {status}");
         }
         
         Console.WriteLine("All done");
