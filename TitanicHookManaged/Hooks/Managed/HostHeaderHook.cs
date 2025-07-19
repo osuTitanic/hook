@@ -18,7 +18,7 @@ public static class HostHeaderHook
     {
         var harmony = HarmonyInstance.Create("sh.Titanic.Hook.HostHeader");
         
-        MethodInfo? targetMethod = GetTargetMethod(AssemblyUtils.OsuOrCommonTypes);
+        MethodInfo? targetMethod = GetTargetMethod(AssemblyUtils.CommonOrOsuTypes);
         if (targetMethod == null)
         {
             Console.WriteLine("Target method not found");

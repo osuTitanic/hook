@@ -18,7 +18,7 @@ public static class pWebRequestHelper
     {
         get
         {
-            _pWebRequestType ??= AssemblyUtils.OsuOrCommonTypes
+            _pWebRequestType ??= AssemblyUtils.CommonOrOsuTypes
                 .SelectMany(t => t.GetConstructors(BindingFlags.NonPublic | BindingFlags.Static))
                 .Where(m => m.GetParameters().Length == 0 &&
                             HasServicePointManagerCalls(m))

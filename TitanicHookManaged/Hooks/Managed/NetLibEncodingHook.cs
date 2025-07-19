@@ -16,7 +16,7 @@ public static class NetLibEncodingHook
     {
         var harmony = HarmonyInstance.Create("sh.Titanic.Hook.NetLibEncoding");
 
-        ConstructorInfo? targetMethod = GetTargetMethod(AssemblyUtils.OsuOrCommonTypes);
+        ConstructorInfo? targetMethod = GetTargetMethod(AssemblyUtils.CommonOrOsuTypes);
         if (targetMethod == null)
         {
             Console.WriteLine("Target method not found");

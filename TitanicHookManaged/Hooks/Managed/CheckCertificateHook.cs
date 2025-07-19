@@ -14,7 +14,7 @@ public static class CheckCertificateHook
     {
         var harmony = HarmonyInstance.Create("sh.Titanic.Hook.CheckCertificate");
 
-        MethodInfo? targetMethod = GetTargetMethod(AssemblyUtils.OsuOrCommonTypes.ToArray());
+        MethodInfo? targetMethod = GetTargetMethod(AssemblyUtils.CommonOrOsuTypes.ToArray());
         if (targetMethod == null)
         {
             Console.WriteLine("Target method not found");

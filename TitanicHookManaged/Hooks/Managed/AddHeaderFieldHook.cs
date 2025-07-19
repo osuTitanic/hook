@@ -15,7 +15,7 @@ public static class AddHeaderFieldHook
     {
         var harmony = HarmonyInstance.Create("sh.Titanic.Hook.AddHeaderField");
 
-        MethodInfo? targetMethod = GetTargetMethod(AssemblyUtils.OsuOrCommonTypes);
+        MethodInfo? targetMethod = GetTargetMethod(AssemblyUtils.CommonOrOsuTypes);
         if (targetMethod == null)
         {
             Console.WriteLine("Target method not found");

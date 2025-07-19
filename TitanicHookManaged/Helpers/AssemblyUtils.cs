@@ -10,52 +10,52 @@ public static class AssemblyUtils
     /// <summary>
     /// Gets osu!common (if present) or osu!
     /// </summary>
-    public static Assembly OsuOrCommonAssembly
+    public static Assembly CommonOrCommonOrOsuAssembly
     {
         get
         {
-            if (_osuOrCommonAssembly == null)
+            if (_commonOrOsuAssembly == null)
             {
                 // Check if osu!common is present
-                _osuOrCommonAssembly = GetAssembly("osu!common");
-                if (_osuOrCommonAssembly == null)
+                _commonOrOsuAssembly = GetAssembly("osu!common");
+                if (_commonOrOsuAssembly == null)
                 {
                     // If not, get the osu! assembly
-                    _osuOrCommonAssembly = GetAssembly("osu!");
+                    _commonOrOsuAssembly = GetAssembly("osu!");
                 }
             }
 
-            if (_osuOrCommonAssembly == null)
+            if (_commonOrOsuAssembly == null)
             {
                 Console.WriteLine("Couldn't find neither osu!common or osu!");
                 throw new Exception("Couldn't find neither osu!common or osu!");
             }
-            return _osuOrCommonAssembly;
+            return _commonOrOsuAssembly;
         }
     }
 
-    public static Type[] OsuOrCommonTypes
+    public static Type[] CommonOrOsuTypes
     {
         get
         {
-            if (_osuOrCommonTypes == null)
+            if (_commonOrOsuTypes == null)
             {
                 // Workaround is needed in case reflection can't load an osu!.exe dependency
                 try
                 {
                     // Try to load normally
-                    _osuOrCommonTypes = new List<Type>();
-                    _osuOrCommonTypes.AddRange(OsuOrCommonAssembly.GetTypes());
+                    _commonOrOsuTypes = new List<Type>();
+                    _commonOrOsuTypes.AddRange(CommonOrCommonOrOsuAssembly.GetTypes());
                 }
                 catch (ReflectionTypeLoadException e)
                 {
                     // It failed so we start over again but this time we only include the valid types
-                    _osuOrCommonTypes = new List<Type>(); // wipe
-                    _osuOrCommonTypes.AddRange(e.Types.Where(t => t != null).ToList());
+                    _commonOrOsuTypes = new List<Type>(); // wipe
+                    _commonOrOsuTypes.AddRange(e.Types.Where(t => t != null).ToList());
                 }
             }
             
-            return _osuOrCommonTypes.ToArray();
+            return _commonOrOsuTypes.ToArray();
         }
     }
     
@@ -78,8 +78,8 @@ public static class AssemblyUtils
     
     #region Private cache for getters
 
-    private static Assembly? _osuOrCommonAssembly;
-    private static List<Type>? _osuOrCommonTypes = null;
+    private static Assembly? _commonOrOsuAssembly;
+    private static List<Type>? _commonOrOsuTypes = null;
 
     #endregion
 }
