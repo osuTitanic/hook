@@ -8,7 +8,7 @@ namespace TitanicHookManaged.Helpers;
 public static class AssemblyUtils
 {
     /// <summary>
-    /// Gets osu!common (if present) or osu! (if present)
+    /// Gets osu!common (if present) or osu!
     /// </summary>
     public static Assembly OsuOrCommonAssembly
     {

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
 using Harmony;
 using TitanicHookManaged.Helpers;
@@ -42,31 +43,16 @@ public static class AddHeaderFieldHook
     /// <returns></returns>
     private static MethodInfo? GetTargetMethod(Type[] types)
     {
-        foreach (var type in types)
-        {
-            MethodInfo[] methods = type.GetMethods(BindingFlags.Static | BindingFlags.Public);
-
-            foreach (MethodInfo method in methods)
-            {
-                ParameterInfo[] parameters = method.GetParameters();
-
-                if (parameters.Length != 3)
-                    continue;
-                
-                // Not sure why comparing string values is necessary, but otherwise it wouldn't work as expected
-                if (parameters[0].ParameterType.FullName != "System.Collections.Specialized.StringCollection" ||
-                    parameters[1].ParameterType.FullName != "System.String" ||
-                    parameters[2].ParameterType.FullName != "System.String")
-                    continue;
-
-                if (method.ReturnType != typeof(void))
-                    continue;
-
-                return method;
-            }
-        }
-
-        return null;
+        MethodInfo? targetMethod = types
+            .SelectMany(m => m.GetMethods(BindingFlags.Static | BindingFlags.Public))
+            .FirstOrDefault(m => m.GetParameters().Length == 3 &&
+                                 m.GetParameters()[0].ParameterType.FullName ==
+                                 "System.Collections.Specialized.StringCollection" &&
+                                 m.GetParameters()[1].ParameterType.FullName == "System.String" &&
+                                 m.GetParameters()[2].ParameterType.FullName == "System.String" &&
+                                 m.ReturnType.FullName == "System.Void");
+        
+        return targetMethod;
     }
 
     /// <summary>
