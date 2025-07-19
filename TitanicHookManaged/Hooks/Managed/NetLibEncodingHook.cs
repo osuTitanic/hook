@@ -36,6 +36,8 @@ public static class NetLibEncodingHook
             Console.WriteLine($"Hook fail: {e}");
         }
     }
+    
+    #region Hook
 
     /// <summary>
     /// Hook for StringStream constructor, that forces writing with UTF-8 without BOM encoding
@@ -70,6 +72,10 @@ public static class NetLibEncodingHook
             Console.WriteLine($"Error in StringStream ctor hook: {e}");
         }
     } 
+    
+    #endregion
+    
+    #region Find method
 
     /// <summary>
     /// Find target method to hook
@@ -118,4 +124,6 @@ public static class NetLibEncodingHook
         
         return false;
     }
+    
+    #endregion
 }

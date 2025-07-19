@@ -35,7 +35,28 @@ public static class AddHeaderFieldHook
         }
         
     }
+    
+    #region Hook
+    
+    /// <summary>
+    /// Hooked AddHeaderField
+    /// </summary>
+    /// <param name="__1">Name of the header</param>
+    /// <param name="__2">Value of the header. It's ref here so that we can get it by reference and modify it</param>
+    public static void AddHeaderFieldPrefix(string __1, ref string __2)
+    {
+        if (__1 == "Host" && __2.Contains("ppy.sh"))
+        {
+            __2 = __2.Replace("ppy.sh", "titanic.sh");
+        }
+        Console.WriteLine($"AddHeaderField hook triggered, {__1}: {__2}");
+    }
+    
+    #endregion
 
+    
+    #region Find method
+    
     /// <summary>
     /// Find target method to hook
     /// </summary>
@@ -54,18 +75,6 @@ public static class AddHeaderFieldHook
         
         return targetMethod;
     }
-
-    /// <summary>
-    /// Hooked AddHeaderField
-    /// </summary>
-    /// <param name="__1">Name of the header</param>
-    /// <param name="__2">Value of the header. It's ref here so that we can get it by reference and modify it</param>
-    public static void AddHeaderFieldPrefix(string __1, ref string __2)
-    {
-        if (__1 == "Host" && __2.Contains("ppy.sh"))
-        {
-            __2 = __2.Replace("ppy.sh", "titanic.sh");
-        }
-        Console.WriteLine($"AddHeaderField hook triggered, {__1}: {__2}");
-    }
+    
+    #endregion
 }

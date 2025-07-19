@@ -34,6 +34,8 @@ public static class CheckCertificateHook
             Console.WriteLine($"Hook fail: {e}");
         }
     }
+    
+    #region Hook
 
     public static bool CheckCertificatePrefix()
     {
@@ -41,6 +43,10 @@ public static class CheckCertificateHook
         Console.WriteLine("checkCertificate prefix triggered");
         return false;
     }
+    
+    #endregion
+    
+    #region Find method
     
     private static MethodInfo? GetTargetMethod(Type[] types)
     {
@@ -139,4 +145,6 @@ public static class CheckCertificateHook
 
         return servicePointCallCount == 3 || servicePointCallCount == 4;
     }
+    
+    #endregion
 }

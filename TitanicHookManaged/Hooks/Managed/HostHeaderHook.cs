@@ -41,6 +41,22 @@ public static class HostHeaderHook
             Console.WriteLine($"Hook fail: {e}");
         }
     }
+    
+    #region Hook
+    
+    public static void CreateRequestPostfix(ref HttpWebRequest __result)
+    {
+        Console.WriteLine($"Triggered CreateRequest postfix: {__result.Host}");
+        if (__result.Host.Contains("ppy.sh"))
+        {
+            Console.WriteLine("Replacing ppy.sh domain in CreateRequestPostfix");
+            __result.Host = __result.Host.Replace("ppy.sh", "titanic.sh");
+        }
+    }
+    
+    #endregion
+    
+    #region Find method
 
     private static MethodInfo? GetTargetMethod(Type[] types)
     {
@@ -95,17 +111,9 @@ public static class HostHeaderHook
             // ignore
         }
 
-        return servicePointCallCount == 3 || servicePointCallCount == 4;
+        return servicePointCallCount is 3 or 4;
     }
 
-    public static void CreateRequestPostfix(ref HttpWebRequest __result)
-    {
-        Console.WriteLine($"Triggered CreateRequest postfix: {__result.Host}");
-        if (__result.Host.Contains("ppy.sh"))
-        {
-            Console.WriteLine("Replacing ppy.sh domain in CreateRequestPostfix");
-            __result.Host = __result.Host.Replace("ppy.sh", "titanic.sh");
-        }
-    }
+    #endregion
 }
 #endif // NET40
