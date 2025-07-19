@@ -7,8 +7,6 @@ namespace TitanicHookManaged.Helpers;
 
 public static class AssemblyUtils
 {
-    private static Assembly? _osuOrCommonAssembly;
-    
     /// <summary>
     /// Gets osu!common (if present) or osu! (if present)
     /// </summary>
@@ -35,8 +33,6 @@ public static class AssemblyUtils
             return _osuOrCommonAssembly;
         }
     }
-    
-    private static List<Type>? _osuOrCommonTypes = null;
 
     public static Type[] OsuOrCommonTypes
     {
@@ -79,4 +75,11 @@ public static class AssemblyUtils
         }
         return null;
     }
+    
+    #region Private cache for getters
+
+    private static Assembly? _osuOrCommonAssembly;
+    private static List<Type>? _osuOrCommonTypes = null;
+
+    #endregion
 }
