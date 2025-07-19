@@ -18,13 +18,19 @@ public static class EntryPoint
         WinApi.AllocConsole();
         
         var stdout = WinApi.GetStdHandle(WinApi.STD_OUTPUT_HANDLE);
-        var fs = new FileStream(stdout, FileAccess.Write);
-        var writer = new StreamWriter(fs)
+        var stderr = WinApi.GetStdHandle(WinApi.STD_ERROR_HANDLE);
+        var outFs = new FileStream(stdout, FileAccess.Write);
+        var outWriter = new StreamWriter(outFs)
         {
             AutoFlush = true
         };
-        Console.SetOut(writer);
-        Console.SetError(writer);
+        var errFs = new FileStream(stderr, FileAccess.Write);
+        var errWriter = new StreamWriter(errFs)
+        {
+            AutoFlush = true
+        };
+        Console.SetOut(outWriter);
+        Console.SetError(errWriter);
     }
     
     public static int Start(string args)
