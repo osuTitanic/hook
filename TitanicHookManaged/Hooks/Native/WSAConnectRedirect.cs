@@ -10,14 +10,53 @@ namespace TitanicHookManaged.Hooks.Native;
 /// </summary>
 public class WSAConnectRedirect
 {
-    // Delegate of WSAConnect
-    [UnmanagedFunctionPointer(CallingConvention.StdCall)]
-    private delegate int WSAConnectDelegate(IntPtr s, IntPtr name, int namelen, IntPtr lpCallerData,
-        IntPtr lpCaleeData, IntPtr lpSQOS, IntPtr lpGQOS);
+    public static void Initialize()
+    {
+        WSAConnectDelegate hookDelegate = HookedWSAConnect; // The function we are replacing with
+        IntPtr hookPtr = Marshal.GetFunctionPointerForDelegate(hookDelegate); // Get pointer to the function
+        
+        var status = MH.CreateHookApi("ws2_32", "WSAConnect", hookPtr, out originalWSAConnect); // Create hook
+        if (status != MhStatus.MH_OK)
+        {
+            Console.WriteLine($"Failed to create WSAConnect hook {status}");
+        }
+        
+        // Get function from original WSAConnect to call it
+        originalWSAConnectFunc = (WSAConnectDelegate)Marshal.GetDelegateForFunctionPointer(originalWSAConnect, typeof(WSAConnectDelegate));
+        
+        // Do not GC our hooking thingies
+        GC.KeepAlive(hookDelegate);
+        GC.KeepAlive(originalWSAConnectFunc);
+    }
     
+    #region Hook
     
-    private static IntPtr originalWSAConnect = IntPtr.Zero; // Pointer to original WSAConnect
-    private static WSAConnectDelegate originalWSAConnectFunc; // Delegate to original WSAConnect
+    // Hooked WSAConnect implementation
+    private static int HookedWSAConnect(
+        IntPtr s, IntPtr name, int namelen, IntPtr lpCallerData, IntPtr lpCaleeData, IntPtr lpSQOS, IntPtr lpGQOS)
+    {
+        Console.WriteLine("WSAConnect hook triggered");
+        
+        var sockAddr = (SockaddrIn)Marshal.PtrToStructure(name, typeof(SockaddrIn)); // Get managed struct from native pointer
+        if (Array.IndexOf(originalBanchoIPs, sockAddr.sin_addr) < 0)
+        {
+            Console.WriteLine("Not a Bancho IP, skipping replace");
+            return originalWSAConnectFunc(s, name, namelen, lpCallerData, lpCaleeData, lpSQOS, lpGQOS);
+        }
+        
+        sockAddr.sin_addr = BitConverter.ToUInt32(TITANIC_IP_BE, 0); // Replace IP
+        
+        // Create replaced name
+        IntPtr newName = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(SockaddrIn)));
+        Marshal.StructureToPtr(sockAddr, newName, false);
+        
+        // Call original WSAConnect
+        return originalWSAConnectFunc(s, newName, namelen, lpCallerData, lpCaleeData, lpSQOS, lpGQOS);
+    }
+    
+    #endregion
+    
+    #region Properties
 
     /// <summary>
     /// IP to redirect the traffic to, in network order
@@ -46,45 +85,18 @@ public class WSAConnectRedirect
         167772311,
     };
     
-    // Hooked WSAConnect implementation
-    private static int HookedWSAConnect(
-        IntPtr s, IntPtr name, int namelen, IntPtr lpCallerData, IntPtr lpCaleeData, IntPtr lpSQOS, IntPtr lpGQOS)
-    {
-        Console.WriteLine("WSAConnect hook triggered");
-        
-        var sockAddr = (SockaddrIn)Marshal.PtrToStructure(name, typeof(SockaddrIn)); // Get managed struct from native pointer
-        if (Array.IndexOf(originalBanchoIPs, sockAddr.sin_addr) < 0)
-        {
-            Console.WriteLine("Not a Bancho IP, skipping replace");
-            return originalWSAConnectFunc(s, name, namelen, lpCallerData, lpCaleeData, lpSQOS, lpGQOS);
-        }
-        
-        sockAddr.sin_addr = BitConverter.ToUInt32(TITANIC_IP_BE, 0); // Replace IP
-        
-        // Create replaced name
-        IntPtr newName = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(SockaddrIn)));
-        Marshal.StructureToPtr(sockAddr, newName, false);
-        
-        // Call original WSAConnect
-        return originalWSAConnectFunc(s, newName, namelen, lpCallerData, lpCaleeData, lpSQOS, lpGQOS);
-    }
+    #endregion
     
-    public static void Initialize()
-    {
-        WSAConnectDelegate hookDelegate = HookedWSAConnect; // The function we are replacing with
-        IntPtr hookPtr = Marshal.GetFunctionPointerForDelegate(hookDelegate); // Get pointer to the function
-        
-        var status = MH.CreateHookApi("ws2_32", "WSAConnect", hookPtr, out originalWSAConnect); // Create hook
-        if (status != MhStatus.MH_OK)
-        {
-            Console.WriteLine($"Failed to create WSAConnect hook {status}");
-        }
-        
-        // Get function from original WSAConnect to call it
-        originalWSAConnectFunc = (WSAConnectDelegate)Marshal.GetDelegateForFunctionPointer(originalWSAConnect, typeof(WSAConnectDelegate));
-        
-        // Do not GC our hooking thingies
-        GC.KeepAlive(hookDelegate);
-        GC.KeepAlive(originalWSAConnectFunc);
-    }
+    #region Delegates
+    
+    // Delegate of WSAConnect
+    [UnmanagedFunctionPointer(CallingConvention.StdCall)]
+    private delegate int WSAConnectDelegate(IntPtr s, IntPtr name, int namelen, IntPtr lpCallerData,
+        IntPtr lpCaleeData, IntPtr lpSQOS, IntPtr lpGQOS);
+    
+    
+    private static IntPtr originalWSAConnect = IntPtr.Zero; // Pointer to original WSAConnect
+    private static WSAConnectDelegate originalWSAConnectFunc; // Delegate to original WSAConnect
+    
+    #endregion
 }

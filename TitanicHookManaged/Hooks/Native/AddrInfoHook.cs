@@ -9,23 +9,6 @@ namespace TitanicHookManaged.Hooks.Native;
 /// </summary>
 public static class AddrInfoHook
 {
-    [UnmanagedFunctionPointer(CallingConvention.StdCall)]
-    private delegate int GetAddrInfoWDelegate([MarshalAs(UnmanagedType.LPWStr)] string pNodeName, [MarshalAs(UnmanagedType.LPWStr)] string pServiceName, IntPtr pHints, IntPtr ppResult);
-    
-    private static IntPtr originalGetAddrInfoW = IntPtr.Zero;
-    private static GetAddrInfoWDelegate originalGetAddrInfoWFunc;
-
-    private static int HookedGetAddrInfoW(string pNodeName, string pServiceName, IntPtr pHints, IntPtr pResult)
-    {
-        Console.WriteLine($"GetAddrInfoW hook triggered {pNodeName}");
-        if (pNodeName.Contains("ppy.sh"))
-        {
-            Console.WriteLine("Replacing ppy.sh resolve to titanic.sh");
-            pNodeName = pNodeName.Replace("ppy.sh", "titanic.sh");
-        }
-        return originalGetAddrInfoWFunc(pNodeName, pServiceName, pHints, pResult);
-    }
-    
     public static void Initialize()
     {
         GetAddrInfoWDelegate hookDelegate = HookedGetAddrInfoW;
@@ -44,4 +27,29 @@ public static class AddrInfoHook
         GC.KeepAlive(hookDelegate);
         GC.KeepAlive(originalGetAddrInfoWFunc);
     }
+    
+    #region Hook
+    
+    private static int HookedGetAddrInfoW(string pNodeName, string pServiceName, IntPtr pHints, IntPtr pResult)
+    {
+        Console.WriteLine($"GetAddrInfoW hook triggered {pNodeName}");
+        if (pNodeName.Contains("ppy.sh"))
+        {
+            Console.WriteLine("Replacing ppy.sh resolve to titanic.sh");
+            pNodeName = pNodeName.Replace("ppy.sh", "titanic.sh");
+        }
+        return originalGetAddrInfoWFunc(pNodeName, pServiceName, pHints, pResult);
+    }
+    
+    #endregion
+    
+    #region Delegates
+    
+    [UnmanagedFunctionPointer(CallingConvention.StdCall)]
+    private delegate int GetAddrInfoWDelegate([MarshalAs(UnmanagedType.LPWStr)] string pNodeName, [MarshalAs(UnmanagedType.LPWStr)] string pServiceName, IntPtr pHints, IntPtr ppResult);
+    
+    private static IntPtr originalGetAddrInfoW = IntPtr.Zero;
+    private static GetAddrInfoWDelegate originalGetAddrInfoWFunc;
+    
+    #endregion
 }

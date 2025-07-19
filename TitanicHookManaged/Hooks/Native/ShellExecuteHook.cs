@@ -9,13 +9,7 @@ namespace TitanicHookManaged.Hooks.Native;
 /// Hook to overwrite ppy.sh url opens to titanic.sh
 /// </summary>
 public static class ShellExecuteHook
-{
-    [UnmanagedFunctionPointer(CallingConvention.StdCall)]
-    private delegate bool ShellExecuteExWDelegate(ShellExecuteInfo info);
-    
-    private static IntPtr originalShellExecuteExW = IntPtr.Zero;
-    private static ShellExecuteExWDelegate originalShellExecuteExWFunc;
-    
+{ 
     public static void Initialize()
     {
         ShellExecuteExWDelegate hookDelegate = HookedShellExecuteExW; // The function we are replacing with
@@ -35,6 +29,8 @@ public static class ShellExecuteHook
         GC.KeepAlive(originalShellExecuteExWFunc);
     }
 
+    #region Hook
+    
     private static bool HookedShellExecuteExW(ShellExecuteInfo info)
     {
         Console.WriteLine("ShellExecuteExW hook called");
@@ -47,4 +43,16 @@ public static class ShellExecuteHook
             
         return originalShellExecuteExWFunc(info);
     }
+    
+    #endregion
+    
+    #region Delegates
+    
+    [UnmanagedFunctionPointer(CallingConvention.StdCall)]
+    private delegate bool ShellExecuteExWDelegate(ShellExecuteInfo info);
+    
+    private static IntPtr originalShellExecuteExW = IntPtr.Zero;
+    private static ShellExecuteExWDelegate originalShellExecuteExWFunc;
+    
+    #endregion
 }
