@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using TitanicHookManaged.Helpers;
 using TitanicHookManaged.MinHook;
 
 namespace TitanicHookManaged.Hooks;
@@ -32,10 +31,7 @@ public static class AddrInfoHook
         GetAddrInfoWDelegate hookDelegate = HookedGetAddrInfoW;
         IntPtr hookPtr = Marshal.GetFunctionPointerForDelegate(hookDelegate);
         
-        IntPtr hWS2 = WinApi.LoadLibrary("ws2_32.dll"); // Load target lib
-        IntPtr GetAddrInfoWHandle = WinApi.GetProcAddress(hWS2, "GetAddrInfoW"); // Get the address of function we are hooking
-        
-        var status = MH.CreateHook(GetAddrInfoWHandle, hookPtr, out originalGetAddrInfoW); // Create hook
+        var status = MH.CreateHookApi("ws2_32", "GetAddrInfoW", hookPtr, out originalGetAddrInfoW); // Create hook
         if (status != MhStatus.MH_OK)
         {
             Console.WriteLine($"Failed to create GetAddrInfoW hook {status}");

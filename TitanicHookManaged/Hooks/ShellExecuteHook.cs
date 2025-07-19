@@ -20,11 +20,8 @@ public static class ShellExecuteHook
     {
         ShellExecuteExWDelegate hookDelegate = HookedShellExecuteExW; // The function we are replacing with
         IntPtr hookPtr = Marshal.GetFunctionPointerForDelegate(hookDelegate); // Get pointer to the function
-
-        IntPtr shell32 = WinApi.LoadLibrary("shell32.dll"); // Load target lib
-        IntPtr ShellExecuteExWhandle = WinApi.GetProcAddress(shell32, "ShellExecuteExW"); // Get the address of function we are hooking
         
-        var status = MH.CreateHook(ShellExecuteExWhandle, hookPtr, out originalShellExecuteExW); // Create hook
+        var status = MH.CreateHookApi( "shell32", "ShellExecuteExW",hookPtr, out originalShellExecuteExW); // Create hook
         if (status != MhStatus.MH_OK)
         {
             Console.WriteLine($"Failed to create GetACP hook {status}");

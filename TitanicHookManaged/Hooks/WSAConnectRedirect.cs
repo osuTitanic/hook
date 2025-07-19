@@ -73,11 +73,8 @@ public class WSAConnectRedirect
     {
         WSAConnectDelegate hookDelegate = HookedWSAConnect; // The function we are replacing with
         IntPtr hookPtr = Marshal.GetFunctionPointerForDelegate(hookDelegate); // Get pointer to the function
-
-        IntPtr hWS2 = WinApi.LoadLibrary("ws2_32.dll"); // Load target lib
-        IntPtr WSAConnectHandle = WinApi.GetProcAddress(hWS2, "WSAConnect"); // Get the address of function we are hooking
         
-        var status = MH.CreateHook(WSAConnectHandle, hookPtr, out originalWSAConnect); // Create hook
+        var status = MH.CreateHookApi("ws2_32", "WSAConnect", hookPtr, out originalWSAConnect); // Create hook
         if (status != MhStatus.MH_OK)
         {
             Console.WriteLine($"Failed to create WSAConnect hook {status}");
