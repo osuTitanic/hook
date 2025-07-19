@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Net;
+using TitanicHookManaged.Helpers;
 using TitanicHookManaged.Hooks;
 using TitanicHookManaged.MinHook;
 

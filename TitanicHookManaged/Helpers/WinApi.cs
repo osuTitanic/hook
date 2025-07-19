@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace TitanicHookManaged;
+namespace TitanicHookManaged.Helpers;
 
 /// <summary>
 /// Helper for accessing some of the native functions of Windows API

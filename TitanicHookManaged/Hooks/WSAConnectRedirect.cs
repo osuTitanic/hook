@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using TitanicHookManaged.Helpers;
 using TitanicHookManaged.MinHook;
 
 namespace TitanicHookManaged.Hooks;

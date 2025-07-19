@@ -15,27 +15,14 @@ public static class NetLibEncodingHook
     public static void Initialize()
     {
         var harmony = HarmonyInstance.Create("sh.titanic.hook.addheaderfieldhook");
-        
-        // Check if osu!common is present
-        Assembly? targetAssembly = AssemblyUtils.GetAssembly("osu!common");
-        if (targetAssembly == null)
-        {
-            // If not, get the osu! assembly
-            targetAssembly = AssemblyUtils.GetAssembly("osu!");
-        }
 
-        if (targetAssembly == null)
-        {
-            Console.WriteLine("Target assembly not found");
-            return;
-        }
-
-        ConstructorInfo? targetMethod = GetTargetMethod(targetAssembly.GetTypes());
+        ConstructorInfo? targetMethod = GetTargetMethod(AssemblyUtils.OsuOrCommonTypes);
         if (targetMethod == null)
         {
             Console.WriteLine("Target method not found");
             return;
         }
+        
         Console.WriteLine($"Resolved StringStream ctor: {targetMethod.DeclaringType.FullName}.{targetMethod.Name}");
         
         var postfix = typeof(NetLibEncodingHook).GetMethod("StringStreamCtorPostfix", BindingFlags.Static | BindingFlags.Public);

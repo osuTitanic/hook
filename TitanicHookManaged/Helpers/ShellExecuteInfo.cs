@@ -3,6 +3,9 @@ using System.Runtime.InteropServices;
 
 namespace TitanicHookManaged.Helpers;
 
+/// <summary>
+/// Struct passed in to ShellExecuteExW. Microsoft made it internal to mscorlib....
+/// </summary>
 [StructLayout(LayoutKind.Sequential)]
 public class ShellExecuteInfo
 {
@@ -11,7 +14,7 @@ public class ShellExecuteInfo
     public IntPtr hwnd = (IntPtr)0;
     public IntPtr lpVerb = (IntPtr)0;
     
-    [MarshalAs(UnmanagedType.LPWStr)]
+    [MarshalAs(UnmanagedType.LPWStr)] // We are interpreting this one as string because we care about that one
     public string lpFile = "";
     
     public IntPtr lpParameters = (IntPtr)0;

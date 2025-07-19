@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace TitanicHookManaged;
+namespace TitanicHookManaged.Helpers;
 
 [StructLayout(LayoutKind.Sequential)]
 public struct SockaddrIn

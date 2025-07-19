@@ -13,22 +13,8 @@ public static class AddHeaderFieldHook
     public static void Initialize()
     {
         var harmony = HarmonyInstance.Create("sh.titanic.hook.addheaderfieldhook");
-        
-        // Check if osu!common is present
-        Assembly? targetAssembly = AssemblyUtils.GetAssembly("osu!common");
-        if (targetAssembly == null)
-        {
-            // If not, get the osu! assembly
-            targetAssembly = AssemblyUtils.GetAssembly("osu!");
-        }
 
-        if (targetAssembly == null)
-        {
-            Console.WriteLine("Target assembly not found");
-            return;
-        }
-
-        MethodInfo? targetMethod = GetTargetMethod(targetAssembly.GetTypes());
+        MethodInfo? targetMethod = GetTargetMethod(AssemblyUtils.OsuOrCommonTypes);
         if (targetMethod == null)
         {
             Console.WriteLine("Target method not found");

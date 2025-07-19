@@ -14,44 +14,14 @@ public static class CheckCertificateHook
     public static void Initialize()
     {
         var harmony = HarmonyInstance.Create("sh.titanic.hook.hostheaderhook");
-        
-        // Check if osu!common is present
-        Assembly? targetAssembly = AssemblyUtils.GetAssembly("osu!common");
-        if (targetAssembly == null)
-        {
-            // If not, get the osu! assembly
-            targetAssembly = AssemblyUtils.GetAssembly("osu!");
-        }
 
-        if (targetAssembly == null)
-        {
-            Console.WriteLine("Target assembly not found");
-            return;
-        }
-
-        MethodInfo? targetMethod = null;
-        
-        // Workaround is needed in case reflection can't load an osu!.exe dependency
-        List<Type> loadedTypes = new List<Type>();
-        try
-        {
-            // Try to load normally
-            loadedTypes.AddRange(targetAssembly.GetTypes());
-        }
-        catch (ReflectionTypeLoadException e)
-        {
-            // It failed so we start over again but this time we only include the valid types
-            loadedTypes = new List<Type>(); // wipe
-            loadedTypes.AddRange(e.Types.Where(t => t != null).ToList());
-        }
-
-        targetMethod = GetTargetMethod(loadedTypes.ToArray());
-        
+        MethodInfo? targetMethod = GetTargetMethod(AssemblyUtils.OsuOrCommonTypes.ToArray());
         if (targetMethod == null)
         {
             Console.WriteLine("Target method not found");
             return;
         }
+        
         Console.WriteLine($"Resolved checkCertificate: {targetMethod.DeclaringType?.FullName}.{targetMethod.Name}");
         
         var prefix = typeof(CheckCertificateHook).GetMethod("CheckCertificatePrefix", BindingFlags.Static | BindingFlags.Public);
