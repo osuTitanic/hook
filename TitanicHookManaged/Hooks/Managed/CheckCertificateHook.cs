@@ -50,23 +50,8 @@ public static class CheckCertificateHook
     
     private static MethodInfo? GetTargetMethod(Type[] types)
     {
-        // Try to find pWebRequest
-        // It will have a private static constructor with 0 params and will call ServicePointManager 3 or 4 times
-        Type? pWebRequestClass = types
-            .SelectMany(t => t.GetConstructors(BindingFlags.NonPublic | BindingFlags.Static))
-            .Where(m => m.GetParameters().Length == 0 && HasServicePointManagerCalls(m))
-            .Select(m => m.DeclaringType)
-            .FirstOrDefault();
-
-        if (pWebRequestClass == null)
-        {
-            Console.WriteLine("Couldn't find pWebRequest");
-            return null;
-        }
-        
-        // Private method with 0 args returning void
-        // Virtualized methods define an object[] and a predictable string
-        MethodInfo? targetMethod = pWebRequestClass
+        // Private method with 0 args returning void, potentially virtualized with Eazfuscator
+        MethodInfo? targetMethod = pWebRequestHelper.ReflectedType
             .GetMethods(BindingFlags.NonPublic | BindingFlags.Instance)
             .FirstOrDefault(m => m.GetParameters().Length == 0 &&
                                  m.ReturnType.FullName == "System.Void" &&
@@ -84,6 +69,7 @@ public static class CheckCertificateHook
 
     /// <summary>
     /// Check whether the method is virtualized using Eazfuscator
+    /// These methods will define a single object[] and a single string with a predictable format (we are not checking format)
     /// </summary>
     /// <param name="targetMethod"></param>
     /// <returns></returns>
@@ -103,7 +89,7 @@ public static class CheckCertificateHook
                     objArrDefCount++;
                 }
 
-                // TODO: Add some check if it's actually an Eazfuscator
+                // TODO: Add some check if it's actually an Eazfuscator. Not needed tho
                 if (instr.OpCode == OpCodes.Ldstr //&&
                     //instr is InlineStringInstruction instrStr
                    )
@@ -118,32 +104,6 @@ public static class CheckCertificateHook
         }
         
         return objArrDefCount == 1 && virtStringDefCount == 1;
-    }
-    
-    private static bool HasServicePointManagerCalls(ConstructorInfo? targetMethod)
-    {
-        int servicePointCallCount = 0;
-        try
-        {
-            ILReader reader = new ILReader(targetMethod);
-
-            foreach (ILInstruction instr in reader)
-            {
-                // Check if it's calling one of the methods that pWebRequest static ctor calls, and add it to the counter if it does
-                if (instr.OpCode == OpCodes.Call &&
-                    instr is InlineMethodInstruction method &&
-                    method.Method.Name is "set_Expect100Continue" or "set_DefaultConnectionLimit" or "set_CheckCertificateRevocationList" or "set_SecurityProtocol")
-                {
-                    servicePointCallCount++;
-                }
-            }
-        }
-        catch
-        {
-            // ignore
-        }
-
-        return servicePointCallCount == 3 || servicePointCallCount == 4;
     }
     
     #endregion
