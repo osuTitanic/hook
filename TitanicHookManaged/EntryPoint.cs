@@ -47,8 +47,6 @@ public static class EntryPoint
             Console.WriteLine($"Failed to initialize MH: {status}");
         }
         
-        //Console.WriteLine("Hooking GetACP");
-        //ACPHook.Initialize();
         Console.WriteLine("Hooking WSAConnect");
         WSAConnectRedirect.Initialize();
         Console.WriteLine("Hooking GetAddrInfo");
@@ -65,8 +63,6 @@ public static class EntryPoint
         Console.WriteLine("Hooking checkCertificate");
         CheckCertificateHook.Initialize();
 #endif
-        // Console.WriteLine("Hooking DefaultEncoding");
-        // DefaultEncodingHook.Initialize();
         Console.WriteLine("All hooked");
         
         // Enable all hooks
