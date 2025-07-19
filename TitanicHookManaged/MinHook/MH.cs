@@ -10,12 +10,12 @@ public static class MH
 {
     private const string LIB_NAME = "MinHook.x86.dll";
     
-    [DllImport(LIB_NAME, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl, EntryPoint = "MH_Initialize")]
+    [DllImport(LIB_NAME, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall, EntryPoint = "MH_Initialize")]
     // Initialize the MinHook library. You must call this function EXACTLY ONCE
     // at the beginning of your program.
     public static extern MhStatus Initialize();
     
-    [DllImport(LIB_NAME, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl, EntryPoint = "MH_CreateHook")]
+    [DllImport(LIB_NAME, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall, EntryPoint = "MH_CreateHook")]
     // Creates a hook for the specified target function, in disabled state.
     // Parameters:
     //   pTarget     [in]  A pointer to the target function, which will be
@@ -27,7 +27,7 @@ public static class MH
     //                     This parameter can be NULL.
     public static extern MhStatus CreateHook(IntPtr pTarget, IntPtr pDetour, out IntPtr ppOriginal);
     
-    [DllImport(LIB_NAME, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl, EntryPoint = "MH_CreateHookApi")]
+    [DllImport(LIB_NAME, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall, EntryPoint = "MH_CreateHookApi")]
     // Creates a hook for the specified API function, in disabled state.
     // Parameters:
     //   pszModule   [in]  A pointer to the loaded module name which contains the
@@ -41,7 +41,7 @@ public static class MH
     //                     This parameter can be NULL.
     public static extern MhStatus CreateHookApi([MarshalAs(UnmanagedType.LPWStr)] string pszModule, [MarshalAs(UnmanagedType.LPStr)] string pszProcName, IntPtr pDetour, out IntPtr ppOriginal);
     
-    [DllImport(LIB_NAME, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl, EntryPoint = "MH_EnableHook")]
+    [DllImport(LIB_NAME, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall, EntryPoint = "MH_EnableHook")]
     // Enables an already created hook.
     // Parameters:
     //   pTarget [in] A pointer to the target function.
