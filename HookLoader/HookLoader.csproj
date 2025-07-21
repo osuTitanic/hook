@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFrameworks>net20;net40</TargetFrameworks>
+        <ImplicitUsings>disable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <LangVersion>13</LangVersion>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+      <PlatformTarget>x86</PlatformTarget>
+      <Prefer32bit>true</Prefer32bit>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+      <PlatformTarget>x86</PlatformTarget>
+      <Prefer32bit>true</Prefer32bit>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\TitanicHookManaged\TitanicHookManaged.csproj" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(TargetFramework)' == 'net20'">
+      <PackageReference Include="LinqBridge" Version="1.3.0" />
+    </ItemGroup>
+
+</Project>

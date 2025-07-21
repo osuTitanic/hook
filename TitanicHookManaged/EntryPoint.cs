@@ -58,10 +58,12 @@ public static class EntryPoint
         WSAConnectRedirect.Initialize();
         Console.WriteLine("Hooking GetAddrInfo");
         AddrInfoHook.Initialize();
-        // Console.WriteLine("Hooking AddHeaderField");
-        // AddHeaderFieldHook.Initialize();
-        // Console.WriteLine("Hooking StringStream ctor");
-        // NetLibEncodingHook.Initialize();
+#if NET20
+        Console.WriteLine("Hooking AddHeaderField");
+        AddHeaderFieldHook.Initialize();
+        Console.WriteLine("Hooking StringStream ctor");
+        NetLibEncodingHook.Initialize();
+#endif
         Console.WriteLine("Hooking ShellExecuteExW");
         ShellExecuteHook.Initialize();
 #if NET40
