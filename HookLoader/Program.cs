@@ -7,36 +7,36 @@ namespace HookLoader;
 
 class Program
 {
+    /// <summary>
+    /// Small program that will load osu!.exe into memory, execute hooks, and start osu!'s main function
+    /// </summary>
+    /// <param name="args"></param>
     [STAThread]
     static void Main(string[] args)
     {
-        string path = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "osu!.exe");
-        string commonPath = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "osu!common.dll");
-        
         // Load osu!
-        Assembly? loaded = Assembly.Load(File.ReadAllBytes(path));
-
-        // Load osu!common too if it exists
-        // TODO: BROKEN
-        if (File.Exists(commonPath))
-        {
-            Assembly.Load(File.ReadAllBytes(commonPath));
-        }
+        string path = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "osu!.exe");
+        Assembly loaded = Assembly.Load(File.ReadAllBytes(path));
         
+        // Get entry point
         MethodInfo entry = loaded.EntryPoint;
         if (entry == null)
         {
             Console.WriteLine("Entry point not found.");
             return;
         }
-        
-        // Load TitanicHook
-        TitanicHookManaged.EntryPoint.Start("");
-        
+
+        // Load early hooks
         EntryPointHook.Initialize(loaded);
         ExecutablePathHook.Initialize(path);
         ExtractIconHook.Initialize();
         
+        // Hook osu!.exe's entrypoint to execute other hooks there
+        // This is required because osu!common has to be loaded by osu! for hooking
+        // If we would've loaded osu!common manually it wouldn't work
+        OsuStartHook.Initialize(entry);
+        
+        // Start the exe's entry point
         entry.Invoke(null, new object[] { });
     }
 }
