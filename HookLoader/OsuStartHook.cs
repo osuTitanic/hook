@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using Harmony;
+using TitanicHookManaged;
 
 namespace HookLoader;
 
@@ -12,7 +13,7 @@ public static class OsuStartHook
     public static void Initialize(MethodInfo method)
     {
         var harmony = HarmonyInstance.Create("sh.Titanic.Hook.OsuStartHook");
-        var prefix = typeof(OsuStartHook).GetMethod("OsuStartPrefix", BindingFlags.Static | BindingFlags.Public);
+        var prefix = typeof(OsuStartHook).GetMethod("OsuStartPrefix", Constants.HookBindingFlags);
         try
         {
             harmony.Patch(method, new HarmonyMethod(prefix));
@@ -26,10 +27,10 @@ public static class OsuStartHook
     
     #region Hook
     
-    public static void OsuStartPrefix()
+    private static void OsuStartPrefix()
     {
         // Load TitanicHook
-        TitanicHookManaged.EntryPoint.InitializeHooks();
+        EntryPoint.InitializeHooks();
     }
     
     #endregion
