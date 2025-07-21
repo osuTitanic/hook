@@ -11,10 +11,17 @@ class Program
     static void Main(string[] args)
     {
         string path = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "osu!.exe");
+        string commonPath = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "osu!common.dll");
         
         // Load osu!
-        byte[] assemblyBytes = File.ReadAllBytes(path);
-        Assembly? loaded = Assembly.Load(assemblyBytes);
+        Assembly? loaded = Assembly.Load(File.ReadAllBytes(path));
+
+        // Load osu!common too if it exists
+        // TODO: BROKEN
+        if (File.Exists(commonPath))
+        {
+            Assembly.Load(File.ReadAllBytes(commonPath));
+        }
         
         MethodInfo entry = loaded.EntryPoint;
         if (entry == null)
@@ -27,6 +34,8 @@ class Program
         TitanicHookManaged.EntryPoint.Start("");
         
         EntryPointHook.Initialize(loaded);
+        ExecutablePathHook.Initialize(path);
+        ExtractIconHook.Initialize();
         
         entry.Invoke(null, new object[] { });
     }

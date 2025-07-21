@@ -26,4 +26,8 @@
       <PackageReference Include="LinqBridge" Version="1.3.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Reference Include="System.Windows.Forms" />
+    </ItemGroup>
+
 </Project>
