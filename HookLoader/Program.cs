@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 
 namespace HookLoader;
@@ -30,6 +29,7 @@ class Program
         EntryPointHook.Initialize(loaded);
         ExecutablePathHook.Initialize(path);
         ExtractIconHook.Initialize();
+        GetArgsHook.Initialize([path]);
         
         // Hook osu!.exe's entrypoint to execute other hooks there
         // This is required because osu!common has to be loaded by osu! for hooking
