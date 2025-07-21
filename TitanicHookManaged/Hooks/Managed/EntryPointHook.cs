@@ -24,7 +24,7 @@ public static class EntryPointHook
             return;
         }
         
-        var prefix = typeof(EntryPointHook).GetMethod("GetEntryAssemblyPrefix", BindingFlags.Static | BindingFlags.Public);
+        var prefix = typeof(EntryPointHook).GetMethod("GetEntryAssemblyPrefix", Constants.HookBindingFlags);
 
         try
         {
@@ -39,7 +39,7 @@ public static class EntryPointHook
     
     #region Hook
     
-    public static bool GetEntryAssemblyPrefix(ref Assembly? __result)
+    private static bool GetEntryAssemblyPrefix(ref Assembly? __result)
     {
         Console.WriteLine("GetEntryAssembly hook triggered");
         __result = _spoofedEntryPointAssembly;

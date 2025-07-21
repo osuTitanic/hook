@@ -25,7 +25,7 @@ public static class NetLibEncodingHook
         
         Console.WriteLine($"Resolved StringStream ctor: {targetMethod.DeclaringType.FullName}.{targetMethod.Name}");
         
-        var postfix = typeof(NetLibEncodingHook).GetMethod("StringStreamCtorPostfix", BindingFlags.Static | BindingFlags.Public);
+        var postfix = typeof(NetLibEncodingHook).GetMethod("StringStreamCtorPostfix", Constants.HookBindingFlags);
 
         try
         {
@@ -46,7 +46,7 @@ public static class NetLibEncodingHook
     /// <param name="__instance">StringStream instance, here we are taking it as MemoryStream due to StringStream being a custom type that implements MemoryStream</param>
     /// <param name="__0">text</param>
     /// <param name="__1">args</param>
-    public static void StringStreamCtorPostfix(ref MemoryStream __instance, string __0, params object[] __1)
+    private static void StringStreamCtorPostfix(ref MemoryStream __instance, string __0, params object[] __1)
     {
         Console.WriteLine("StringStream ctor hook triggered");
         try

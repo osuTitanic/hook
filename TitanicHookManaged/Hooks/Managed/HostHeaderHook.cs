@@ -27,7 +27,7 @@ public static class HostHeaderHook
         
         Console.WriteLine($"Resolved CreateWebRequest: {targetMethod.DeclaringType?.FullName}.{targetMethod.Name}");
         
-        var postfix = typeof(HostHeaderHook).GetMethod("CreateRequestPostfix", BindingFlags.Static | BindingFlags.Public);
+        var postfix = typeof(HostHeaderHook).GetMethod("CreateRequestPostfix", Constants.HookBindingFlags);
 
         try
         {
@@ -41,7 +41,7 @@ public static class HostHeaderHook
     
     #region Hook
     
-    public static void CreateRequestPostfix(ref HttpWebRequest __result)
+    private static void CreateRequestPostfix(ref HttpWebRequest __result)
     {
         Console.WriteLine($"Triggered CreateRequest postfix: {__result.Host}");
         if (__result.Host.Contains("ppy.sh"))

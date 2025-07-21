@@ -23,7 +23,7 @@ public static class CheckCertificateHook
         
         Console.WriteLine($"Resolved checkCertificate: {targetMethod.DeclaringType?.FullName}.{targetMethod.Name}");
         
-        var prefix = typeof(CheckCertificateHook).GetMethod("CheckCertificatePrefix", BindingFlags.Static | BindingFlags.Public);
+        var prefix = typeof(CheckCertificateHook).GetMethod("CheckCertificatePrefix", Constants.HookBindingFlags);
 
         try
         {
@@ -37,7 +37,7 @@ public static class CheckCertificateHook
     
     #region Hook
 
-    public static bool CheckCertificatePrefix()
+    private static bool CheckCertificatePrefix()
     {
         // Do not check the certificate and return early and don't give control back to original function
         Console.WriteLine("checkCertificate prefix triggered");

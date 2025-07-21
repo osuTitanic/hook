@@ -29,7 +29,7 @@ public static class ExtractIconHook
             return;
         }
         
-        var prefix = typeof(ExtractIconHook).GetMethod("ExtractAssociatedIconPrefix", BindingFlags.Static | BindingFlags.Public);
+        var prefix = typeof(ExtractIconHook).GetMethod("ExtractAssociatedIconPrefix", Constants.HookBindingFlags);
 
         try
         {
@@ -44,7 +44,7 @@ public static class ExtractIconHook
     
     #region Hook
     
-    public static void ExtractAssociatedIconPrefix(ref string __0)
+    private static void ExtractAssociatedIconPrefix(ref string __0)
     {
         Console.WriteLine("ExtractAssociatedIcon hook triggered");
         __0 = __0.Replace("HookLoader.exe", "osu!.exe"); // Change the target icon path

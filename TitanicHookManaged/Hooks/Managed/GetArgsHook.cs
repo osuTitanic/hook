@@ -24,7 +24,7 @@ public static class GetArgsHook
             return;
         }
         
-        var prefix = typeof(GetArgsHook).GetMethod("GetArgsPrefix", BindingFlags.Static | BindingFlags.Public);
+        var prefix = typeof(GetArgsHook).GetMethod("GetArgsPrefix", Constants.HookBindingFlags);
         
         try
         {
@@ -38,7 +38,7 @@ public static class GetArgsHook
 
     #region Hook
 
-    public static bool GetArgsPrefix(ref string[] __result)
+    private static bool GetArgsPrefix(ref string[] __result)
     {
         Console.WriteLine("GetCommandLineArgs hook triggered");
         __result = _spoofedArgs;

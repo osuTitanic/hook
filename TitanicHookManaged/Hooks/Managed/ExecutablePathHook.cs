@@ -24,7 +24,7 @@ public static class ExecutablePathHook
             return;
         }
         
-        var prefix = typeof(ExecutablePathHook).GetMethod("GetExecutablePathPrefix", BindingFlags.Static | BindingFlags.Public);
+        var prefix = typeof(ExecutablePathHook).GetMethod("GetExecutablePathPrefix", Constants.HookBindingFlags);
 
         try
         {
@@ -39,7 +39,7 @@ public static class ExecutablePathHook
     
     #region Hook
     
-    public static bool GetExecutablePathPrefix(ref string? __result)
+    private static bool GetExecutablePathPrefix(ref string? __result)
     {
         Console.WriteLine("get_ExecutablePath hook triggered");
         __result = _spoofedExePath;

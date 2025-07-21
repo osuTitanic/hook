@@ -23,7 +23,7 @@ public static class AddHeaderFieldHook
         }
         Console.WriteLine($"Resolved AddHeaderField: {targetMethod.Name}");
         
-        var prefix = typeof(AddHeaderFieldHook).GetMethod("AddHeaderFieldPrefix", BindingFlags.Static | BindingFlags.Public);
+        var prefix = typeof(AddHeaderFieldHook).GetMethod("AddHeaderFieldPrefix", Constants.HookBindingFlags);
 
         try
         {
@@ -43,7 +43,7 @@ public static class AddHeaderFieldHook
     /// </summary>
     /// <param name="__1">Name of the header</param>
     /// <param name="__2">Value of the header. It's ref here so that we can get it by reference and modify it</param>
-    public static void AddHeaderFieldPrefix(string __1, ref string __2)
+    private static void AddHeaderFieldPrefix(string __1, ref string __2)
     {
         if (__1 == "Host" && __2.Contains("ppy.sh"))
         {
