@@ -4,6 +4,7 @@ using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 using TitanicHookManaged.Hooks.Managed;
+using TitanicHookManaged.MinHook;
 
 namespace HookLoader;
 
@@ -16,6 +17,21 @@ class Program
     [STAThread]
     static void Main(string[] args)
     {
+        // Check is the correct MinHook present
+        if (!File.Exists(MH.LIB_NAME) || ResourceUtils.CalculateSha256(MH.LIB_NAME) != MH.LIB_SHA256)
+        {
+            // Extract MinHook from embedded resource
+            Console.WriteLine($"Couldn't find {MH.LIB_NAME}. Extracting from embedded resources.");
+            byte[]? minhookBytes = ResourceUtils.GetEmbeddedResource(MH.LIB_NAME);
+            if (minhookBytes == null)
+            {
+                MessageBox.Show("Failed to load MinHook", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            using FileStream fs = File.Create(MH.LIB_NAME);
+            fs.Write(minhookBytes, 0, minhookBytes.Length);
+        }
+        
         // Load osu!
         string path = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "osu!.exe");
         Assembly loaded = Assembly.Load(File.ReadAllBytes(path));

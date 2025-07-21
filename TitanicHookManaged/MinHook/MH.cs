@@ -8,7 +8,8 @@ namespace TitanicHookManaged.MinHook;
 /// </summary>
 public static class MH
 {
-    private const string LIB_NAME = "MinHook.x86.bin";
+    public const string LIB_NAME = "MinHook.x86.bin";
+    public const string LIB_SHA256 = "b071f4f12fdff2ed30caed2f3fe087c49320bfd83448a1a9c355ec779eaeb692";
     
     [DllImport(LIB_NAME, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall, EntryPoint = "MH_Initialize")]
     // Initialize the MinHook library. You must call this function EXACTLY ONCE
