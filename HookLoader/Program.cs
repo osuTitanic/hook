@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
+using TitanicHookManaged.Hooks.Managed;
 
 namespace HookLoader;
 
@@ -24,8 +25,8 @@ class Program
             Console.WriteLine("Entry point not found.");
             return;
         }
-
-        // Load early hooks
+        
+        // Load hooks specific to the loader
         EntryPointHook.Initialize(loaded);
         ExecutablePathHook.Initialize(path);
         ExtractIconHook.Initialize();

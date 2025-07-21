@@ -2,10 +2,11 @@
 using System.Reflection;
 using Harmony;
 
-namespace HookLoader;
+namespace TitanicHookManaged.Hooks.Managed;
 
 /// <summary>
-/// Hook for spoofing entry assembly
+/// Hook for spoofing GetEntryAssembly.
+/// Only to be used in HookLoader
 /// </summary>
 public static class EntryPointHook
 {
@@ -40,6 +41,7 @@ public static class EntryPointHook
     
     public static bool GetEntryAssemblyPrefix(ref Assembly? __result)
     {
+        Console.WriteLine("GetEntryAssembly hook triggered");
         __result = _spoofedEntryPointAssembly;
         return false;
     }

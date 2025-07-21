@@ -1,17 +1,22 @@
 ﻿using System;
 using System.Drawing;
-using System.Reflection;
 using System.Linq;
+using System.Reflection;
 using Harmony;
 
-namespace HookLoader;
+namespace TitanicHookManaged.Hooks.Managed;
 
+/// <summary>
+/// Hook for ExtractAssociatedIcon so that osu! will have correct icon.
+/// Only to be used in HookLoader
+/// </summary>
 public static class ExtractIconHook
 {
     public static void Initialize()
     {
         var harmony = HarmonyInstance.Create("sh.Titanic.Hook.ExtractIconHook");
         
+        // We want specifically the overload that takes System.String
         MethodInfo? targetMethod = typeof(Icon)
             .GetMethods(BindingFlags.Static | BindingFlags.Public)
             .FirstOrDefault(m => m.Name == "ExtractAssociatedIcon" &&
@@ -41,7 +46,8 @@ public static class ExtractIconHook
     
     public static void ExtractAssociatedIconPrefix(ref string __0)
     {
-        __0 = __0.Replace("HookLoader.exe", "osu!.exe");
+        Console.WriteLine("ExtractAssociatedIcon hook triggered");
+        __0 = __0.Replace("HookLoader.exe", "osu!.exe"); // Change the target icon path
     }
     
     #endregion

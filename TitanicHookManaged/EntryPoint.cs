@@ -32,21 +32,28 @@ public static class EntryPoint
         Console.SetOut(outWriter);
         Console.SetError(errWriter);
     }
-    
-    public static int Start(string args)
+
+    /// <summary>
+    /// Target for injecting with ManagedInjector
+    /// </summary>
+    /// <param name="args"></param>
+    /// <returns></returns>
+    public static int InjectedTarget(string args)
     {
         InitializeConsole();
-        Console.WriteLine("Hello from hook world");
-
+        InitializeHooks();
+        return 0;
+    }
+    
+    /// <summary>
+    /// Start hooks
+    /// </summary>
+    public static void InitializeHooks()
+    {
         AppDomain.CurrentDomain.UnhandledException += (sender, e) =>
         {
             Console.WriteLine("Unhandled exception in injected module " + e.ExceptionObject.ToString());
         };
-        
-        Console.WriteLine("Resolving server.titanic.sh IP");
-        IPAddress ip = Dns.GetHostAddresses("server.titanic.sh")[0];
-        WSAConnectRedirect.TITANIC_IP_BE = ip.GetAddressBytes();
-        Console.WriteLine("Titanic IP: " + ip);
         
         var status = MH.Initialize();
         if (status != MhStatus.MH_OK)
@@ -54,18 +61,21 @@ public static class EntryPoint
             Console.WriteLine($"Failed to initialize MH: {status}");
         }
         
+        // Native hooks
         Console.WriteLine("Hooking WSAConnect");
         WSAConnectRedirect.Initialize();
         Console.WriteLine("Hooking GetAddrInfo");
         AddrInfoHook.Initialize();
+        Console.WriteLine("Hooking ShellExecuteExW");
+        ShellExecuteHook.Initialize();
+        
+        // Managed hooks
 #if NET20
         Console.WriteLine("Hooking AddHeaderField");
         AddHeaderFieldHook.Initialize();
         Console.WriteLine("Hooking StringStream ctor");
         NetLibEncodingHook.Initialize();
 #endif
-        Console.WriteLine("Hooking ShellExecuteExW");
-        ShellExecuteHook.Initialize();
 #if NET40
         Console.WriteLine("Hooking CreateWebRequest");
         HostHeaderHook.Initialize();
@@ -82,6 +92,5 @@ public static class EntryPoint
         }
         
         Console.WriteLine("All done");
-        return 0;
     }
 }

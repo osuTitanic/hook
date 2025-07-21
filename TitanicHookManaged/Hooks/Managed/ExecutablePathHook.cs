@@ -2,8 +2,12 @@
 using System.Reflection;
 using Harmony;
 
-namespace HookLoader;
+namespace TitanicHookManaged.Hooks.Managed;
 
+/// <summary>
+/// Hook for spoofing Application.ExecutablePath getter.
+/// Only to be used by HookLoader
+/// </summary>
 public static class ExecutablePathHook
 {
     private static string? _spoofedExePath;
@@ -37,6 +41,7 @@ public static class ExecutablePathHook
     
     public static bool GetExecutablePathPrefix(ref string? __result)
     {
+        Console.WriteLine("get_ExecutablePath hook triggered");
         __result = _spoofedExePath;
         return false;
     }

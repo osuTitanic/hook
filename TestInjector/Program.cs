@@ -45,7 +45,7 @@ class Program
         Console.WriteLine($"Injectee path: {injecteePath}");
         
         InjectableProcess injectableProcess = new InjectableProcess((uint)osuProcess.Id);
-        injectableProcess.Inject(injecteePath, "TitanicHookManaged.EntryPoint", "Start");
+        injectableProcess.Inject(injecteePath, "TitanicHookManaged.EntryPoint", "InjectedTarget");
         
         Console.WriteLine("Injected");
     }

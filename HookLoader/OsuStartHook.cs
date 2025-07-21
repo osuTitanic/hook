@@ -9,9 +9,6 @@ namespace HookLoader;
 /// </summary>
 public static class OsuStartHook
 {
-    public static Assembly? OsuAssembly = null;
-    public static string? OsuPath = null;
-    
     public static void Initialize(MethodInfo method)
     {
         var harmony = HarmonyInstance.Create("sh.Titanic.Hook.OsuStartHook");
@@ -32,7 +29,7 @@ public static class OsuStartHook
     public static void OsuStartPrefix()
     {
         // Load TitanicHook
-        TitanicHookManaged.EntryPoint.Start("");
+        TitanicHookManaged.EntryPoint.InitializeHooks();
     }
     
     #endregion
