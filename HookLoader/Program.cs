@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Windows.Forms;
 using TitanicHookManaged.Hooks.Managed;
 
 namespace HookLoader;
@@ -18,6 +19,12 @@ class Program
         // Load osu!
         string path = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "osu!.exe");
         Assembly loaded = Assembly.Load(File.ReadAllBytes(path));
+
+        if (loaded.ImageRuntimeVersion != Assembly.GetExecutingAssembly().ImageRuntimeVersion)
+        {
+            MessageBox.Show(".NET Framework runtime version mismatch! You have to use a different version of TitanicHookManaged.", "Mismatch!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return;
+        }
         
         // Get entry point
         MethodInfo entry = loaded.EntryPoint;
