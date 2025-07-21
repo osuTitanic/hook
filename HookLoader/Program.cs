@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using TitanicHookManaged.Hooks.Managed;
@@ -26,11 +27,17 @@ class Program
             return;
         }
         
+        List<string> FakeArgs = new();
+        FakeArgs.Add(path);
+#if NET40
+        FakeArgs.Add("-go");
+#endif
+        
         // Load hooks specific to the loader
         EntryPointHook.Initialize(loaded);
         ExecutablePathHook.Initialize(path);
         ExtractIconHook.Initialize();
-        GetArgsHook.Initialize([path]);
+        GetArgsHook.Initialize(FakeArgs.ToArray());
         
         // Hook osu!.exe's entrypoint to execute other hooks there
         // This is required because osu!common has to be loaded by osu! for hooking
