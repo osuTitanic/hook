@@ -15,10 +15,11 @@ public static class ShellExecuteHook
         ShellExecuteExWDelegate hookDelegate = HookedShellExecuteExW; // The function we are replacing with
         IntPtr hookPtr = Marshal.GetFunctionPointerForDelegate(hookDelegate); // Get pointer to the function
         
-        var status = MH.CreateHookApi( "shell32", "ShellExecuteExW",hookPtr, out originalShellExecuteExW); // Create hook
+        var status = MH.CreateHookApiEx( "shell32", "ShellExecuteExW",hookPtr, out originalShellExecuteExW, out ppTarget); // Create hook
         if (status != MhStatus.MH_OK)
         {
-            Console.WriteLine($"Failed to create GetACP hook {status}");
+            Console.WriteLine($"Failed to create ShellExecuteExW hook {status}");
+            return;
         }
         
         // Get function from original ShellExecuteExW to call it
@@ -27,6 +28,9 @@ public static class ShellExecuteHook
         // Do not GC our hooking thingies
         GC.KeepAlive(hookDelegate);
         GC.KeepAlive(originalShellExecuteExWFunc);
+        
+        status = MH.EnableHook(ppTarget);
+        Console.WriteLine($"Enabling ShellExecuteExW status: {status}");
     }
 
     #region Hook
@@ -50,7 +54,8 @@ public static class ShellExecuteHook
     
     [UnmanagedFunctionPointer(CallingConvention.StdCall)]
     private delegate bool ShellExecuteExWDelegate(ShellExecuteInfo info);
-    
+
+    private static IntPtr ppTarget;
     private static IntPtr originalShellExecuteExW = IntPtr.Zero;
     private static ShellExecuteExWDelegate originalShellExecuteExWFunc;
     

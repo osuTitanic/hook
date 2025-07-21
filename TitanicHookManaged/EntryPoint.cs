@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Net;
+using System.Windows.Forms;
 using TitanicHookManaged.Helpers;
 using TitanicHookManaged.Hooks.Managed;
 using TitanicHookManaged.Hooks.Native;
@@ -58,16 +59,19 @@ public static class EntryPoint
         var status = MH.Initialize();
         if (status != MhStatus.MH_OK)
         {
-            Console.WriteLine($"Failed to initialize MH: {status}");
+            Console.WriteLine($"Failed to initialize MinHook: {status}");
+            //MessageBox.Show($"Failed to initialize MinHook: {status}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
-        
-        // Native hooks
-        Console.WriteLine("Hooking WSAConnect");
-        WSAConnectRedirect.Initialize();
-        Console.WriteLine("Hooking GetAddrInfo");
-        AddrInfoHook.Initialize();
-        Console.WriteLine("Hooking ShellExecuteExW");
-        ShellExecuteHook.Initialize();
+        else
+        {
+            // Native hooks
+            Console.WriteLine("Hooking WSAConnect");
+            WSAConnectRedirect.Initialize();
+            Console.WriteLine("Hooking GetAddrInfo");
+            AddrInfoHook.Initialize();
+            Console.WriteLine("Hooking ShellExecuteExW");
+            ShellExecuteHook.Initialize();
+        }
         
         // Managed hooks
 #if NET20
@@ -83,14 +87,5 @@ public static class EntryPoint
         CheckCertificateHook.Initialize();
 #endif
         Console.WriteLine("All hooked");
-        
-        // Enable all hooks
-        status = MH.EnableHook(IntPtr.Zero);
-        if (status != MhStatus.MH_OK)
-        {
-            Console.WriteLine($"Failed to enable hooks: {status}");
-        }
-        
-        Console.WriteLine("All done");
     }
 }

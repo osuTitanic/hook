@@ -42,6 +42,23 @@ public static class MH
     //                     This parameter can be NULL.
     public static extern MhStatus CreateHookApi([MarshalAs(UnmanagedType.LPWStr)] string pszModule, [MarshalAs(UnmanagedType.LPStr)] string pszProcName, IntPtr pDetour, out IntPtr ppOriginal);
     
+    [DllImport(LIB_NAME, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall, EntryPoint = "MH_CreateHookApiEx")]
+    // Creates a hook for the specified API function, in disabled state.
+    // Parameters:
+    //   pszModule   [in]  A pointer to the loaded module name which contains the
+    //                     target function.
+    //   pszProcName [in]  A pointer to the target function name, which will be
+    //                     overridden by the detour function.
+    //   pDetour     [in]  A pointer to the detour function, which will override
+    //                     the target function.
+    //   ppOriginal  [out] A pointer to the trampoline function, which will be
+    //                     used to call the original target function.
+    //                     This parameter can be NULL.
+    //   ppTarget    [out] A pointer to the target function, which will be used
+    //                     with other functions.
+    //                     This parameter can be NULL.
+    public static extern MhStatus CreateHookApiEx([MarshalAs(UnmanagedType.LPWStr)] string pszModule, [MarshalAs(UnmanagedType.LPStr)] string pszProcName, IntPtr pDetour, out IntPtr ppOriginal, out IntPtr ppTarget);
+    
     [DllImport(LIB_NAME, CharSet = CharSet.Ansi, CallingConvention = CallingConvention.StdCall, EntryPoint = "MH_EnableHook")]
     // Enables an already created hook.
     // Parameters:

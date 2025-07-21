@@ -14,10 +14,11 @@ public static class AddrInfoHook
         GetAddrInfoWDelegate hookDelegate = HookedGetAddrInfoW;
         IntPtr hookPtr = Marshal.GetFunctionPointerForDelegate(hookDelegate);
         
-        var status = MH.CreateHookApi("ws2_32", "GetAddrInfoW", hookPtr, out originalGetAddrInfoW); // Create hook
+        var status = MH.CreateHookApiEx("ws2_32", "GetAddrInfoW", hookPtr, out originalGetAddrInfoW, out ppTarget); // Create hook
         if (status != MhStatus.MH_OK)
         {
             Console.WriteLine($"Failed to create GetAddrInfoW hook {status}");
+            return;
         }
         
         // Get function from original WSAConnect to call it
@@ -26,6 +27,9 @@ public static class AddrInfoHook
         // Do not GC our hooking thingies
         GC.KeepAlive(hookDelegate);
         GC.KeepAlive(originalGetAddrInfoWFunc);
+        
+        status = MH.EnableHook(ppTarget);
+        Console.WriteLine($"Enabling AddrInfoHook status: {status}");
     }
     
     #region Hook
@@ -47,7 +51,8 @@ public static class AddrInfoHook
     
     [UnmanagedFunctionPointer(CallingConvention.StdCall)]
     private delegate int GetAddrInfoWDelegate([MarshalAs(UnmanagedType.LPWStr)] string pNodeName, [MarshalAs(UnmanagedType.LPWStr)] string pServiceName, IntPtr pHints, IntPtr ppResult);
-    
+
+    private static IntPtr ppTarget;
     private static IntPtr originalGetAddrInfoW = IntPtr.Zero;
     private static GetAddrInfoWDelegate originalGetAddrInfoWFunc;
     

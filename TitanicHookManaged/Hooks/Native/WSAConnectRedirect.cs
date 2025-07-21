@@ -22,10 +22,11 @@ public class WSAConnectRedirect
         WSAConnectDelegate hookDelegate = HookedWSAConnect; // The function we are replacing with
         IntPtr hookPtr = Marshal.GetFunctionPointerForDelegate(hookDelegate); // Get pointer to the function
         
-        var status = MH.CreateHookApi("ws2_32", "WSAConnect", hookPtr, out originalWSAConnect); // Create hook
+        var status = MH.CreateHookApiEx("ws2_32", "WSAConnect", hookPtr, out originalWSAConnect, out ppTarget); // Create hook
         if (status != MhStatus.MH_OK)
         {
             Console.WriteLine($"Failed to create WSAConnect hook {status}");
+            return;
         }
         
         // Get function from original WSAConnect to call it
@@ -34,6 +35,9 @@ public class WSAConnectRedirect
         // Do not GC our hooking thingies
         GC.KeepAlive(hookDelegate);
         GC.KeepAlive(originalWSAConnectFunc);
+        
+        status = MH.EnableHook(ppTarget);
+        Console.WriteLine($"Enabling WSAConnect status: {status}");
     }
     
     #region Hook
@@ -102,6 +106,7 @@ public class WSAConnectRedirect
         IntPtr lpCaleeData, IntPtr lpSQOS, IntPtr lpGQOS);
     
     
+    private static IntPtr ppTarget;
     private static IntPtr originalWSAConnect = IntPtr.Zero; // Pointer to original WSAConnect
     private static WSAConnectDelegate originalWSAConnectFunc; // Delegate to original WSAConnect
     
