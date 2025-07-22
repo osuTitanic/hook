@@ -77,8 +77,8 @@ class Program
         if (loaded.ImageRuntimeVersion != Assembly.GetExecutingAssembly().ImageRuntimeVersion)
         {
             Logging.LogAndShowError($".NET Framework runtime version mismatch!\n" +
-                                    $"This version of osu! required .NET Framework {GetShortFrameworkVer(loaded.ImageRuntimeVersion)}, this executable of Titanic!Loader is .NET Framework {GetShortFrameworkVer(Assembly.GetExecutingAssembly().ImageRuntimeVersion)}\n" +
-                                    $"Get the correct version of Titanic!Loader for this version of osu!");
+                                    $"This version of osu! requires .NET Framework {GetShortFrameworkVer(loaded.ImageRuntimeVersion)}, this executable of Titanic!Loader is .NET Framework {GetShortFrameworkVer(Assembly.GetExecutingAssembly().ImageRuntimeVersion)}\n" +
+                                    $"Get the correct version of Titanic!Loader for this version of osu!.");
             return;
         }
         
