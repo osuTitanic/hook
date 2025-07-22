@@ -35,23 +35,6 @@ class Program
         Logging.UseConsoleLogging = Config.EnableConsole;
         Logging.UseFileLogging = Config.LogToFile;
         
-#if USE_MINHOOK
-        // Check is the correct MinHook present
-        if (!File.Exists(MH.LIB_NAME) || ResourceUtils.CalculateSha256(MH.LIB_NAME) != MH.LIB_SHA256)
-        {
-            // Extract MinHook from embedded resource
-            Console.WriteLine($"Couldn't find {MH.LIB_NAME}. Extracting from embedded resources.");
-            byte[]? minhookBytes = ResourceUtils.GetEmbeddedResource(MH.LIB_NAME);
-            if (minhookBytes == null)
-            {
-                MessageBox.Show("Failed to load MinHook", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-            using FileStream fs = File.Create(MH.LIB_NAME);
-            fs.Write(minhookBytes, 0, minhookBytes.Length);
-        }
-#endif
-        
         _originalEntryAssembly = Assembly.GetEntryAssembly();
         if (_originalEntryAssembly == null)
         {

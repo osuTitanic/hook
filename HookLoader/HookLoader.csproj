@@ -45,10 +45,6 @@
     <ItemGroup>
       <PackageReference Include="ILMerge" Version="3.0.41" />
     </ItemGroup>
-
-    <ItemGroup Condition="$(DefineConstants.Contains('USE_MINHOOK'))">
-      <EmbeddedResource Include="MinHook.x86.bin" LogicalName="MinHook.x86.bin" />
-    </ItemGroup>
     
     <!-- ILMerge job for .NET Framework 2.0 build -->
     <Target Name="ILMerge-net20" AfterTargets="Build" Condition="'$(Configuration)' == 'Release' And '$(TargetFramework)' == 'net20'">

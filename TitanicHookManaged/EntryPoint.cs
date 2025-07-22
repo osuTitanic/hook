@@ -5,10 +5,6 @@ using System.Windows.Forms;
 using TitanicHookManaged.Helpers;
 using TitanicHookManaged.Hooks.Managed;
 using TitanicHookShared;
-#if USE_MINHOOK
-using TitanicHookManaged.Hooks.Native;
-using TitanicHookManaged.MinHook;
-#endif
 
 namespace TitanicHookManaged;
 
@@ -47,37 +43,12 @@ public static class EntryPoint
         Logging.UseConsoleLogging = Config.EnableConsole;
         Logging.UseFileLogging = Config.LogToFile;
         
-#if USE_MINHOOK
-        var status = MH.Initialize();
-        if (status != MhStatus.MH_OK)
-        {
-            Console.WriteLine($"Failed to initialize MinHook: {status}");
-            //MessageBox.Show($"Failed to initialize MinHook: {status}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        }
-        else
-        {
-            // Native hooks
-            if (Config.HookTcpConnections)
-            {
-                Console.WriteLine("Hooking WSAConnect");
-                WSAConnectRedirect.Initialize();
-            }
-            Console.WriteLine("Hooking GetAddrInfo");
-            AddrInfoHook.Initialize();
-            Console.WriteLine("Hooking ShellExecuteExW");
-            ShellExecuteHook.Initialize();
-        }
-#else
-
-        // Managed hooks
         if (Config.HookTcpConnections)
         {
             TcpClientHook.Initialize();
         }
         DnsHostByNameHook.Initialize();
         StartProcessHook.Initialize();
-
-#endif
         
         if (Config.HookNetLib)
         {
