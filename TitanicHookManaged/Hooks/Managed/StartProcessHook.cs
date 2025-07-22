@@ -3,14 +3,17 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using Harmony;
+using TitanicHookShared;
 
 namespace TitanicHookManaged.Hooks.Managed;
 
 public static class StartProcessHook
 {
+    public const string HookName = "sh.Titanic.Hook.StartProcess";
+    
     public static void Initialize()
     {
-        var harmony = HarmonyInstance.Create("sh.Titanic.Hook.StartProcessHook");
+        var harmony = HarmonyInstance.Create(HookName);
         
         MethodInfo? targetMethod = typeof(Process)
             .GetMethods(BindingFlags.Public | BindingFlags.Static)

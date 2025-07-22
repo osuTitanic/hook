@@ -2,7 +2,7 @@
 using System.IO;
 using System.Windows.Forms;
 
-namespace TitanicHookManaged.Helpers;
+namespace TitanicHookShared;
 
 public class Configuration
 {

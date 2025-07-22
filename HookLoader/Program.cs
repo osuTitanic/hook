@@ -5,6 +5,7 @@ using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 using TitanicHookManaged.Hooks.Managed;
+using TitanicHookShared;
 
 namespace HookLoader;
 
@@ -15,6 +16,8 @@ class Program
     /// </summary>
     private static Assembly? _originalEntryAssembly;
     
+    public static Configuration Config;
+    
     /// <summary>
     /// Small program that will load osu!.exe into memory, execute hooks, and start osu!'s main function
     /// </summary>
@@ -22,6 +25,13 @@ class Program
     [STAThread]
     static void Main(string[] args)
     {
+        Config = new Configuration(Constants.DefaultConfigName);
+#if !DEBUG
+        // Initialize console if not in debug
+        if (config.EnableConsole)
+            WinApi.InitializeConsole();
+#endif
+        
 #if USE_MINHOOK
         // Check is the correct MinHook present
         if (!File.Exists(MH.LIB_NAME) || ResourceUtils.CalculateSha256(MH.LIB_NAME) != MH.LIB_SHA256)

@@ -2,6 +2,7 @@
 using System.Reflection;
 using Harmony;
 using TitanicHookManaged;
+using TitanicHookShared;
 
 namespace HookLoader;
 
@@ -30,7 +31,7 @@ public static class OsuStartHook
     private static void OsuStartPrefix()
     {
         // Load TitanicHook
-        EntryPoint.InitializeHooks();
+        EntryPoint.InitializeHooks(Program.Config);
     }
     
     #endregion

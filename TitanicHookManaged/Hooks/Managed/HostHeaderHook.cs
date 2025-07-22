@@ -5,6 +5,7 @@ using System.Net;
 using System.Reflection;
 using Harmony;
 using TitanicHookManaged.Helpers;
+using TitanicHookShared;
 
 namespace TitanicHookManaged.Hooks.Managed;
 
@@ -14,9 +15,11 @@ namespace TitanicHookManaged.Hooks.Managed;
 /// </summary>
 public static class HostHeaderHook
 {
+    public const string HookName = "sh.Titanic.Hook.HostHeader";
+    
     public static void Initialize()
     {
-        var harmony = HarmonyInstance.Create("sh.Titanic.Hook.HostHeader");
+        var harmony = HarmonyInstance.Create(HookName);
         
         MethodInfo? targetMethod = GetTargetMethod(AssemblyUtils.CommonOrOsuTypes);
         if (targetMethod == null)

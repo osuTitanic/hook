@@ -3,14 +3,17 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using Harmony;
+using TitanicHookShared;
 
 namespace TitanicHookManaged.Hooks.Managed;
 
 public static class DnsHostByNameHook
 {
+    public const string HookName = "sh.Titanic.Hook.DnsHostByName";
+    
     public static void Initialize()
     {
-        var harmony = HarmonyInstance.Create("sh.Titanic.Hook.DnsHostByNameHook");
+        var harmony = HarmonyInstance.Create(HookName);
         
         MethodInfo? targetMethod = typeof(Dns)
             .GetMethods(BindingFlags.Static | BindingFlags.NonPublic)

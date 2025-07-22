@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using Harmony;
+using TitanicHookShared;
 
 namespace TitanicHookManaged.Hooks.Managed;
 
@@ -11,10 +12,11 @@ namespace TitanicHookManaged.Hooks.Managed;
 public static class EntryPointHook
 {
     private static Assembly? _spoofedEntryPointAssembly;
+    public const string HookName = "sh.Titanic.Hook.GetEntryAssembly";
     
     public static void Initialize(Assembly? spoofedAssembly)
     {
-        var harmony = HarmonyInstance.Create("sh.Titanic.Hook.GetEntryAssemblyHook");
+        var harmony = HarmonyInstance.Create(HookName);
         _spoofedEntryPointAssembly = spoofedAssembly;
 
         MethodInfo? targetMethod = typeof(Assembly).GetMethod("GetEntryAssembly", BindingFlags.Static | BindingFlags.Public);

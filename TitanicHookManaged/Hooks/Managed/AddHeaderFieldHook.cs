@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reflection;
 using Harmony;
 using TitanicHookManaged.Helpers;
+using TitanicHookShared;
 
 namespace TitanicHookManaged.Hooks.Managed;
 
@@ -11,9 +12,11 @@ namespace TitanicHookManaged.Hooks.Managed;
 /// </summary>
 public static class AddHeaderFieldHook
 {
+    public const string HookName = "sh.Titanic.Hook.AddHeaderField";
+    
     public static void Initialize()
     {
-        var harmony = HarmonyInstance.Create("sh.Titanic.Hook.AddHeaderField");
+        var harmony = HarmonyInstance.Create(HookName);
 
         MethodInfo? targetMethod = GetTargetMethod(AssemblyUtils.CommonOrOsuTypes);
         if (targetMethod == null)

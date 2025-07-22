@@ -6,11 +6,14 @@ using System.Net.Sockets;
 using System.Reflection;
 using System.Windows.Forms;
 using Harmony;
+using TitanicHookShared;
 
 namespace TitanicHookManaged.Hooks.Managed;
 
 public class TcpClientHook
 {
+    public const string HookName = "sh.Titanic.Hook.TcpClient";
+    
     public static void Initialize()
     {
         // Get Titanic's Bancho IP address
@@ -23,7 +26,7 @@ public class TcpClientHook
         }
         Console.WriteLine("Bancho service IP: " + _newIp);
         
-        var harmony = HarmonyInstance.Create("sh.Titanic.Hook.TcpClientHook");
+        var harmony = HarmonyInstance.Create(HookName);
         
         // Look for BeginConnect(string, int, AsyncCallback, object) overload
         MethodInfo? beginConnect = typeof(TcpClient)

@@ -5,14 +5,17 @@ using System.Reflection.Emit;
 using ClrTest.Reflection;
 using Harmony;
 using TitanicHookManaged.Helpers;
+using TitanicHookShared;
 
 namespace TitanicHookManaged.Hooks.Managed;
 
 public static class CheckCertificateHook
 {
+    public const string HookName = "sh.Titanic.Hook.CheckCertificate";
+    
     public static void Initialize()
     {
-        var harmony = HarmonyInstance.Create("sh.Titanic.Hook.CheckCertificate");
+        var harmony = HarmonyInstance.Create(HookName);
 
         MethodInfo? targetMethod = GetTargetMethod(AssemblyUtils.CommonOrOsuTypes.ToArray());
         if (targetMethod == null)

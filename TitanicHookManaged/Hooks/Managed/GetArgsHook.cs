@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using Harmony;
+using TitanicHookShared;
 
 namespace TitanicHookManaged.Hooks.Managed;
 
@@ -10,11 +11,12 @@ namespace TitanicHookManaged.Hooks.Managed;
 /// </summary>
 public static class GetArgsHook
 {
+    public const string HookName = "sh.Titanic.Hook.GetArgs";
     private static string[] _spoofedArgs;
     
     public static void Initialize(string[] spoofedArgs)
     {
-        var harmony = HarmonyInstance.Create("sh.Titanic.Hook.GetArgsHook");
+        var harmony = HarmonyInstance.Create(HookName);
         _spoofedArgs = spoofedArgs;
         
         MethodInfo? targetMethod = typeof(Environment).GetMethod("GetCommandLineArgs", BindingFlags.Static | BindingFlags.Public);

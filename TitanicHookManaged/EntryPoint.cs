@@ -4,6 +4,7 @@ using System.Net;
 using System.Windows.Forms;
 using TitanicHookManaged.Helpers;
 using TitanicHookManaged.Hooks.Managed;
+using TitanicHookShared;
 #if USE_MINHOOK
 using TitanicHookManaged.Hooks.Native;
 using TitanicHookManaged.MinHook;
@@ -14,36 +15,13 @@ namespace TitanicHookManaged;
 public static class EntryPoint
 {
     /// <summary>
-    /// Initializes the console after injecting
-    /// </summary>
-    private static void InitializeConsole()
-    {
-        WinApi.AllocConsole();
-        
-        var stdout = WinApi.GetStdHandle(WinApi.STD_OUTPUT_HANDLE);
-        var stderr = WinApi.GetStdHandle(WinApi.STD_ERROR_HANDLE);
-        var outFs = new FileStream(stdout, FileAccess.Write);
-        var outWriter = new StreamWriter(outFs)
-        {
-            AutoFlush = true
-        };
-        var errFs = new FileStream(stderr, FileAccess.Write);
-        var errWriter = new StreamWriter(errFs)
-        {
-            AutoFlush = true
-        };
-        Console.SetOut(outWriter);
-        Console.SetError(errWriter);
-    }
-
-    /// <summary>
     /// Target for injecting with ManagedInjector
     /// </summary>
     /// <param name="args"></param>
     /// <returns></returns>
     public static int InjectedTarget(string args)
     {
-        InitializeConsole();
+        WinApi.InitializeConsole();
         InitializeHooks();
         return 0;
     }
@@ -51,17 +29,20 @@ public static class EntryPoint
     /// <summary>
     /// Start hooks
     /// </summary>
-    public static void InitializeHooks()
+    public static void InitializeHooks(Configuration? config = null)
     {
         AppDomain.CurrentDomain.UnhandledException += (sender, e) =>
         {
             Console.WriteLine("Unhandled exception in injected module " + e.ExceptionObject.ToString());
         };
 
-        Config ??= new Configuration(Constants.DefaultConfigName);
+        if (config == null)
+            Config ??= new Configuration(Constants.DefaultConfigName);
+        else
+            Config = config;
         
         if (Config.EnableConsole)
-            InitializeConsole();
+            WinApi.InitializeConsole();
         
 #if USE_MINHOOK
         var status = MH.Initialize();
@@ -88,34 +69,34 @@ public static class EntryPoint
         // Managed hooks
         if (Config.HookTcpConnections)
         {
-            Console.WriteLine("Hooking TcpClientConnect");
+            Console.WriteLine($"Enabling hook: {TcpClientHook.HookName}");
             TcpClientHook.Initialize();
         }
-        Console.WriteLine("Hooking InternalGetHostByName");
+        Console.WriteLine($"Enabling hook: {DnsHostByNameHook.HookName}");
         DnsHostByNameHook.Initialize();
-        Console.WriteLine("Hooking Process Start");
+        Console.WriteLine($"Enabling hook: {StartProcessHook.HookName}");
         StartProcessHook.Initialize();
 
 #endif
         
         if (Config.HookNetLib)
         {
-            Console.WriteLine("Hooking AddHeaderField");
+            Console.WriteLine($"Enabling hook: {AddHeaderFieldHook.HookName}");
             AddHeaderFieldHook.Initialize();
-            Console.WriteLine("Hooking StringStream ctor");
+            Console.WriteLine($"Enabling hook: {NetLibEncodingHook.HookName}");
             NetLibEncodingHook.Initialize();
         }
         
 #if NET40
         if (Config.HookModernHostMethod)
         {
-            Console.WriteLine("Hooking CreateWebRequest");
+            Console.WriteLine($"Enabling hook: {HostHeaderHook.HookName}");
             HostHeaderHook.Initialize();
         }
 
         if (Config.HookCheckCertificate)
         {
-            Console.WriteLine("Hooking checkCertificate");
+            Console.WriteLine($"Enabling hook: {CheckCertificateHook.HookName}");
             CheckCertificateHook.Initialize();
         }
 #endif

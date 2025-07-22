@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using Harmony;
+using TitanicHookShared;
 
 namespace TitanicHookManaged.Hooks.Managed;
 
@@ -11,10 +12,11 @@ namespace TitanicHookManaged.Hooks.Managed;
 public static class ExecutablePathHook
 {
     private static string? _spoofedExePath;
+    public const string HookName = "sh.Titanic.Hook.ExecutablePath";
     
     public static void Initialize(string? spoofedExePath)
     {
-        var harmony = HarmonyInstance.Create("sh.Titanic.Hook.ExecutablePathHook");
+        var harmony = HarmonyInstance.Create(HookName);
         _spoofedExePath = spoofedExePath;
 
         MethodInfo? targetMethod = typeof(System.Windows.Forms.Application).GetMethod("get_ExecutablePath", BindingFlags.Static | BindingFlags.Public);

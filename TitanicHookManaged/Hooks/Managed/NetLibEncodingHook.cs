@@ -7,14 +7,17 @@ using System.Text;
 using ClrTest.Reflection;
 using Harmony;
 using TitanicHookManaged.Helpers;
+using TitanicHookShared;
 
 namespace TitanicHookManaged.Hooks.Managed;
 
 public static class NetLibEncodingHook
 {
+    public const string HookName = "sh.Titanic.Hook.NetLibEncoding";
+    
     public static void Initialize()
     {
-        var harmony = HarmonyInstance.Create("sh.Titanic.Hook.NetLibEncoding");
+        var harmony = HarmonyInstance.Create(HookName);
 
         ConstructorInfo? targetMethod = GetTargetMethod(AssemblyUtils.CommonOrOsuTypes);
         if (targetMethod == null)
