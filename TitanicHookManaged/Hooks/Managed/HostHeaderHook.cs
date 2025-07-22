@@ -19,37 +19,41 @@ public static class HostHeaderHook
     
     public static void Initialize()
     {
+        Logging.HookStart(HookName);
         var harmony = HarmonyInstance.Create(HookName);
         
         MethodInfo? targetMethod = GetTargetMethod(AssemblyUtils.CommonOrOsuTypes);
         if (targetMethod == null)
         {
-            Console.WriteLine("Target method not found");
+            Logging.HookError(HookName, "Target method not found");
             return;
         }
         
-        Console.WriteLine($"Resolved CreateWebRequest: {targetMethod.DeclaringType?.FullName}.{targetMethod.Name}");
+        Logging.HookStep(HookName,$"Resolved CreateWebRequest: {targetMethod.DeclaringType?.FullName}.{targetMethod.Name}");
         
         var postfix = typeof(HostHeaderHook).GetMethod("CreateRequestPostfix", Constants.HookBindingFlags);
 
         try
         {
+            Logging.HookPatching(HookName);
             harmony.Patch(targetMethod, null, new HarmonyMethod(postfix));
         }
         catch (Exception e)
         {
-            Console.WriteLine($"Hook fail: {e}");
+            Logging.HookError(HookName, e.ToString());
         }
+        
+        Logging.HookDone(HookName);
     }
     
     #region Hook
     
     private static void CreateRequestPostfix(ref HttpWebRequest __result)
     {
-        Console.WriteLine($"Triggered CreateRequest postfix: {__result.Host}");
+        Logging.HookTrigger(HookName);
         if (__result.Host.Contains("ppy.sh"))
         {
-            Console.WriteLine($"Replacing ppy.sh domain with {EntryPoint.Config.ServerName} in CreateRequestPostfix");
+            Logging.HookOutput(HookName, $"Replacing ppy.sh domain with {EntryPoint.Config.ServerName} in CreateRequestPostfix");
             __result.Host = __result.Host.Replace("ppy.sh", EntryPoint.Config.ServerName);
         }
     }
@@ -67,7 +71,7 @@ public static class HostHeaderHook
 
         if (targetMethod == null)
         {
-            Console.WriteLine("Couldn't find CreateWebRequest");
+            Logging.HookError(HookName, "Couldn't find CreateWebRequest");
             return null;
         }
         

@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using ClrTest.Reflection;
+using TitanicHookShared;
 
 namespace TitanicHookManaged.Helpers;
 
@@ -27,7 +28,7 @@ public static class pWebRequestHelper
             
             if (_pWebRequestType == null)
             {
-                Console.WriteLine("Couldn't find pWebRequest");
+                Logging.LogAndShowError("Couldn't find pWebRequest");
             }
             
             return _pWebRequestType;

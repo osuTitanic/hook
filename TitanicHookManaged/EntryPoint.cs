@@ -33,7 +33,7 @@ public static class EntryPoint
     {
         AppDomain.CurrentDomain.UnhandledException += (sender, e) =>
         {
-            Console.WriteLine("Unhandled exception in injected module " + e.ExceptionObject.ToString());
+            Logging.LogAndShowError("Unhandled exception in injected module " + e.ExceptionObject.ToString());
         };
 
         if (config == null)
@@ -69,38 +69,32 @@ public static class EntryPoint
         // Managed hooks
         if (Config.HookTcpConnections)
         {
-            Console.WriteLine($"Enabling hook: {TcpClientHook.HookName}");
             TcpClientHook.Initialize();
         }
-        Console.WriteLine($"Enabling hook: {DnsHostByNameHook.HookName}");
         DnsHostByNameHook.Initialize();
-        Console.WriteLine($"Enabling hook: {StartProcessHook.HookName}");
         StartProcessHook.Initialize();
 
 #endif
         
         if (Config.HookNetLib)
         {
-            Console.WriteLine($"Enabling hook: {AddHeaderFieldHook.HookName}");
             AddHeaderFieldHook.Initialize();
-            Console.WriteLine($"Enabling hook: {NetLibEncodingHook.HookName}");
             NetLibEncodingHook.Initialize();
         }
         
 #if NET40
         if (Config.HookModernHostMethod)
         {
-            Console.WriteLine($"Enabling hook: {HostHeaderHook.HookName}");
             HostHeaderHook.Initialize();
         }
 
         if (Config.HookCheckCertificate)
         {
-            Console.WriteLine($"Enabling hook: {CheckCertificateHook.HookName}");
             CheckCertificateHook.Initialize();
         }
 #endif
-        Console.WriteLine("All hooked");
+        
+        Logging.Info("All hooked");
     }
 
     public static Configuration? Config = null;

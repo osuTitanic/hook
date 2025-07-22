@@ -16,13 +16,15 @@ public static class GetArgsHook
     
     public static void Initialize(string[] spoofedArgs)
     {
+        Logging.HookStart(HookName);
+        
         var harmony = HarmonyInstance.Create(HookName);
         _spoofedArgs = spoofedArgs;
         
         MethodInfo? targetMethod = typeof(Environment).GetMethod("GetCommandLineArgs", BindingFlags.Static | BindingFlags.Public);
         if (targetMethod == null)
         {
-            Console.WriteLine("Could not find GetCommandLineArgs");
+            Logging.HookError(HookName, "Could not find GetCommandLineArgs");
             return;
         }
         
@@ -30,19 +32,22 @@ public static class GetArgsHook
         
         try
         {
+            Logging.HookPatching(HookName);
             harmony.Patch(targetMethod, new HarmonyMethod(prefix));
         }
         catch (Exception e)
         {
-            Console.WriteLine($"Hook fail: {e}");
+            Logging.HookError(HookName, e.ToString());
         }
+        
+        Logging.HookDone(HookName);
     }
 
     #region Hook
 
     private static bool GetArgsPrefix(ref string[] __result)
     {
-        Console.WriteLine("GetCommandLineArgs hook triggered");
+        Logging.HookTrigger(HookName);
         __result = _spoofedArgs;
         return false;
     }

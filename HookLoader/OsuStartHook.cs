@@ -11,19 +11,25 @@ namespace HookLoader;
 /// </summary>
 public static class OsuStartHook
 {
+    private const string HookName = "sh.Titanic.Hook.OsuStartHook";
+    
     public static void Initialize(MethodInfo method)
     {
-        var harmony = HarmonyInstance.Create("sh.Titanic.Hook.OsuStartHook");
+        Logging.HookStart(HookName);
+        
+        var harmony = HarmonyInstance.Create(HookName);
         var prefix = typeof(OsuStartHook).GetMethod("OsuStartPrefix", Constants.HookBindingFlags);
         try
         {
+            Logging.HookStep(HookName, "Patching");
             harmony.Patch(method, new HarmonyMethod(prefix));
         }
         catch (Exception e)
         {
-            Console.WriteLine($"Hook fail: {e}");
+            Logging.HookError(HookName, e.ToString());
         }
-        Console.WriteLine("OsuStartHook initialized.");
+        
+        Logging.HookDone(HookName);
     }
     
     #region Hook
@@ -31,6 +37,7 @@ public static class OsuStartHook
     private static void OsuStartPrefix()
     {
         // Load TitanicHook
+        Logging.HookTrigger(HookName);
         EntryPoint.InitializeHooks(Program.Config);
     }
     

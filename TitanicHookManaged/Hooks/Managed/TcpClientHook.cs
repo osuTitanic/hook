@@ -16,15 +16,17 @@ public class TcpClientHook
     
     public static void Initialize()
     {
+        Logging.HookStart(HookName);
+        
         // Get Titanic's Bancho IP address
-        Console.WriteLine($"Resolving server.{EntryPoint.Config.ServerName} IP");
+        Logging.HookStep(HookName, $"Resolving server.{EntryPoint.Config.ServerName} IP");
         _newIp = Dns.GetHostAddresses($"server.{EntryPoint.Config.ServerName}")[0];
         if (_newIp == null)
         {
-            MessageBox.Show($"Couldn't resolve server.{EntryPoint.Config.ServerName}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            Logging.HookError(HookName, $"Couldn't resolve server.{EntryPoint.Config.ServerName}");
             return;
         }
-        Console.WriteLine("Bancho service IP: " + _newIp);
+        Logging.HookStep(HookName, "Bancho service IP: " + _newIp);
         
         var harmony = HarmonyInstance.Create(HookName);
         
@@ -36,7 +38,7 @@ public class TcpClientHook
                                  m.GetParameters()[0].ParameterType.FullName == "System.String");
         if (beginConnect == null)
         {
-            Console.WriteLine("Could not find TcpClient.BeginConnect(string, int, AsyncCallback, object)");
+            Logging.HookError(HookName, "Could not find TcpClient.BeginConnect(string, int, AsyncCallback, object)");
         }
         
         // Look for Connect(string, int) overload
@@ -47,30 +49,33 @@ public class TcpClientHook
                                  m.GetParameters()[0].ParameterType.FullName == "System.String");
         if (connect == null)
         {
-            Console.WriteLine("Could not find TcpClient.BeginConnect(string, int, AsyncCallback, object)");
+            Logging.HookError(HookName, "Could not find TcpClient.BeginConnect(string, int, AsyncCallback, object)");
         }
         
         var prefix = typeof(TcpClientHook).GetMethod("TcpConnectPrefix", Constants.HookBindingFlags);
 
         try
         {
+            Logging.HookStep(HookName, "Patching");
             if (beginConnect != null) harmony.Patch(beginConnect, new HarmonyMethod(prefix));
             if (connect != null) harmony.Patch(connect, new HarmonyMethod(prefix));
         }
         catch (Exception e)
         {
-            Console.WriteLine($"Hook fail: {e}");
+            Logging.HookError(HookName, e.ToString());
         }
+        
+        Logging.HookDone(HookName);
     }
 
     #region Hook
 
     private static void TcpConnectPrefix(ref string __0)
     {
-        Console.WriteLine($"TcpConnectPrefix called with address {__0}");
+        Logging.HookTrigger(HookName);
         if (_banchoIpList.Contains(__0))
         {
-            Console.WriteLine("Replacing IP");
+            Logging.HookOutput(HookName, "Replacing IP");
             __0 = _newIp.ToString();
         }
     }

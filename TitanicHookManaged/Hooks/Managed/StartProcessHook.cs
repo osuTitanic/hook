@@ -13,6 +13,8 @@ public static class StartProcessHook
     
     public static void Initialize()
     {
+        Logging.HookStart(HookName);
+        
         var harmony = HarmonyInstance.Create(HookName);
         
         MethodInfo? targetMethod = typeof(Process)
@@ -23,7 +25,7 @@ public static class StartProcessHook
 
         if (targetMethod == null)
         {
-            Console.WriteLine("Couldn't find Process.Start(ProcessStartInfo)");
+            Logging.HookError(HookName, "Couldn't find Process.Start(ProcessStartInfo)");
             return;
         }
 
@@ -31,19 +33,22 @@ public static class StartProcessHook
 
         try
         {
+            Logging.HookPatching(HookName);
             harmony.Patch(targetMethod, new HarmonyMethod(prefix));
         }
         catch (Exception e)
         {
-            Console.WriteLine($"Hook fail: {e}");
+            Logging.HookError(HookName,e.ToString());
         }
+        
+        Logging.HookDone(HookName);
     }
 
     #region Hook
 
     private static void ProcessStartPrefix(ref ProcessStartInfo __0)
     {
-        Console.WriteLine("ProcessStartPrefix triggered");
+        Logging.HookTrigger(HookName);
         if (__0.FileName.Contains("ppy.sh")) // TODO: Make regex check for URLs
         {
             __0.FileName = __0.FileName.Replace("ppy.sh", EntryPoint.Config.ServerName);

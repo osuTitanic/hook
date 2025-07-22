@@ -16,13 +16,15 @@ public static class EntryPointHook
     
     public static void Initialize(Assembly? spoofedAssembly)
     {
+        Logging.HookTrigger(HookName);
+        
         var harmony = HarmonyInstance.Create(HookName);
         _spoofedEntryPointAssembly = spoofedAssembly;
 
         MethodInfo? targetMethod = typeof(Assembly).GetMethod("GetEntryAssembly", BindingFlags.Static | BindingFlags.Public);
         if (targetMethod == null)
         {
-            Console.WriteLine("Could not find entry assembly target method");
+            Logging.HookError(HookName, "Could not find entry assembly target method");
             return;
         }
         
@@ -30,20 +32,22 @@ public static class EntryPointHook
 
         try
         {
+            Logging.HookPatching(HookName);
             harmony.Patch(targetMethod, new HarmonyMethod(prefix));
         }
         catch (Exception e)
         {
-            Console.WriteLine($"Hook fail: {e}");
+            Logging.HookError(HookName, e.ToString());
         }
-        Console.WriteLine("Entry point hooked");
+        
+        Logging.HookDone(HookName);
     }
     
     #region Hook
     
     private static bool GetEntryAssemblyPrefix(ref Assembly? __result)
     {
-        Console.WriteLine("GetEntryAssembly hook triggered");
+        Logging.HookTrigger(HookName);
         __result = _spoofedEntryPointAssembly;
         return false;
     }

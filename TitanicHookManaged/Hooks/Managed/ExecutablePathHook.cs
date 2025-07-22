@@ -16,13 +16,15 @@ public static class ExecutablePathHook
     
     public static void Initialize(string? spoofedExePath)
     {
+        Logging.HookStart(HookName);
+        
         var harmony = HarmonyInstance.Create(HookName);
         _spoofedExePath = spoofedExePath;
 
         MethodInfo? targetMethod = typeof(System.Windows.Forms.Application).GetMethod("get_ExecutablePath", BindingFlags.Static | BindingFlags.Public);
         if (targetMethod == null)
         {
-            Console.WriteLine("Could not find get_ExecutablePath method");
+            Logging.HookError(HookName, "Could not find get_ExecutablePath method");
             return;
         }
         
@@ -30,20 +32,22 @@ public static class ExecutablePathHook
 
         try
         {
+            Logging.HookPatching(HookName);
             harmony.Patch(targetMethod, new HarmonyMethod(prefix));
         }
         catch (Exception e)
         {
-            Console.WriteLine($"Hook fail: {e}");
+            Logging.HookError(HookName, e.ToString());
         }
-        Console.WriteLine("Executable path hooked");
+        
+        Logging.HookDone(HookName);
     }
     
     #region Hook
     
     private static bool GetExecutablePathPrefix(ref string? __result)
     {
-        Console.WriteLine("get_ExecutablePath hook triggered");
+        Logging.HookTrigger(HookName);
         __result = _spoofedExePath;
         return false;
     }

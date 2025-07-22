@@ -16,27 +16,31 @@ public static class AddHeaderFieldHook
     
     public static void Initialize()
     {
+        Logging.HookStart(HookName);
+        
         var harmony = HarmonyInstance.Create(HookName);
 
         MethodInfo? targetMethod = GetTargetMethod(AssemblyUtils.CommonOrOsuTypes);
         if (targetMethod == null)
         {
-            Console.WriteLine("Target method not found");
+            Logging.HookError(HookName, "Target method not found");
             return;
         }
-        Console.WriteLine($"Resolved AddHeaderField: {targetMethod.Name}");
+        Logging.HookStep(HookName, $"Resolved AddHeaderField: {targetMethod.Name}");
         
         var prefix = typeof(AddHeaderFieldHook).GetMethod("AddHeaderFieldPrefix", Constants.HookBindingFlags);
 
         try
         {
+            Logging.HookPatching(HookName);
             harmony.Patch(targetMethod, new HarmonyMethod(prefix));
         }
         catch (Exception e)
         {
-            Console.WriteLine($"Hook fail: {e}");
+            Logging.HookError(HookName, e.ToString());
         }
         
+        Logging.HookDone(HookName);
     }
     
     #region Hook
@@ -48,7 +52,7 @@ public static class AddHeaderFieldHook
     /// <param name="__2">Value of the header. It's ref here so that we can get it by reference and modify it</param>
     private static void AddHeaderFieldPrefix(string __1, ref string __2)
     {
-        Console.WriteLine($"AddHeaderField hook triggered, {__1}: {__2}");
+        Logging.HookTrigger(HookName);
         
         if (__1 == "Host" && __2.Contains("ppy.sh"))
             __2 = __2.Replace("ppy.sh", EntryPoint.Config.ServerName);

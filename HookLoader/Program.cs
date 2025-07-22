@@ -52,7 +52,7 @@ class Program
         _originalEntryAssembly = Assembly.GetEntryAssembly();
         if (_originalEntryAssembly == null)
         {
-            MessageBox.Show("Assembly.GetEntryAssembly() returned null", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            Logging.LogAndShowError("Assembly.GetEntryAssembly() returned null");
             return;
         }
         
@@ -62,7 +62,7 @@ class Program
 
         if (loaded.ImageRuntimeVersion != Assembly.GetExecutingAssembly().ImageRuntimeVersion)
         {
-            MessageBox.Show(".NET Framework runtime version mismatch! You have to use a different version of TitanicHookManaged.", "Mismatch!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            Logging.LogAndShowError(".NET Framework runtime version mismatch! You have to use a different version of TitanicHookManaged.");
             return;
         }
         
@@ -70,7 +70,7 @@ class Program
         MethodInfo entry = loaded.EntryPoint;
         if (entry == null)
         {
-            Console.WriteLine("Entry point not found.");
+            Logging.LogAndShowError("Entry point not found.");
             return;
         }
         
@@ -81,6 +81,7 @@ class Program
 #endif
         
         // Load hooks specific to the loader
+        Logging.Info("Loading early hooks");
         EntryPointHook.Initialize(loaded);
         ExecutablePathHook.Initialize(path);
         ExtractIconHook.Initialize(AppDomain.CurrentDomain.FriendlyName);
@@ -89,9 +90,11 @@ class Program
         // Hook osu!.exe's entrypoint to execute other hooks there
         // This is required because osu!common has to be loaded by osu! for hooking
         // If we would've loaded osu!common manually it wouldn't work
+        Logging.Info("Hooking osu!'s main function");
         OsuStartHook.Initialize(entry);
         
         // Start the exe's entry point
+        Logging.Info("Starting osu!");
         entry.Invoke(null, new object[] { });
     }
 }

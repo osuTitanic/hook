@@ -2,15 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using TitanicHookShared;
 
 namespace TitanicHookManaged.Helpers;
 
 public static class AssemblyUtils
 {
     /// <summary>
-    /// Gets osu!common (if present) or osu!
+    /// Gets osu!common (if present) or osu! (if osu!common doesn't exist)
     /// </summary>
-    public static Assembly CommonOrCommonOrOsuAssembly
+    public static Assembly CommonOrOsuAssembly
     {
         get
         {
@@ -27,7 +28,7 @@ public static class AssemblyUtils
 
             if (_commonOrOsuAssembly == null)
             {
-                Console.WriteLine("Couldn't find neither osu!common or osu!");
+                Logging.LogAndShowError("Couldn't find neither osu!common or osu!");
                 throw new Exception("Couldn't find neither osu!common or osu!");
             }
             return _commonOrOsuAssembly;
@@ -45,7 +46,7 @@ public static class AssemblyUtils
                 {
                     // Try to load normally
                     _commonOrOsuTypes = new List<Type>();
-                    _commonOrOsuTypes.AddRange(CommonOrCommonOrOsuAssembly.GetTypes());
+                    _commonOrOsuTypes.AddRange(CommonOrOsuAssembly.GetTypes());
                 }
                 catch (ReflectionTypeLoadException e)
                 {

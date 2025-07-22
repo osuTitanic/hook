@@ -17,27 +17,31 @@ public static class NetLibEncodingHook
     
     public static void Initialize()
     {
+        Logging.HookStart(HookName);
         var harmony = HarmonyInstance.Create(HookName);
 
         ConstructorInfo? targetMethod = GetTargetMethod(AssemblyUtils.CommonOrOsuTypes);
         if (targetMethod == null)
         {
-            Console.WriteLine("Target method not found");
+            Logging.HookError(HookName, "Target method not found");
             return;
         }
         
-        Console.WriteLine($"Resolved StringStream ctor: {targetMethod.DeclaringType.FullName}.{targetMethod.Name}");
+        Logging.HookStep(HookName, $"Resolved StringStream ctor: {targetMethod.DeclaringType.FullName}.{targetMethod.Name}");
         
         var postfix = typeof(NetLibEncodingHook).GetMethod("StringStreamCtorPostfix", Constants.HookBindingFlags);
 
         try
         {
+            Logging.HookPatching(HookName);
             harmony.Patch(targetMethod, null, new HarmonyMethod(postfix));
         }
         catch (Exception e)
         {
-            Console.WriteLine($"Hook fail: {e}");
+            Logging.HookError(HookName, e.ToString());
         }
+        
+        Logging.HookDone(HookName);
     }
     
     #region Hook
@@ -51,7 +55,7 @@ public static class NetLibEncodingHook
     /// <param name="__1">args</param>
     private static void StringStreamCtorPostfix(ref MemoryStream __instance, string __0, params object[] __1)
     {
-        Console.WriteLine("StringStream ctor hook triggered");
+        Logging.HookTrigger(HookName);
         try
         {
             __instance.SetLength(0); // Wipe the underlying MemoryStream without disposing it
@@ -72,7 +76,7 @@ public static class NetLibEncodingHook
         }
         catch (Exception e)
         {
-            Console.WriteLine($"Error in StringStream ctor hook: {e}");
+            Logging.HookOutput(HookName, $"Error: {e}");
         }
     } 
     

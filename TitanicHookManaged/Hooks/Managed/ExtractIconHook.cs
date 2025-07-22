@@ -18,6 +18,8 @@ public static class ExtractIconHook
     
     public static void Initialize(string? hookLoaderName)
     {
+        Logging.HookStart(HookName);
+        
         if (hookLoaderName == null)
             return;
         
@@ -33,7 +35,7 @@ public static class ExtractIconHook
                                  );
         if (targetMethod == null)
         {
-            Console.WriteLine("Could not find ExtractAssociatedIcon");
+            Logging.HookError(HookName, "Could not find ExtractAssociatedIcon");
             return;
         }
         
@@ -41,20 +43,22 @@ public static class ExtractIconHook
 
         try
         {
+            Logging.HookPatching(HookName);
             harmony.Patch(targetMethod, new HarmonyMethod(prefix));
         }
         catch (Exception e)
         {
-            Console.WriteLine($"Hook fail: {e}");
+            Logging.HookError(HookName, e.ToString());
         }
-        Console.WriteLine("Entry point hooked");
+        
+        Logging.HookDone(HookName);
     }
     
     #region Hook
     
     private static void ExtractAssociatedIconPrefix(ref string __0)
     {
-        Console.WriteLine("ExtractAssociatedIcon hook triggered");
+        Logging.HookTrigger(HookName);
         __0 = __0.Replace(_hookLoaderName, "osu!.exe"); // Change the target icon path
     }
     

@@ -15,27 +15,32 @@ public static class CheckCertificateHook
     
     public static void Initialize()
     {
+        Logging.HookStart(HookName);
+        
         var harmony = HarmonyInstance.Create(HookName);
 
         MethodInfo? targetMethod = GetTargetMethod(AssemblyUtils.CommonOrOsuTypes.ToArray());
         if (targetMethod == null)
         {
-            Console.WriteLine("Target method not found");
+            Logging.HookError(HookName, "Target method not found");
             return;
         }
         
-        Console.WriteLine($"Resolved checkCertificate: {targetMethod.DeclaringType?.FullName}.{targetMethod.Name}");
+        Logging.HookStep(HookName, $"Resolved checkCertificate: {targetMethod.DeclaringType?.FullName}.{targetMethod.Name}");
         
         var prefix = typeof(CheckCertificateHook).GetMethod("CheckCertificatePrefix", Constants.HookBindingFlags);
 
         try
         {
+            Logging.HookPatching(HookName);
             harmony.Patch(targetMethod, new HarmonyMethod(prefix));
         }
         catch (Exception e)
         {
-            Console.WriteLine($"Hook fail: {e}");
+            Logging.HookError(HookName, e.ToString());
         }
+        
+        Logging.HookDone(HookName);
     }
     
     #region Hook
@@ -43,7 +48,7 @@ public static class CheckCertificateHook
     private static bool CheckCertificatePrefix()
     {
         // Do not check the certificate and return early and don't give control back to original function
-        Console.WriteLine("checkCertificate prefix triggered");
+        Logging.HookTrigger(HookName);
         return false;
     }
     
@@ -63,7 +68,7 @@ public static class CheckCertificateHook
 
         if (targetMethod == null)
         {
-            Console.WriteLine("Couldn't find checkCertificate");
+            Logging.HookError(HookName, "Couldn't find checkCertificate");
             return null;
         }
         
