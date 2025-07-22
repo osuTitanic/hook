@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Windows.Forms;
 
 namespace TitanicHookShared;
@@ -8,13 +9,56 @@ namespace TitanicHookShared;
 /// </summary>
 public static class Logging // Holy public static void boilerplate class
 {
+    public static bool UseConsoleLogging = true;
+
+    public static bool UseFileLogging
+    {
+        get => _useFileLogging;
+        set
+        {
+            _useFileLogging = value;
+            if (_useFileLogging)
+            {
+                // Set up file logging
+                _logFileHandle ??= File.OpenWrite(Constants.LogFileName);
+                _logFile ??= new StreamWriter(_logFileHandle);
+            }
+            else
+            {
+                // Close file logging
+                _logFile?.Close();
+                _logFileHandle?.Close();
+            }
+        }
+    }
+
+    private static FileStream? _logFileHandle = null;
+    private static StreamWriter? _logFile = null;
+    private static bool _useFileLogging = false;
+
+    /// <summary>
+    /// Internal function to write logs to file and/or console
+    /// </summary>
+    /// <param name="message"></param>
+    private static void WriteToLog(string message)
+    {
+        // Only do console logging checks in Release
+#if !DEBUG
+        if (UseConsoleLogging)
+#endif
+            Console.WriteLine(message);
+        
+        if (UseFileLogging)
+            _logFile?.WriteLine(message);
+    }
+
     /// <summary>
     /// Hook is starting to initialize
     /// </summary>
     /// <param name="hookName">Hook name</param>
     public static void HookStart(string hookName)
     {
-        Console.WriteLine($"[HOOK INIT] {hookName}");
+        WriteToLog($"[HOOK INIT] {hookName}");
     }
     
     /// <summary>
@@ -23,7 +67,7 @@ public static class Logging // Holy public static void boilerplate class
     /// <param name="hookName">Hook name</param>
     public static void HookDone(string hookName)
     {
-        Console.WriteLine($"[HOOK DONE] {hookName}");
+        WriteToLog($"[HOOK DONE] {hookName}");
     }
     
     /// <summary>
@@ -33,7 +77,7 @@ public static class Logging // Holy public static void boilerplate class
     /// <param name="message">Message</param>
     public static void HookStep(string hookName, string message)
     {
-        Console.WriteLine($"[HOOK STEP] ({hookName}): {message}");
+        WriteToLog($"[HOOK STEP] ({hookName}): {message}");
     }
 
     /// <summary>
@@ -42,7 +86,7 @@ public static class Logging // Holy public static void boilerplate class
     /// <param name="hookName">Hook name</param>
     public static void HookPatching(string hookName)
     {
-        Console.WriteLine($"[HOOK PATCHING] {hookName}");
+        WriteToLog($"[HOOK PATCHING] {hookName}");
     }
     
     /// <summary>
@@ -52,7 +96,7 @@ public static class Logging // Holy public static void boilerplate class
     /// <param name="message">Message</param>
     public static void HookError(string hookName, string message)
     {
-        Console.WriteLine($"[HOOK ERR] ({hookName}): {message}");
+        WriteToLog($"[HOOK ERR] ({hookName}): {message}");
         ShowError($"Hooking error in hook {hookName}\n{message}");
     }
 
@@ -62,7 +106,7 @@ public static class Logging // Holy public static void boilerplate class
     /// <param name="hookName">Hook name</param>
     public static void HookTrigger(string hookName)
     {
-        Console.WriteLine($"[HOOK TRIGGER]: {hookName}");
+        WriteToLog($"[HOOK TRIGGER]: {hookName}");
     }
     
     /// <summary>
@@ -72,7 +116,7 @@ public static class Logging // Holy public static void boilerplate class
     /// <param name="message">Message</param>
     public static void HookOutput(string hookName, string message)
     {
-        Console.WriteLine($"[HOOK OUT] ({hookName}): {message}");
+        WriteToLog($"[HOOK OUT] ({hookName}): {message}");
     }
 
     /// <summary>
@@ -81,7 +125,7 @@ public static class Logging // Holy public static void boilerplate class
     /// <param name="message">Message</param>
     public static void Info(string message)
     {
-        Console.WriteLine($"[INFO] ({message})");
+        WriteToLog($"[INFO] ({message})");
     }
 
     /// <summary>
@@ -99,7 +143,7 @@ public static class Logging // Holy public static void boilerplate class
     /// <param name="message"></param>
     public static void LogAndShowError(string message)
     {
-        Console.WriteLine($"[ERROR] ({message})");
+        WriteToLog($"[ERROR] ({message})");
         ShowError(message);
     }
 }

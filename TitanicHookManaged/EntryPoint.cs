@@ -44,6 +44,9 @@ public static class EntryPoint
         if (Config.EnableConsole)
             WinApi.InitializeConsole();
         
+        Logging.UseConsoleLogging = Config.EnableConsole;
+        Logging.UseFileLogging = Config.LogToFile;
+        
 #if USE_MINHOOK
         var status = MH.Initialize();
         if (status != MhStatus.MH_OK)

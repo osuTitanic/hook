@@ -32,6 +32,9 @@ class Program
             WinApi.InitializeConsole();
 #endif
         
+        Logging.UseConsoleLogging = Config.EnableConsole;
+        Logging.UseFileLogging = Config.LogToFile;
+        
 #if USE_MINHOOK
         // Check is the correct MinHook present
         if (!File.Exists(MH.LIB_NAME) || ResourceUtils.CalculateSha256(MH.LIB_NAME) != MH.LIB_SHA256)
