@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if USE_MINHOOK
+using System;
 using System.Runtime.InteropServices;
 using TitanicHookManaged.Helpers;
 using TitanicHookManaged.MinHook;
@@ -61,3 +62,4 @@ public static class ShellExecuteHook
     
     #endregion
 }
+#endif

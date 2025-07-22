@@ -4,8 +4,10 @@ using System.Net;
 using System.Windows.Forms;
 using TitanicHookManaged.Helpers;
 using TitanicHookManaged.Hooks.Managed;
+#if USE_MINHOOK
 using TitanicHookManaged.Hooks.Native;
 using TitanicHookManaged.MinHook;
+#endif
 
 namespace TitanicHookManaged;
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if USE_MINHOOK
+using System;
 using System.Runtime.InteropServices;
 
 namespace TitanicHookManaged.MinHook;
@@ -67,3 +68,4 @@ public static class MH
     //                enabled in one go.
     public static extern MhStatus EnableHook(IntPtr pTarget);
 }
+#endif

@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if USE_WINDOWS
+using System;
 using System.Net;
 using System.Runtime.InteropServices;
 using TitanicHookManaged.Helpers;
@@ -112,3 +113,4 @@ public class WSAConnectRedirect
     
     #endregion
 }
+#endif

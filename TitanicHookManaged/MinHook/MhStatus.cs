@@ -1,4 +1,5 @@
-﻿namespace TitanicHookManaged.MinHook;
+﻿#if USE_MINHOOK
+namespace TitanicHookManaged.MinHook;
 
 /// <summary>
 /// Error codes returned by MinHook native functions
@@ -49,3 +50,4 @@ public enum MhStatus
     // The specified function is not found.
     MH_ERROR_FUNCTION_NOT_FOUND
 }
+#endif

@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if USE_MINHOOK
+using System;
 using System.Runtime.InteropServices;
 using TitanicHookManaged.MinHook;
 
@@ -58,3 +59,4 @@ public static class AddrInfoHook
     
     #endregion
 }
+#endif

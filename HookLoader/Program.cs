@@ -4,7 +4,6 @@ using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 using TitanicHookManaged.Hooks.Managed;
-using TitanicHookManaged.MinHook;
 
 namespace HookLoader;
 
