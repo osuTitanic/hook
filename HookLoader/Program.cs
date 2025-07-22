@@ -28,7 +28,7 @@ class Program
         Config = new Configuration(Constants.DefaultConfigName);
 #if !DEBUG
         // Initialize console if not in debug
-        if (config.EnableConsole)
+        if (Config.EnableConsole)
             WinApi.InitializeConsole();
 #endif
         
