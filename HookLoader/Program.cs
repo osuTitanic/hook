@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
@@ -9,6 +10,11 @@ namespace HookLoader;
 
 class Program
 {
+    /// <summary>
+    /// Original entry assembly (before hooking)
+    /// </summary>
+    private static Assembly? _originalEntryAssembly;
+    
     /// <summary>
     /// Small program that will load osu!.exe into memory, execute hooks, and start osu!'s main function
     /// </summary>
@@ -33,8 +39,15 @@ class Program
         }
 #endif
         
+        _originalEntryAssembly = Assembly.GetEntryAssembly();
+        if (_originalEntryAssembly == null)
+        {
+            MessageBox.Show("Assembly.GetEntryAssembly() returned null", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return;
+        }
+        
         // Load osu!
-        string path = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "osu!.exe");
+        string path = Path.Combine(Path.GetDirectoryName(_originalEntryAssembly.Location), "osu!.exe");
         Assembly loaded = Assembly.Load(File.ReadAllBytes(path));
 
         if (loaded.ImageRuntimeVersion != Assembly.GetExecutingAssembly().ImageRuntimeVersion)
@@ -60,7 +73,7 @@ class Program
         // Load hooks specific to the loader
         EntryPointHook.Initialize(loaded);
         ExecutablePathHook.Initialize(path);
-        ExtractIconHook.Initialize();
+        ExtractIconHook.Initialize(AppDomain.CurrentDomain.FriendlyName);
         GetArgsHook.Initialize(FakeArgs.ToArray());
         
         // Hook osu!.exe's entrypoint to execute other hooks there

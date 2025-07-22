@@ -12,8 +12,14 @@ namespace TitanicHookManaged.Hooks.Managed;
 /// </summary>
 public static class ExtractIconHook
 {
-    public static void Initialize()
+    private static string? _hookLoaderName;
+    
+    public static void Initialize(string? hookLoaderName)
     {
+        if (hookLoaderName == null)
+            return;
+        
+        _hookLoaderName = hookLoaderName;
         var harmony = HarmonyInstance.Create("sh.Titanic.Hook.ExtractIconHook");
         
         // We want specifically the overload that takes System.String
@@ -47,7 +53,7 @@ public static class ExtractIconHook
     private static void ExtractAssociatedIconPrefix(ref string __0)
     {
         Console.WriteLine("ExtractAssociatedIcon hook triggered");
-        __0 = __0.Replace("HookLoader.exe", "osu!.exe"); // Change the target icon path
+        __0 = __0.Replace(_hookLoaderName, "osu!.exe"); // Change the target icon path
     }
     
     #endregion
