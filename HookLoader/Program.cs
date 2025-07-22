@@ -17,6 +17,7 @@ class Program
     [STAThread]
     static void Main(string[] args)
     {
+#if USE_MINHOOK
         // Check is the correct MinHook present
         if (!File.Exists(MH.LIB_NAME) || ResourceUtils.CalculateSha256(MH.LIB_NAME) != MH.LIB_SHA256)
         {
@@ -31,6 +32,7 @@ class Program
             using FileStream fs = File.Create(MH.LIB_NAME);
             fs.Write(minhookBytes, 0, minhookBytes.Length);
         }
+#endif
         
         // Load osu!
         string path = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "osu!.exe");

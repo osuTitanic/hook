@@ -61,6 +61,7 @@ public static class EntryPoint
         if (Config.EnableConsole)
             InitializeConsole();
         
+#if USE_MINHOOK
         var status = MH.Initialize();
         if (status != MhStatus.MH_OK)
         {
@@ -80,8 +81,21 @@ public static class EntryPoint
             Console.WriteLine("Hooking ShellExecuteExW");
             ShellExecuteHook.Initialize();
         }
-        
+#else
+
         // Managed hooks
+        if (Config.HookTcpConnections)
+        {
+            Console.WriteLine("Hooking TcpClientConnect");
+            TcpClientHook.Initialize();
+        }
+        Console.WriteLine("Hooking InternalGetHostByName");
+        DnsHostByNameHook.Initialize();
+        Console.WriteLine("Hooking Process Start");
+        StartProcessHook.Initialize();
+
+#endif
+        
         if (Config.HookNetLib)
         {
             Console.WriteLine("Hooking AddHeaderField");

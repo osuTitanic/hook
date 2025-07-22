@@ -1,0 +1,95 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Net.Sockets;
+using System.Reflection;
+using System.Windows.Forms;
+using Harmony;
+
+namespace TitanicHookManaged.Hooks.Managed;
+
+public class TcpClientHook
+{
+    public static void Initialize()
+    {
+        // Get Titanic's Bancho IP address
+        Console.WriteLine($"Resolving server.{EntryPoint.Config.ServerName} IP");
+        _newIp = Dns.GetHostAddresses($"server.{EntryPoint.Config.ServerName}")[0];
+        if (_newIp == null)
+        {
+            MessageBox.Show($"Couldn't resolve server.{EntryPoint.Config.ServerName}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return;
+        }
+        Console.WriteLine("Bancho service IP: " + _newIp);
+        
+        var harmony = HarmonyInstance.Create("sh.Titanic.Hook.TcpClientHook");
+        
+        // Look for BeginConnect(string, int, AsyncCallback, object) overload
+        MethodInfo? beginConnect = typeof(TcpClient)
+            .GetMethods(BindingFlags.Instance | BindingFlags.Public)
+            .FirstOrDefault(m => m.Name == "BeginConnect" &&
+                                 m.GetParameters().Length == 4 &&
+                                 m.GetParameters()[0].ParameterType.FullName == "System.String");
+        if (beginConnect == null)
+        {
+            Console.WriteLine("Could not find TcpClient.BeginConnect(string, int, AsyncCallback, object)");
+        }
+        
+        // Look for Connect(string, int) overload
+        MethodInfo? connect = typeof(TcpClient)
+            .GetMethods(BindingFlags.Instance | BindingFlags.Public)
+            .FirstOrDefault(m => m.Name == "Connect" &&
+                                 m.GetParameters().Length == 2 &&
+                                 m.GetParameters()[0].ParameterType.FullName == "System.String");
+        if (connect == null)
+        {
+            Console.WriteLine("Could not find TcpClient.BeginConnect(string, int, AsyncCallback, object)");
+        }
+        
+        var prefix = typeof(TcpClientHook).GetMethod("TcpConnectPrefix", Constants.HookBindingFlags);
+
+        try
+        {
+            if (beginConnect != null) harmony.Patch(beginConnect, new HarmonyMethod(prefix));
+            if (connect != null) harmony.Patch(connect, new HarmonyMethod(prefix));
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Hook fail: {e}");
+        }
+    }
+
+    #region Hook
+
+    private static void TcpConnectPrefix(ref string __0)
+    {
+        Console.WriteLine($"TcpConnectPrefix called with address {__0}");
+        if (_banchoIpList.Contains(__0))
+        {
+            Console.WriteLine("Replacing IP");
+            __0 = _newIp.ToString();
+        }
+    }
+
+    #endregion
+    
+    #region Properties
+    
+    /// <summary>
+    /// List of IP addresses originally used for Bancho
+    /// </summary>
+    static readonly List<string> _banchoIpList =
+    [
+        "50.23.74.93", "219.117.212.118", "192.168.1.106", "174.34.145.226", "216.6.228.50",
+        "50.228.6.216", "69.147.233.10", "167.83.161.203", "10.233.147.69", "1.0.0.127",
+        "53.228.6.216", "52.228.6.216", "51.228.6.216", "50.228.6.216", "151.0.0.10"
+    ];
+
+    /// <summary>
+    /// Redirected Bancho IP address
+    /// </summary>
+    private static IPAddress? _newIp = null;
+
+    #endregion
+}

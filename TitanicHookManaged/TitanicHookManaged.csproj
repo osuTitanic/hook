@@ -14,7 +14,7 @@
       <Reference Include="System.Windows.Forms" />
     </ItemGroup>
 
-    <ItemGroup>
+    <ItemGroup Condition="$(DefineConstants.Contains('USE_MINHOOK'))">
       <None Update="MinHook.x86.bin">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>

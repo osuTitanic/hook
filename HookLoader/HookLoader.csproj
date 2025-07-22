@@ -34,7 +34,7 @@
       <PackageReference Include="ILMerge" Version="3.0.41" />
     </ItemGroup>
 
-    <ItemGroup>
+    <ItemGroup Condition="$(DefineConstants.Contains('USE_MINHOOK'))">
       <EmbeddedResource Include="MinHook.x86.bin" LogicalName="MinHook.x86.bin" />
     </ItemGroup>
     
