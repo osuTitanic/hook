@@ -14,10 +14,10 @@ public class WSAConnectRedirect
     public static void Initialize()
     {
         // Get Titanic's Bancho IP address
-        Console.WriteLine("Resolving server.titanic.sh IP");
-        IPAddress ip = Dns.GetHostAddresses("server.titanic.sh")[0];
+        Console.WriteLine($"Resolving server.{EntryPoint.Config.ServerName} IP");
+        IPAddress ip = Dns.GetHostAddresses($"server.{EntryPoint.Config.ServerName}")[0];
         TITANIC_IP_BE = ip.GetAddressBytes();
-        Console.WriteLine("Titanic IP: " + ip);
+        Console.WriteLine("Bancho service IP: " + ip);
         
         WSAConnectDelegate hookDelegate = HookedWSAConnect; // The function we are replacing with
         IntPtr hookPtr = Marshal.GetFunctionPointerForDelegate(hookDelegate); // Get pointer to the function

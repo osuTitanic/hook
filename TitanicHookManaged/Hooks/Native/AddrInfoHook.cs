@@ -39,8 +39,8 @@ public static class AddrInfoHook
         Console.WriteLine($"GetAddrInfoW hook triggered {pNodeName}");
         if (pNodeName.Contains("ppy.sh"))
         {
-            Console.WriteLine("Replacing ppy.sh resolve to titanic.sh");
-            pNodeName = pNodeName.Replace("ppy.sh", "titanic.sh");
+            Console.WriteLine($"Replacing ppy.sh resolve to {EntryPoint.Config.ServerName}");
+            pNodeName = pNodeName.Replace("ppy.sh", EntryPoint.Config.ServerName);
         }
         return originalGetAddrInfoWFunc(pNodeName, pServiceName, pHints, pResult);
     }

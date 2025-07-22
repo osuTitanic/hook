@@ -42,7 +42,7 @@ public static class ShellExecuteHook
         if (info.lpFile.Contains("ppy.sh"))
         {
             Console.WriteLine("Replacing domain in ShellExecuteExW");
-            info.lpFile = info.lpFile.Replace("ppy.sh", "titanic.sh"); // I hope there isn't a memory leak here...
+            info.lpFile = info.lpFile.Replace("ppy.sh", EntryPoint.Config.ServerName); // I hope there isn't a memory leak here...
         }
             
         return originalShellExecuteExWFunc(info);

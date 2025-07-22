@@ -55,6 +55,11 @@ public static class EntryPoint
         {
             Console.WriteLine("Unhandled exception in injected module " + e.ExceptionObject.ToString());
         };
+
+        Config ??= new Configuration(Constants.DefaultConfigName);
+        
+        if (Config.EnableConsole)
+            InitializeConsole();
         
         var status = MH.Initialize();
         if (status != MhStatus.MH_OK)
@@ -65,8 +70,11 @@ public static class EntryPoint
         else
         {
             // Native hooks
-            Console.WriteLine("Hooking WSAConnect");
-            WSAConnectRedirect.Initialize();
+            if (Config.HookTcpConnections)
+            {
+                Console.WriteLine("Hooking WSAConnect");
+                WSAConnectRedirect.Initialize();
+            }
             Console.WriteLine("Hooking GetAddrInfo");
             AddrInfoHook.Initialize();
             Console.WriteLine("Hooking ShellExecuteExW");
@@ -74,18 +82,29 @@ public static class EntryPoint
         }
         
         // Managed hooks
-#if NET20
-        Console.WriteLine("Hooking AddHeaderField");
-        AddHeaderFieldHook.Initialize();
-        Console.WriteLine("Hooking StringStream ctor");
-        NetLibEncodingHook.Initialize();
-#endif
+        if (Config.HookNetLib)
+        {
+            Console.WriteLine("Hooking AddHeaderField");
+            AddHeaderFieldHook.Initialize();
+            Console.WriteLine("Hooking StringStream ctor");
+            NetLibEncodingHook.Initialize();
+        }
+        
 #if NET40
-        Console.WriteLine("Hooking CreateWebRequest");
-        HostHeaderHook.Initialize();
-        Console.WriteLine("Hooking checkCertificate");
-        CheckCertificateHook.Initialize();
+        if (Config.HookModernHostMethod)
+        {
+            Console.WriteLine("Hooking CreateWebRequest");
+            HostHeaderHook.Initialize();
+        }
+
+        if (Config.HookCheckCertificate)
+        {
+            Console.WriteLine("Hooking checkCertificate");
+            CheckCertificateHook.Initialize();
+        }
 #endif
         Console.WriteLine("All hooked");
     }
+
+    public static Configuration? Config = null;
 }

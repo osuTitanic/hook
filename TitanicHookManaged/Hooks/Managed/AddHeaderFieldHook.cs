@@ -47,7 +47,7 @@ public static class AddHeaderFieldHook
     {
         if (__1 == "Host" && __2.Contains("ppy.sh"))
         {
-            __2 = __2.Replace("ppy.sh", "titanic.sh");
+            __2 = __2.Replace("ppy.sh", EntryPoint.Config.ServerName);
         }
         Console.WriteLine($"AddHeaderField hook triggered, {__1}: {__2}");
     }

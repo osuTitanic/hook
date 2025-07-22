@@ -46,8 +46,8 @@ public static class HostHeaderHook
         Console.WriteLine($"Triggered CreateRequest postfix: {__result.Host}");
         if (__result.Host.Contains("ppy.sh"))
         {
-            Console.WriteLine("Replacing ppy.sh domain in CreateRequestPostfix");
-            __result.Host = __result.Host.Replace("ppy.sh", "titanic.sh");
+            Console.WriteLine($"Replacing ppy.sh domain with {EntryPoint.Config.ServerName} in CreateRequestPostfix");
+            __result.Host = __result.Host.Replace("ppy.sh", EntryPoint.Config.ServerName);
         }
     }
     
