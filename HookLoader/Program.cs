@@ -76,7 +76,9 @@ class Program
 
         if (loaded.ImageRuntimeVersion != Assembly.GetExecutingAssembly().ImageRuntimeVersion)
         {
-            Logging.LogAndShowError(".NET Framework runtime version mismatch! You have to use a different version of TitanicHookManaged.");
+            Logging.LogAndShowError($".NET Framework runtime version mismatch!\n" +
+                                    $"This version of osu! required .NET Framework {GetShortFrameworkVer(loaded.ImageRuntimeVersion)}, this executable of Titanic!Loader is .NET Framework {GetShortFrameworkVer(Assembly.GetExecutingAssembly().ImageRuntimeVersion)}\n" +
+                                    $"Get the correct version of Titanic!Loader for this version of osu!");
             return;
         }
         
@@ -110,5 +112,15 @@ class Program
         // Start the exe's entry point
         Logging.Info("Starting osu!");
         entry.Invoke(null, new object[] { });
+    }
+
+    /// <summary>
+    /// Converts long framework version (e.g. v2.0.50727, v4.0.30319) to short (e.g. 2.0, 4.0)
+    /// </summary>
+    /// <param name="framework">Long framework version</param>
+    /// <returns>Short framework version</returns>
+    private static string GetShortFrameworkVer(string framework)
+    {
+        return framework.Substring(1, 4);
     }
 }

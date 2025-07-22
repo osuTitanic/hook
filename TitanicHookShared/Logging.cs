@@ -134,7 +134,7 @@ public static class Logging // Holy public static void boilerplate class
     /// <param name="message">Message</param>
     public static void ShowError(string message)
     {
-        MessageBox.Show(message, "TitanicHook", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        MessageBox.Show(message, "Titanic!Loader", MessageBoxButtons.OK, MessageBoxIcon.Error);
     }
 
     /// <summary>
