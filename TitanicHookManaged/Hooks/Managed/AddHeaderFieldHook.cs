@@ -45,11 +45,12 @@ public static class AddHeaderFieldHook
     /// <param name="__2">Value of the header. It's ref here so that we can get it by reference and modify it</param>
     private static void AddHeaderFieldPrefix(string __1, ref string __2)
     {
-        if (__1 == "Host" && __2.Contains("ppy.sh"))
-        {
-            __2 = __2.Replace("ppy.sh", EntryPoint.Config.ServerName);
-        }
         Console.WriteLine($"AddHeaderField hook triggered, {__1}: {__2}");
+        
+        if (__1 == "Host" && __2.Contains("ppy.sh"))
+            __2 = __2.Replace("ppy.sh", EntryPoint.Config.ServerName);
+        else if (__1 == "Host" && __2 == "peppy.chigau.com")
+            __2 = __2.Replace("peppy.chigau.com", $"chigau.{EntryPoint.Config.ServerName}");
     }
     
     #endregion

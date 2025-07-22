@@ -39,7 +39,10 @@ public static class DnsHostByNameHook
     private static void InternalGetHostByNamePrefix(ref string __0)
     {
         Console.WriteLine($"InternalGetHostByNamePrefix triggered with host name {__0}");
-        __0 = __0.Replace("ppy.sh", EntryPoint.Config.ServerName);
+        if (__0.Contains("ppy.sh"))
+            __0 = __0.Replace("ppy.sh", EntryPoint.Config.ServerName);
+        else if (__0 == "peppy.chigau.com")
+            __0 = __0.Replace("peppy.chigau.com", $"chigau.{EntryPoint.Config.ServerName}");
     }
     
     #endregion
