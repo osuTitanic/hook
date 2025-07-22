@@ -4,6 +4,11 @@ using System.Windows.Forms;
 
 namespace TitanicHookShared;
 
+/// <summary>
+/// Callback delegate for config not found
+/// </summary>
+public delegate void ConfigurationNotFoundCallback(string filename, Exception e);
+
 public class Configuration
 {
     // Alloc console for logs
@@ -37,7 +42,7 @@ public class Configuration
         = false;
 #endif
 
-    public Configuration(string filename)
+    public Configuration(string filename, ConfigurationNotFoundCallback? callback = null)
     {
         string[] lines;
         try
@@ -46,8 +51,8 @@ public class Configuration
         }
         catch (Exception e)
         {
-            MessageBox.Show("Couldn't load TitanicHook config. A default one will be created.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            SaveConfiguration(filename);
+            callback ??= DefaultConfigNotFoundCallback; // Assign default callback if not specified
+            callback(filename, e);
             return;
         }
 
@@ -87,6 +92,10 @@ public class Configuration
         }
     }
 
+    /// <summary>
+    /// Save current configuration to a file
+    /// </summary>
+    /// <param name="filename">Config filename</param>
     private void SaveConfiguration(string filename)
     {
         using FileStream fs = new FileStream(filename, FileMode.Create);
@@ -102,5 +111,16 @@ public class Configuration
         sw.WriteLine($"HookNetLib={HookNetLib}");
         sw.WriteLine($"HookModernHostMethod={HookModernHostMethod}");
         sw.WriteLine($"HookCheckCertificate={HookCheckCertificate}");
+    }
+
+    /// <summary>
+    /// Default callback function for when config is not found
+    /// </summary>
+    /// <param name="filename">Config filename</param>
+    /// <param name="e">Exception thrown when loading the config</param>
+    private void DefaultConfigNotFoundCallback(string filename, Exception e)
+    {
+        MessageBox.Show("Couldn't load TitanicHook config. A default one will be created.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        SaveConfiguration(filename);
     }
 }
