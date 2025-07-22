@@ -60,8 +60,19 @@ class Program
         }
         
         // Load osu!
-        string path = Path.Combine(Path.GetDirectoryName(_originalEntryAssembly.Location), "osu!.exe");
-        Assembly loaded = Assembly.Load(File.ReadAllBytes(path));
+        string path;
+        Assembly loaded;
+        try
+        {
+            path = Path.Combine(Path.GetDirectoryName(_originalEntryAssembly.Location), "osu!.exe");
+            loaded = Assembly.Load(File.ReadAllBytes(path));
+        }
+        catch (Exception e)
+        {
+            Logging.LogAndShowError($"Failed to load osu!.exe\n {e}");
+            return;
+        }
+        
 
         if (loaded.ImageRuntimeVersion != Assembly.GetExecutingAssembly().ImageRuntimeVersion)
         {
