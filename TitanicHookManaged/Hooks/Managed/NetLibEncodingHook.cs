@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Runtime.InteropServices;
 using System.Text;
 using ClrTest.Reflection;
 using Harmony;
@@ -18,6 +19,15 @@ public static class NetLibEncodingHook
     public static void Initialize()
     {
         Logging.HookStart(HookName);
+        
+        if (WinApi.RunningUnderWine && WinApi.GetACP() == 1252)
+        {
+            // Fix for old version of Wine (like Wine-GE 8.21), seems to work fine on newer Wine versions tho from my
+            // limited testing
+            Logging.HookStep(HookName, "Skipping applying due to running under Wine and having correct codepage");
+            return;
+        }
+        
         var harmony = HarmonyInstance.Create(HookName);
 
         ConstructorInfo? targetMethod = GetTargetMethod(AssemblyUtils.CommonOrOsuTypes);
