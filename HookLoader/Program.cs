@@ -35,6 +35,23 @@ class Program
         Logging.UseConsoleLogging = Config.EnableConsole;
         Logging.UseFileLogging = Config.LogToFile;
         
+        if (RunningOnMono)
+        {
+            string netFrameworkRequired = ".NET Framework ";
+#if NET20
+            netFrameworkRequired += "2.0";
+#elif NET40
+            netFrameworkRequired += "4.0";
+#endif
+            string isAllowedString = Config.AllowMono ? "Titanic!Loader will proceed, but might not work as expected" : "Titanic!Loader will now close. Enable AllowMono in configuration file to allow (KEEP IN MIND THAT THIS IS UNSUPPORTED AND WILL CAUSE ISSUES)";
+            Logging.LogAndShowError($"Running on Mono is NOT SUPPORTED and WILL CAUSE ISSUES!\n" +
+                                    $"Please install {netFrameworkRequired} in your Wineprefix to continue.\n" +
+                                    isAllowedString);
+            
+            if (!Config.AllowMono)
+                return;
+        }
+        
         _originalEntryAssembly = Assembly.GetEntryAssembly();
         if (_originalEntryAssembly == null)
         {
@@ -106,4 +123,6 @@ class Program
     {
         return framework.Substring(1, 4);
     }
+    
+    private static bool RunningOnMono => Type.GetType("Mono.Runtime") != null;
 }

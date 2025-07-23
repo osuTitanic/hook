@@ -41,6 +41,11 @@ public class Configuration
 #else
         = false;
 #endif
+    
+    /// <summary>
+    /// Whether to allow running under Mono
+    /// </summary>
+    public bool AllowMono { get; set; } = false;
 
     public Configuration(string filename, ConfigurationNotFoundCallback? callback = null)
     {
@@ -88,6 +93,9 @@ public class Configuration
                 case "HookCheckCertificate":
                     HookCheckCertificate = bool.Parse(splitLine[1]);
                     break;
+                case "AllowMono":
+                    AllowMono = bool.Parse(splitLine[1]);
+                    break;
             }
         }
     }
@@ -111,6 +119,7 @@ public class Configuration
         sw.WriteLine($"HookNetLib={HookNetLib}");
         sw.WriteLine($"HookModernHostMethod={HookModernHostMethod}");
         sw.WriteLine($"HookCheckCertificate={HookCheckCertificate}");
+        sw.WriteLine($"AllowMono={AllowMono}");
     }
 
     /// <summary>
