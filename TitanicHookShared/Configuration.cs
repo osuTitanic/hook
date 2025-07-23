@@ -56,6 +56,12 @@ public class Configuration
     public bool AllowMono { get; set; } = false;
     
     /// <summary>
+    /// SHA256 of client that the config is generated for.
+    /// This is to prevent people from sharing config files.
+    /// </summary>
+    public string ClientSha256 { get; set; } = "";
+    
+    /// <summary>
     /// Whether it's the first config creation.
     /// This is not written to the config!
     /// </summary>
@@ -119,6 +125,9 @@ public class Configuration
                 case "AllowMono":
                     AllowMono = bool.Parse(splitLine[1]);
                     break;
+                case "ClientSha256":
+                    ClientSha256 = splitLine[1];
+                    break;
             }
         }
     }
@@ -145,6 +154,7 @@ public class Configuration
         sw.WriteLine($"HookModernHostMethod={HookModernHostMethod}");
         sw.WriteLine($"HookCheckCertificate={HookCheckCertificate}");
         sw.WriteLine($"AllowMono={AllowMono}");
+        sw.WriteLine($"ClientSha256={ClientSha256}");
     }
 
     /// <summary>

@@ -1,12 +1,10 @@
 ﻿using System;
 using System.IO;
-using System.Reflection;
 using System.Security.Cryptography;
-using System.Windows.Forms;
 
-namespace HookLoader;
+namespace TitanicHookShared;
 
-public static class ResourceUtils
+public static class ChecksumUtils
 {
     /// <summary>
     /// Calculate SHA256 sum of a file
@@ -22,21 +20,15 @@ public static class ResourceUtils
     }
 
     /// <summary>
-    /// Read bytes of embedded resource
+    /// Calculate MD5 sum of a file
     /// </summary>
     /// <param name="filename"></param>
     /// <returns></returns>
-    public static byte[]? GetEmbeddedResource(string filename)
+    public static string CalculateMd5(string filename)
     {
-        var assembly = Assembly.GetExecutingAssembly();
-        using Stream? stream = assembly.GetManifestResourceStream(filename);
-        if (stream == null)
-        {
-            return null;
-        }
-            
-        byte[] buffer = new byte[stream.Length];
-        stream.Read(buffer, 0, buffer.Length);
-        return buffer;
+        using var md5 = MD5.Create();
+        using var stream = File.OpenRead(filename);
+        byte[] hash = md5.ComputeHash(stream);
+        return BitConverter.ToString(hash).Replace("-", string.Empty).ToLowerInvariant();
     }
 }

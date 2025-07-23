@@ -1,7 +1,4 @@
 ﻿using System;
-using System.IO;
-using System.Net;
-using System.Windows.Forms;
 using TitanicHookManaged.Helpers;
 using TitanicHookManaged.Hooks.Managed;
 using TitanicHookShared;
@@ -39,6 +36,17 @@ public static class EntryPoint
         
         if (Config.EnableConsole)
             WinApi.InitializeConsole();
+
+        string currentClientSha256 = ChecksumUtils.CalculateSha256(AssemblyUtils.OsuAssembly.Location);
+        if (Config.ClientSha256 == "")
+            Config.ClientSha256 = currentClientSha256;
+
+        if (currentClientSha256 != Config.ClientSha256)
+        {
+            Logging.LogAndShowError("This configuration file was created for a different version of osu!\n" +
+                                    $"Please delete {Constants.DefaultConfigName} and try again.");
+            Environment.Exit(1);
+        }
         
         Logging.UseConsoleLogging = Config.EnableConsole;
         Logging.UseFileLogging = Config.LogToFile;
