@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using TitanicHookShared;
 
 namespace TitanicHookManaged.Helpers;
@@ -32,6 +34,26 @@ public static class AssemblyUtils
                 throw new Exception("Couldn't find neither osu!common or osu!");
             }
             return _commonOrOsuAssembly;
+        }
+    }
+    
+    /// <summary>
+    /// Gets osu!.exe assembly
+    /// </summary>
+    public static Assembly OsuAssembly
+    {
+        get
+        {
+            if (_osuAssembly == null)
+            {
+                // Check if osu!common is present
+                _osuAssembly = GetAssembly("osu!");
+            }
+
+            if (_osuAssembly != null) return _osuAssembly;
+            
+            Logging.LogAndShowError("Couldn't find osu! assembly");
+            throw new Exception("Couldn't find osu! assembly");
         }
     }
 
@@ -76,9 +98,28 @@ public static class AssemblyUtils
         }
         return null;
     }
+
+    /// <summary>
+    /// Tries to detect the release year of osu! version
+    /// </summary>
+    /// <param name="osu"></param>
+    /// <returns>Release year of the osu! assembly if found, or 0 if not</returns>
+    public static int DetectOsuYear(Assembly osu)
+    {
+        // Get year from copyright attribute
+        // TODO: Maybe use certificate (if supported by OS and signed)
+
+        FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(osu.Location);
+        var match = Regex.Match(versionInfo.LegalCopyright, @"(\d{4})\b(?!.*\d)");
+        if (!match.Success)
+            return 0;
+        
+        return int.Parse(match.Groups[1].Value);
+    }
     
     #region Private cache for getters
 
+    private static Assembly? _osuAssembly;
     private static Assembly? _commonOrOsuAssembly;
     private static List<Type>? _commonOrOsuTypes = null;
 

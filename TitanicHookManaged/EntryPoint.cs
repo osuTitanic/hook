@@ -43,6 +43,14 @@ public static class EntryPoint
         Logging.UseConsoleLogging = Config.EnableConsole;
         Logging.UseFileLogging = Config.LogToFile;
         
+        if (Config.FirstRun)
+        {
+            // Determine is TCP hook required
+            int year = AssemblyUtils.DetectOsuYear(AssemblyUtils.OsuAssembly);
+            if (year >= 2014)
+                Config.HookTcpConnections = false;
+        }
+        
         if (Config.HookTcpConnections) TcpClientHook.Initialize();
         DnsHostByNameHook.Initialize();
         StartProcessHook.Initialize();
