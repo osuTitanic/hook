@@ -28,7 +28,7 @@ public static class pWebRequestHelper
             
             if (_pWebRequestType == null)
             {
-                Logging.LogAndShowError("Couldn't find pWebRequest");
+                Logging.Info("Couldn't find pWebRequest");
             }
             
             return _pWebRequestType;

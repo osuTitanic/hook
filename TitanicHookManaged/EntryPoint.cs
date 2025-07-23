@@ -43,32 +43,22 @@ public static class EntryPoint
         Logging.UseConsoleLogging = Config.EnableConsole;
         Logging.UseFileLogging = Config.LogToFile;
         
-        if (Config.HookTcpConnections)
-        {
-            TcpClientHook.Initialize();
-        }
+        if (Config.HookTcpConnections) TcpClientHook.Initialize();
         DnsHostByNameHook.Initialize();
         StartProcessHook.Initialize();
         
-        if (Config.HookNetLib)
-        {
-            AddHeaderFieldHook.Initialize();
-            NetLibEncodingHook.Initialize();
-        }
+        if (Config.HookNetLibHeaders) AddHeaderFieldHook.Initialize();
+        if (Config.HookNetLibEncoding) NetLibEncodingHook.Initialize();
         
 #if NET40
-        if (Config.HookModernHostMethod)
-        {
-            HostHeaderHook.Initialize();
-        }
-
-        if (Config.HookCheckCertificate)
-        {
-            CheckCertificateHook.Initialize();
-        }
+        
+        if (Config.HookModernHostMethod) HostHeaderHook.Initialize();
+        if (Config.HookCheckCertificate) CheckCertificateHook.Initialize();
 #endif
         
         Logging.Info("All hooked");
+        Config.FirstRun = false;
+        Config.SaveConfiguration(Config.Filename);
     }
 
     public static Configuration? Config = null;

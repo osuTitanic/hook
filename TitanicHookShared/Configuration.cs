@@ -23,8 +23,11 @@ public class Configuration
     // Whether to hook WSAConnect (TCP Bancho)
     public bool HookTcpConnections { get; set; } = true;
     
-    // Whether to hook NetLib (AddHeaderField, StringStream ctor)
-    public bool HookNetLib { get; set; } = true;
+    // Whether to hook NetLib AddHeaderField
+    public bool HookNetLibHeaders { get; set; } = true;
+    
+    // Whether to hook NetLib StringStream ctor
+    public bool HookNetLibEncoding { get; set; } = true;
     
     // Whether to hook Host header in pWebRequest (.NET Framework 4.x only)
     public bool HookModernHostMethod { get; set; }
@@ -32,7 +35,7 @@ public class Configuration
          = true;
 #else
         = false;
-    #endif
+#endif
     
     // Whether to hook pWebRequest certificate check (.NET Framework 4.x only)
     public bool HookCheckCertificate { get; set; }
@@ -46,9 +49,18 @@ public class Configuration
     /// Whether to allow running under Mono
     /// </summary>
     public bool AllowMono { get; set; } = false;
+    
+    /// <summary>
+    /// Whether it's the first config creation.
+    /// This is not written to the config!
+    /// </summary>
+    public bool FirstRun { get; set; } = false;
+
+    public string Filename;
 
     public Configuration(string filename, ConfigurationNotFoundCallback? callback = null)
     {
+        Filename = filename;
         string[] lines;
         try
         {
@@ -84,8 +96,11 @@ public class Configuration
                 case "HookTcpConnections":
                     HookTcpConnections = bool.Parse(splitLine[1]);
                     break;
-                case "HookNetLib":
-                    HookNetLib = bool.Parse(splitLine[1]);
+                case "HookNetLibHeaders":
+                    HookNetLibHeaders = bool.Parse(splitLine[1]);
+                    break;
+                case "HookNetLibEncoding":
+                    HookNetLibEncoding = bool.Parse(splitLine[1]);
                     break;
                 case "HookModernHostMethod":
                     HookModernHostMethod = bool.Parse(splitLine[1]);
@@ -104,7 +119,7 @@ public class Configuration
     /// Save current configuration to a file
     /// </summary>
     /// <param name="filename">Config filename</param>
-    private void SaveConfiguration(string filename)
+    public void SaveConfiguration(string filename)
     {
         using FileStream fs = new FileStream(filename, FileMode.Create);
         using StreamWriter sw = new StreamWriter(fs);
@@ -116,7 +131,8 @@ public class Configuration
         sw.WriteLine($"LogToFile={LogToFile}");
         sw.WriteLine($"ServerName={ServerName}");
         sw.WriteLine($"HookTcpConnections={HookTcpConnections}");
-        sw.WriteLine($"HookNetLib={HookNetLib}");
+        sw.WriteLine($"HookNetLibHeaders={HookNetLibHeaders}");
+        sw.WriteLine($"HookNetLibEncoding={HookNetLibEncoding}");
         sw.WriteLine($"HookModernHostMethod={HookModernHostMethod}");
         sw.WriteLine($"HookCheckCertificate={HookCheckCertificate}");
         sw.WriteLine($"AllowMono={AllowMono}");
@@ -129,7 +145,8 @@ public class Configuration
     /// <param name="e">Exception thrown when loading the config</param>
     private void DefaultConfigNotFoundCallback(string filename, Exception e)
     {
-        MessageBox.Show("Couldn't load TitanicHook config. A default one will be created.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        Console.WriteLine("Couldn't load TitanicHook config. A default one will be created.");
+        FirstRun = true;
         SaveConfiguration(filename);
     }
 }

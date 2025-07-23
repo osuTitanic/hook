@@ -25,7 +25,9 @@ public static class HostHeaderHook
         MethodInfo? targetMethod = GetTargetMethod(AssemblyUtils.CommonOrOsuTypes);
         if (targetMethod == null)
         {
-            Logging.HookError(HookName, "Target method not found");
+            Logging.HookError(HookName, "Target method not found", !EntryPoint.Config.FirstRun);
+            if (EntryPoint.Config.FirstRun)
+                EntryPoint.Config.HookModernHostMethod = false;
             return;
         }
         
@@ -65,7 +67,7 @@ public static class HostHeaderHook
     private static MethodInfo? GetTargetMethod(Type[] types)
     {
         // Protected virtual method with 0 args returning HttpWebRequest
-        MethodInfo? targetMethod = pWebRequestHelper.ReflectedType
+        MethodInfo? targetMethod = pWebRequestHelper.ReflectedType?
             .GetMethods(BindingFlags.NonPublic | BindingFlags.Instance)
             .FirstOrDefault(m => m.GetParameters().Length == 0 && m.ReturnType.FullName == "System.Net.HttpWebRequest");
 

@@ -33,7 +33,9 @@ public static class NetLibEncodingHook
         ConstructorInfo? targetMethod = GetTargetMethod(AssemblyUtils.CommonOrOsuTypes);
         if (targetMethod == null)
         {
-            Logging.HookError(HookName, "Target method not found");
+            Logging.HookError(HookName, "Target method not found", !EntryPoint.Config.FirstRun);
+            if (EntryPoint.Config.FirstRun)
+                EntryPoint.Config.HookNetLibEncoding = false;
             return;
         }
         

@@ -88,16 +88,17 @@ public static class Logging // Holy public static void boilerplate class
     {
         WriteToLog($"[HOOK PATCHING] {hookName}");
     }
-    
+
     /// <summary>
     /// Error occured in hooking, show a message box too
     /// </summary>
     /// <param name="hookName">Hook name</param>
     /// <param name="message">Message</param>
-    public static void HookError(string hookName, string message)
+    /// <param name="showError">Show error message</param>
+    public static void HookError(string hookName, string message, bool showError = true)
     {
         WriteToLog($"[HOOK ERR] ({hookName}): {message}");
-        ShowError($"Hooking error in hook {hookName}\n{message}");
+        if (showError) ShowError($"Hooking error in hook {hookName}\n{message}");
     }
 
     /// <summary>

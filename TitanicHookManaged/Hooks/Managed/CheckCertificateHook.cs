@@ -22,7 +22,9 @@ public static class CheckCertificateHook
         MethodInfo? targetMethod = GetTargetMethod(AssemblyUtils.CommonOrOsuTypes.ToArray());
         if (targetMethod == null)
         {
-            Logging.HookError(HookName, "Target method not found");
+            Logging.HookError(HookName, "Target method not found", !EntryPoint.Config.FirstRun);
+            if (EntryPoint.Config.FirstRun)
+                EntryPoint.Config.HookCheckCertificate = false;
             return;
         }
         
@@ -59,7 +61,7 @@ public static class CheckCertificateHook
     private static MethodInfo? GetTargetMethod(Type[] types)
     {
         // Private method with 0 args returning void, potentially virtualized with Eazfuscator
-        MethodInfo? targetMethod = pWebRequestHelper.ReflectedType
+        MethodInfo? targetMethod = pWebRequestHelper.ReflectedType?
             .GetMethods(BindingFlags.NonPublic | BindingFlags.Instance)
             .FirstOrDefault(m => m.GetParameters().Length == 0 &&
                                  m.ReturnType.FullName == "System.Void" &&

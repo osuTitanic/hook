@@ -23,7 +23,9 @@ public static class AddHeaderFieldHook
         MethodInfo? targetMethod = GetTargetMethod(AssemblyUtils.CommonOrOsuTypes);
         if (targetMethod == null)
         {
-            Logging.HookError(HookName, "Target method not found");
+            Logging.HookError(HookName, "Target method not found", !EntryPoint.Config.FirstRun);
+            if (EntryPoint.Config.FirstRun)
+                EntryPoint.Config.HookNetLibHeaders = false;
             return;
         }
         Logging.HookStep(HookName, $"Resolved AddHeaderField: {targetMethod.Name}");
