@@ -166,6 +166,5 @@ public class Configuration
     {
         Console.WriteLine("Couldn't load TitanicHook config. A default one will be created.");
         FirstRun = true;
-        SaveConfiguration(filename);
     }
 }
