@@ -60,12 +60,11 @@ class Program
         }
         
         // Load osu!
-        string path;
         Assembly loaded;
         try
         {
-            path = Path.Combine(Path.GetDirectoryName(_originalEntryAssembly.Location), "osu!.exe");
-            loaded = Assembly.Load(File.ReadAllBytes(path));
+            OsuPath = Path.Combine(Path.GetDirectoryName(_originalEntryAssembly.Location), "osu!.exe");
+            loaded = Assembly.Load(File.ReadAllBytes(OsuPath));
         }
         catch (Exception e)
         {
@@ -91,7 +90,7 @@ class Program
         }
         
         List<string> FakeArgs = new();
-        FakeArgs.Add(path);
+        FakeArgs.Add(OsuPath);
 #if NET40
         FakeArgs.Add("-go");
 #endif
@@ -99,7 +98,7 @@ class Program
         // Load hooks specific to the loader
         Logging.Info("Loading early hooks");
         EntryPointHook.Initialize(loaded);
-        ExecutablePathHook.Initialize(path);
+        ExecutablePathHook.Initialize(OsuPath);
         ExtractIconHook.Initialize(AppDomain.CurrentDomain.FriendlyName);
         GetArgsHook.Initialize(FakeArgs.ToArray());
         
@@ -123,6 +122,8 @@ class Program
     {
         return framework.Substring(1, 4);
     }
+
+    internal static string OsuPath = "";
     
     private static bool RunningOnMono => Type.GetType("Mono.Runtime") != null;
 }

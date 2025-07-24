@@ -102,14 +102,14 @@ public static class AssemblyUtils
     /// <summary>
     /// Tries to detect the release year of osu! version
     /// </summary>
-    /// <param name="osu"></param>
+    /// <param name="osuPath">Path to osu!.exe</param>
     /// <returns>Release year of the osu! assembly if found, or 0 if not</returns>
-    public static int DetectOsuYear(Assembly osu)
+    public static int DetectOsuYear(string osuPath)
     {
         // Get year from copyright attribute
         // TODO: Maybe use certificate (if supported by OS and signed)
 
-        FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(osu.Location);
+        FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(osuPath);
         var match = Regex.Match(versionInfo.LegalCopyright, @"(\d{4})\b(?!.*\d)");
         if (!match.Success)
             return 0;
