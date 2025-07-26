@@ -110,8 +110,15 @@ public static class EntryPoint
                 m.GetParameters()[0].ParameterType.FullName == "System.String" &&
                 m.ReturnType.FullName == "System.Void" &&
                 SigScanning.GetOpcodes(m).SequenceEqual(showMessageSig));
-        
-        showMessageMethod?.Invoke(null, new object[] { $"If you see this, that means that ShowMessage was successfully located using OpCodes {showMessageMethod.DeclaringType.FullName}.{showMessageMethod.Name}" });
+
+        if (showMessageMethod == null)
+        {
+            Logging.Info("Couldn't find ShowMessage");
+        }
+        else
+        {
+            showMessageMethod.Invoke(null, new object[] { $"If you see this, that means that ShowMessage was successfully located using OpCodes {showMessageMethod.DeclaringType.FullName}.{showMessageMethod.Name}" });
+        }
     }
 
     public static Configuration? Config = null;
