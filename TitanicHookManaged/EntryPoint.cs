@@ -87,20 +87,20 @@ public static class EntryPoint
         Config.FirstRun = false;
         Config.SaveConfiguration(Config.Filename);
 
-        byte[] showMessageSig =
+        OpCode[] showMessageSig =
         {
-            (byte)OpCodes.Newobj.Value,
-            (byte)OpCodes.Stloc_0.Value,
-            (byte)OpCodes.Ldloc_0.Value,
-            (byte)OpCodes.Ldarg_0.Value,
-            (byte)OpCodes.Stfld.Value,
-            (byte)OpCodes.Ldsfld.Value,
-            (byte)OpCodes.Ldloc_0.Value,
-            (byte)OpCodes.Ldftn.Value,
-            (byte)OpCodes.Newobj.Value,
-            (byte)OpCodes.Ldc_I4_1.Value,
-            (byte)OpCodes.Callvirt.Value,
-            (byte)OpCodes.Ret.Value,
+            OpCodes.Newobj,
+            OpCodes.Stloc_0,
+            OpCodes.Ldloc_0,
+            OpCodes.Ldarg_0,
+            OpCodes.Stfld,
+            OpCodes.Ldsfld,
+            OpCodes.Ldloc_0,
+            OpCodes.Ldftn,
+            OpCodes.Newobj,
+            OpCodes.Ldc_I4_1,
+            OpCodes.Callvirt,
+            OpCodes.Ret,
         };
         var showMessageMethod = AssemblyUtils.OsuAssembly
             .GetTypes()

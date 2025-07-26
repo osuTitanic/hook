@@ -13,12 +13,12 @@ public class SigScanning
     /// </summary>
     /// <param name="method">Method</param>
     /// <returns>All OpCodes</returns>
-    public static byte[] GetOpcodes(MethodInfo method)
+    public static OpCode[] GetOpcodes(MethodInfo method)
     {
         // TODO: Fix this for builds using SmartAssembly control flow obfuscation.
         // SmartAssembly seems to add Br.s opcodes to confuse IL readers
         ILReader reader = new ILReader(method);
-        return reader.Select(instr => (byte)instr.OpCode.Value)
+        return reader.Select(instr => instr.OpCode)
             .ToArray();
     }
 }
