@@ -117,7 +117,7 @@ public static class EntryPoint
         }
         else
         {
-            showMessageMethod.Invoke(null, new object[] { $"If you see this, that means that ShowMessage was successfully located using OpCodes {showMessageMethod.DeclaringType.FullName}.{showMessageMethod.Name}" });
+            showMessageMethod.Invoke(null, new object[] { $"If you see this, that means that ShowMessage was successfully located using OpCodes {showMessageMethod.DeclaringType?.FullName}.{showMessageMethod.Name}" });
         }
     }
 
