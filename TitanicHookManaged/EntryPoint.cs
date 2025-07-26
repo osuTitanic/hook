@@ -1,4 +1,8 @@
 ﻿using System;
+using System.Linq;
+using System.Reflection;
+using System.Reflection.Emit;
+using System.Windows.Forms;
 using TitanicHookManaged.Helpers;
 using TitanicHookManaged.Hooks.Managed;
 using TitanicHookShared;
@@ -82,6 +86,32 @@ public static class EntryPoint
         Logging.Info("All hooked");
         Config.FirstRun = false;
         Config.SaveConfiguration(Config.Filename);
+
+        byte[] showMessageSig =
+        {
+            (byte)OpCodes.Newobj.Value,
+            (byte)OpCodes.Stloc_0.Value,
+            (byte)OpCodes.Ldloc_0.Value,
+            (byte)OpCodes.Ldarg_0.Value,
+            (byte)OpCodes.Stfld.Value,
+            (byte)OpCodes.Ldsfld.Value,
+            (byte)OpCodes.Ldloc_0.Value,
+            (byte)OpCodes.Ldftn.Value,
+            (byte)OpCodes.Newobj.Value,
+            (byte)OpCodes.Ldc_I4_1.Value,
+            (byte)OpCodes.Callvirt.Value,
+            (byte)OpCodes.Ret.Value,
+        };
+        var showMessageMethod = AssemblyUtils.OsuAssembly
+            .GetTypes()
+            .SelectMany(t => t.GetMethods(BindingFlags.Static | BindingFlags.NonPublic))
+            .FirstOrDefault(m =>
+                m.GetParameters().Length == 1 &&
+                m.GetParameters()[0].ParameterType.FullName == "System.String" &&
+                m.ReturnType.FullName == "System.Void" &&
+                SigScanning.GetOpcodes(m).SequenceEqual(showMessageSig));
+        
+        showMessageMethod?.Invoke(null, new object[] { $"If you see this, that means that ShowMessage was successfully located using OpCodes {showMessageMethod.DeclaringType.FullName}.{showMessageMethod.Name}" });
     }
 
     public static Configuration? Config = null;
