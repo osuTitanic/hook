@@ -109,7 +109,7 @@ public static class EntryPoint
                 m.GetParameters().Length == 1 &&
                 m.GetParameters()[0].ParameterType.FullName == "System.String" &&
                 m.ReturnType.FullName == "System.Void" &&
-                SigScanning.GetOpcodes(m).SequenceEqual(showMessageSig));
+                SigScanning.GetOpcodes2(m).SequenceEqual(showMessageSig));
 
         if (showMessageMethod == null)
         {
