@@ -5,6 +5,7 @@ using System.Reflection.Emit;
 using System.Windows.Forms;
 using TitanicHookManaged.Helpers;
 using TitanicHookManaged.Hooks.Managed;
+using TitanicHookManaged.OsuInterop;
 using TitanicHookShared;
 
 namespace TitanicHookManaged;
@@ -86,39 +87,7 @@ public static class EntryPoint
         Logging.Info("All hooked");
         Config.FirstRun = false;
         Config.SaveConfiguration(Config.Filename);
-
-        OpCode[] showMessageSig =
-        {
-            OpCodes.Newobj,
-            OpCodes.Stloc_0,
-            OpCodes.Ldloc_0,
-            OpCodes.Ldarg_0,
-            OpCodes.Stfld,
-            OpCodes.Ldsfld,
-            OpCodes.Ldloc_0,
-            OpCodes.Ldftn,
-            OpCodes.Newobj,
-            OpCodes.Ldc_I4_1,
-            OpCodes.Callvirt,
-            OpCodes.Ret,
-        };
-        var showMessageMethod = AssemblyUtils.OsuAssembly
-            .GetTypes()
-            .SelectMany(t => t.GetMethods(BindingFlags.Static | BindingFlags.NonPublic))
-            .FirstOrDefault(m =>
-                m.GetParameters().Length == 1 &&
-                m.GetParameters()[0].ParameterType.FullName == "System.String" &&
-                m.ReturnType.FullName == "System.Void" &&
-                SigScanning.GetOpcodes(m).SequenceEqual(showMessageSig));
-
-        if (showMessageMethod == null)
-        {
-            Logging.Info("Couldn't find ShowMessage");
-        }
-        else
-        {
-            showMessageMethod.Invoke(null, new object[] { $"If you see this, that means that ShowMessage was successfully located using OpCodes {showMessageMethod.DeclaringType?.FullName}.{showMessageMethod.Name}" });
-        }
+        Notifications.ShowMessage("Welcome to Titanic!");
     }
 
     public static Configuration? Config = null;
