@@ -86,13 +86,13 @@ public static class Version
         .SelectMany(t => t.GetMethods(BindingFlags.NonPublic | BindingFlags.Static))
         .FirstOrDefault(m => m.GetParameters().Length == 0 &&
                              m.ReturnType.FullName == "System.String" &&
-                             (
-                                 SigScanning.GetOpcodes(m).SequenceEqual(_getVersionSignature) ||
-                                 SigScanning.GetOpcodes(m).SequenceEqual(_getVersionSignatureObf) ||
-                                 SigScanning.GetOpcodes(m).SequenceEqual(_getVersionSignatureOld) ||
-                                 SigScanning.GetOpcodes(m).SequenceEqual(_getVersionSignatureOldOld) ||
-                                 SigScanning.GetOpcodes(m).SequenceEqual(_getVersionSignatureOldOldObf)
-                             )
+                             SigScanning.CompareMultipleSigs(m, [
+                                 _getVersionSignature, 
+                                 _getVersionSignatureObf, 
+                                 _getVersionSignatureOld, 
+                                 _getVersionSignatureOldOld, 
+                                 _getVersionSignatureOldOldObf
+                             ])
         );
     
     public static string GetVersion() => _getVersionRef?.Invoke(null, null) as string;

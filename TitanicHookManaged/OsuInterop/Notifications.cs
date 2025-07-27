@@ -7,6 +7,8 @@ namespace TitanicHookManaged.OsuInterop;
 
 public static class Notifications
 {
+    #region Signatures
+
     /// <summary>
     /// Exact signature for ShowMessage (works for most methods)
     /// </summary>
@@ -45,17 +47,23 @@ public static class Notifications
         OpCodes.Pop,
         OpCodes.Ret
     ];
+
+    #endregion
     
     /// <summary>
     /// Reference to ShowMessage
     /// </summary>
-    static MethodInfo? _showMessageMethodReference = AssemblyUtils.OsuTypes
+    private static MethodInfo? _showMessageMethodReference = AssemblyUtils.OsuTypes
         .SelectMany(t => t.GetMethods(BindingFlags.Static | BindingFlags.NonPublic))
         .FirstOrDefault(m =>
             m.GetParameters().Length == 1 &&
             m.GetParameters()[0].ParameterType.FullName == "System.String" &&
             m.ReturnType.FullName == "System.Void" &&
-            (SigScanning.GetOpcodes(m).SequenceEqual(_showMessageSig) || SigScanning.GetOpcodes(m).SequenceEqual(_showMessageSig2016)));
+            SigScanning.CompareMultipleSigs(m, [
+                _showMessageSig, 
+                _showMessageSig2016
+            ])
+    );
     
     /// <summary>
     /// Calls ShowMessage

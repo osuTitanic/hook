@@ -7,8 +7,25 @@ using ClrTest.Reflection;
 
 namespace TitanicHookManaged.Helpers;
 
-public class SigScanning
+public static class SigScanning
 {
+    /// <summary>
+    /// Compare method against multiple exact signatures
+    /// </summary>
+    /// <param name="m">Method</param>
+    /// <param name="signatures">List of OpCode signatures</param>
+    /// <returns>At least one signature was matching</returns>
+    public static bool CompareMultipleSigs(MethodInfo m, OpCode[][] signatures)
+    {
+        OpCode[] methodOpcodes = GetOpcodes(m);
+        foreach (OpCode[] signature in signatures)
+        {
+            if (methodOpcodes.SequenceEqual(signature)) return true;
+        }
+        
+        return false;
+    }
+    
     /// <summary>
     /// Get IL OpCodes of a method, deobfuscating Br.S statements in the process
     /// </summary>
