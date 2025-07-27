@@ -82,6 +82,31 @@ public static class AssemblyUtils
         }
     }
     
+    public static Type[] OsuTypes
+    {
+        get
+        {
+            if (_osuTypes == null)
+            {
+                // Workaround is needed in case reflection can't load an osu!.exe dependency
+                try
+                {
+                    // Try to load normally
+                    _osuTypes = new List<Type>();
+                    _osuTypes.AddRange(OsuAssembly.GetTypes());
+                }
+                catch (ReflectionTypeLoadException e)
+                {
+                    // It failed so we start over again but this time we only include the valid types
+                    _osuTypes = new List<Type>(); // wipe
+                    _osuTypes.AddRange(e.Types.Where(t => t != null).ToList());
+                }
+            }
+            
+            return _osuTypes.ToArray();
+        }
+    }
+    
     /// <summary>
     /// Searches for an assembly with a specified name in the current AppDomain
     /// </summary>
@@ -122,6 +147,7 @@ public static class AssemblyUtils
     private static Assembly? _osuAssembly;
     private static Assembly? _commonOrOsuAssembly;
     private static List<Type>? _commonOrOsuTypes = null;
+    private static List<Type>? _osuTypes = null;
 
     #endregion
 }

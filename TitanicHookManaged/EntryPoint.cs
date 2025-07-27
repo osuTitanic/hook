@@ -7,6 +7,7 @@ using TitanicHookManaged.Helpers;
 using TitanicHookManaged.Hooks.Managed;
 using TitanicHookManaged.OsuInterop;
 using TitanicHookShared;
+using Version = TitanicHookManaged.OsuInterop.Version;
 
 namespace TitanicHookManaged;
 
@@ -70,6 +71,8 @@ public static class EntryPoint
             if (year >= 2014)
                 Config.HookTcpConnections = false;
         }
+        
+        Logging.Info($"osu! version from reflection: {Version.GetVersion()}");
         
         if (Config.HookTcpConnections) TcpClientHook.Initialize();
         DnsHostByNameHook.Initialize();
