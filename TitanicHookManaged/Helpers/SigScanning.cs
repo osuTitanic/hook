@@ -10,37 +10,42 @@ namespace TitanicHookManaged.Helpers;
 public class SigScanning
 {
     /// <summary>
-    /// Gets all OpCodes from a method
+    /// Get IL OpCodes of a method, deobfuscating Br.S statements in the process
     /// </summary>
-    /// <param name="method">Method</param>
-    /// <returns>All OpCodes</returns>
+    /// <param name="method">Target method</param>
+    /// <returns>IL opcodes of the method</returns>
     public static OpCode[] GetOpcodes(MethodInfo method)
     {
-        // TODO: Fix this for builds using SmartAssembly control flow obfuscation.
-        // SmartAssembly seems to add Br.s opcodes to confuse IL readers
-        ILReader reader = new ILReader(method);
-        return reader.Select(instr => instr.OpCode)
-            .ToArray();
-    }
-    
-    public static OpCode[] GetOpcodes2(MethodInfo method)
-    {
-        ILReader reader = new ILReader(method);
-        ILInstruction[] instructions = reader.ToArray();
-        Dictionary<int, ILInstruction> offsetAndInstr = instructions.ToDictionary(instr => instr.Offset);
-        // List<int> visitedOffsets = [];
-        // List<ILInstruction> finalInstructions = [];
-        HashSetCompat<int> cleanOffsets = new();
-        List<OpCode> cleanOpcodes = [];
+        // TODO: Might want to add a variant when control flow obfuscation is not used.
+        // Running the deobfuscation code on unobfuscated executables is probably not the best.
+        // Original code for unobfuscated methods:
+        // ILReader reader = new ILReader(method);
+        // return reader.Select(instr => instr.OpCode)
+        //    .ToArray();
+        
+        // Get an Offset:ILInstruction map of the method
+        Dictionary<int, ILInstruction> offsetAndInstr = new ILReader(method)
+            .ToArray()
+            .ToDictionary(instr => instr.Offset);
+        
+        HashSetCompat<int> visitedOffsets = new(); // Store unique visited offsets
+        HashSetCompat<int> cleanOffsets = new(); // Store offsets containing actual offsets (not jumps)
+        List<OpCode> cleanOpcodes = []; // Store the clean OpCodes (without jumps)
+        
+        // Iterate over all instructions here
         foreach (KeyValuePair<int, ILInstruction> instr in offsetAndInstr)
         {
-            // if (instr.Value is ShortInlineBrTargetInstruction jump)
-            //     cleanOffsets.Add(jump.TargetOffset);
-            // else
-            //     cleanOffsets.Add(instr.Value.Offset);
-            cleanOffsets.Add(GetRealOffset(instr.Key, offsetAndInstr));
+            // Skip already visited offsets
+            if (visitedOffsets.Contains(instr.Key))
+                continue;
+            
+            // Get actual instruction offset, add it to clean offsets
+            cleanOffsets.Add(GetRealOffset(instr.Key, offsetAndInstr, ref visitedOffsets));
+            
+            // Do not add this offset here as it was already added by GetRealOffset
         }
 
+        // Get all OpCodes from the clean offsets
         foreach (int offset in cleanOffsets)
         {
              cleanOpcodes.Add(offsetAndInstr[offset].OpCode);
@@ -49,11 +54,20 @@ public class SigScanning
         return cleanOpcodes.ToArray();
     }
 
-    private static int GetRealOffset(int offset, Dictionary<int, ILInstruction> offsetAndInstr)
+    /// <summary>
+    /// Resolves all Br.S statements used in the process of control flow obfuscation
+    /// </summary>
+    /// <param name="offset">Offset of the current method</param>
+    /// <param name="offsetAndInstr">Offset:Instruction mapping</param>
+    /// <param name="visitedOffsets">Reference to visitedOffsets HashSet</param>
+    /// <returns>Offset of actual IL instruction</returns>
+    private static int GetRealOffset(int offset, Dictionary<int, ILInstruction> offsetAndInstr, ref HashSetCompat<int> visitedOffsets)
     {
         ILInstruction instr = offsetAndInstr[offset];
         while (true)
         {
+            visitedOffsets.Add(instr.Offset);
+            
             if (instr.OpCode != OpCodes.Br_S)
                 return instr.Offset;
             

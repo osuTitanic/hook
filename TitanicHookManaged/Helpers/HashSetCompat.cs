@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net.Sockets;
 
 namespace TitanicHookManaged.Helpers;
 
+/// <summary>
+/// Compatibility layer to get HashSet-like functionality on .NET Framework 2.0
+/// </summary>
+/// <typeparam name="T">Type</typeparam>
 public class HashSetCompat<T>
 {
     private Dictionary<T, object> _dict = new();
@@ -21,6 +24,8 @@ public class HashSetCompat<T>
         
         return true;
     }
+    
+    public bool Contains(T value) => _dict.ContainsKey(value);
     
     public IEnumerator<T> GetEnumerator() => _dict.Keys.GetEnumerator();
 }
