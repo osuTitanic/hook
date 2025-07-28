@@ -5,6 +5,7 @@ using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 using TitanicHookManaged.Hooks.Managed;
+using TitanicHookManaged.OsuInterop;
 using TitanicHookShared;
 
 namespace HookLoader;
@@ -91,15 +92,14 @@ class Program
         
         List<string> FakeArgs = new();
         FakeArgs.Add(OsuPath);
-#if NET40
-        FakeArgs.Add("-go");
-#endif
+        if (OsuVersion.GetVersionNumber() >= 20140811)
+            FakeArgs.Add("-go"); // -go arg will bypass the updater in older builds. Always adding it won't work, osu! will show unknown file message
         
         // Load hooks specific to the loader
         Logging.Info("Loading early hooks");
         EntryPointHook.Initialize(loaded);
         ExecutablePathHook.Initialize(OsuPath);
-        // TODO: find out if it's nescessary to force the hook to point at loader's icon
+        // TODO: find out if it's necessary to force the hook to point at loader's icon
         //ExtractIconHook.Initialize(AppDomain.CurrentDomain.FriendlyName);
         GetArgsHook.Initialize(FakeArgs.ToArray());
         

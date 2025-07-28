@@ -7,7 +7,6 @@ using TitanicHookManaged.Helpers;
 using TitanicHookManaged.Hooks.Managed;
 using TitanicHookManaged.OsuInterop;
 using TitanicHookShared;
-using Version = TitanicHookManaged.OsuInterop.Version;
 
 namespace TitanicHookManaged;
 
@@ -72,7 +71,7 @@ public static class EntryPoint
                 Config.HookTcpConnections = false;
         }
         
-        Logging.Info($"osu! version from reflection: {Version.GetVersion()}");
+        Logging.Info($"osu! version from reflection: {OsuVersion.GetVersion()}");
         
         WinformSetTitleHook.Initialize();
         
