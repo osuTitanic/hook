@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using Harmony;
-using TitanicHookShared;
+using TitanicHookManaged.Helpers;
 
 namespace TitanicHookManaged.Hooks.Managed;
 

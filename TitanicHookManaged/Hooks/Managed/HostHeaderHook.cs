@@ -5,7 +5,6 @@ using System.Net;
 using System.Reflection;
 using Harmony;
 using TitanicHookManaged.Helpers;
-using TitanicHookShared;
 
 namespace TitanicHookManaged.Hooks.Managed;
 

@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace TitanicHookShared;
+namespace TitanicHookManaged;
 
 public static class Constants
 {

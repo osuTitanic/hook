@@ -3,7 +3,6 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using ClrTest.Reflection;
-using TitanicHookShared;
 
 namespace TitanicHookManaged.Helpers;
 

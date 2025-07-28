@@ -1,8 +1,7 @@
 ﻿using System;
 using System.IO;
-using System.Windows.Forms;
 
-namespace TitanicHookShared;
+namespace TitanicHookManaged;
 
 /// <summary>
 /// Callback delegate for config not found

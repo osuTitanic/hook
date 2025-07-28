@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Reflection;
-using System.Windows.Forms;
+using TitanicHookManaged;
+using TitanicHookManaged.Helpers;
 using TitanicHookManaged.Hooks.Managed;
 using TitanicHookManaged.OsuInterop;
-using TitanicHookShared;
 
 namespace HookLoader;
 

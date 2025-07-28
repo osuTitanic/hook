@@ -2,7 +2,7 @@
 using System.Reflection;
 using Harmony;
 using TitanicHookManaged;
-using TitanicHookShared;
+using TitanicHookManaged.Helpers;
 
 namespace HookLoader;
 

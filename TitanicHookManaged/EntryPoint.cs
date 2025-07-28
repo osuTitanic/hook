@@ -6,7 +6,6 @@ using System.Windows.Forms;
 using TitanicHookManaged.Helpers;
 using TitanicHookManaged.Hooks.Managed;
 using TitanicHookManaged.OsuInterop;
-using TitanicHookShared;
 
 namespace TitanicHookManaged;
 

@@ -2,7 +2,7 @@
 using System.IO;
 using System.Security.Cryptography;
 
-namespace TitanicHookShared;
+namespace TitanicHookManaged.Helpers;
 
 public static class ChecksumUtils
 {

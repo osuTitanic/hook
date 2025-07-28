@@ -48,11 +48,11 @@
     
     <!-- ILMerge job for .NET Framework 2.0 build -->
     <Target Name="ILMerge-net20" AfterTargets="Build" Condition="'$(Configuration)' == 'Release' And '$(TargetFramework)' == 'net20'">
-        <Exec Command="&quot;$(PkgILMerge)\tools\net452\ILMerge.exe&quot; /targetplatform:v2,&quot;C:\Windows\Microsoft.NET\Framework\v2.0.50727&quot; /out:&quot;$(OutputPath)$(AssemblyName)_merged.exe&quot; &quot;$(OutputPath)$(AssemblyName).exe&quot; &quot;$(OutputPath)0Harmony.dll&quot; &quot;$(OutputPath)ILReader.dll&quot; &quot;$(OutputPath)TitanicHookManaged.dll&quot; &quot;$(OutputPath)TitanicHookShared.dll&quot; &quot;$(OutputPath)LinqBridge.dll&quot;"/>
+        <Exec Command="&quot;$(PkgILMerge)\tools\net452\ILMerge.exe&quot; /targetplatform:v2,&quot;C:\Windows\Microsoft.NET\Framework\v2.0.50727&quot; /out:&quot;$(OutputPath)$(AssemblyName)_merged.exe&quot; &quot;$(OutputPath)$(AssemblyName).exe&quot; &quot;$(OutputPath)0Harmony.dll&quot; &quot;$(OutputPath)ILReader.dll&quot; &quot;$(OutputPath)TitanicHookManaged.dll&quot; &quot;$(OutputPath)LinqBridge.dll&quot;"/>
     </Target>
 
     <!-- ILMerge job for .NET Framework 4 build -->
     <Target Name="ILMerge-net40" AfterTargets="Build" Condition="'$(Configuration)' == 'Release' And '$(TargetFramework)' == 'net40'">
-        <Exec Command="&quot;$(PkgILMerge)\tools\net452\ILMerge.exe&quot; /targetplatform:v4,&quot;C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0&quot; /out:&quot;$(OutputPath)$(AssemblyName)_merged.exe&quot; &quot;$(OutputPath)$(AssemblyName).exe&quot; &quot;$(OutputPath)0Harmony.dll&quot; &quot;$(OutputPath)ILReader.dll&quot; &quot;$(OutputPath)TitanicHookManaged.dll&quot; &quot;$(OutputPath)TitanicHookShared.dll&quot;"/>
+        <Exec Command="&quot;$(PkgILMerge)\tools\net452\ILMerge.exe&quot; /targetplatform:v4,&quot;C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0&quot; /out:&quot;$(OutputPath)$(AssemblyName)_merged.exe&quot; &quot;$(OutputPath)$(AssemblyName).exe&quot; &quot;$(OutputPath)0Harmony.dll&quot; &quot;$(OutputPath)ILReader.dll&quot; &quot;$(OutputPath)TitanicHookManaged.dll&quot;"/>
     </Target>
 </Project>

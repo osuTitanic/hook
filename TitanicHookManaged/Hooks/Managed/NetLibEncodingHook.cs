@@ -8,7 +8,6 @@ using System.Text;
 using ClrTest.Reflection;
 using Harmony;
 using TitanicHookManaged.Helpers;
-using TitanicHookShared;
 
 namespace TitanicHookManaged.Hooks.Managed;
 
