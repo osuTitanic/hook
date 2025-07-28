@@ -9,21 +9,23 @@ public static class Notifications
 {
     #region Signatures
 
-    // 2010 ShowMessage signature, but it would collide with SetTitle in newer clients
-    // static OpCode[] _showMessageSigOld =
-    // [
-    //     OpCodes.Newobj,
-    //     OpCodes.Stloc_0,
-    //     OpCodes.Ldloc_0,
-    //     OpCodes.Ldarg_0,
-    //     OpCodes.Stfld,
-    //     OpCodes.Ldsfld,
-    //     OpCodes.Ldloc_0,
-    //     OpCodes.Ldftn,
-    //     OpCodes.Newobj,
-    //     OpCodes.Callvirt,
-    //     OpCodes.Ret
-    // ];
+    /// <summary>
+    /// Exact ShowMessage signature (2010)
+    /// </summary>
+    static OpCode[] _showMessageSigOld =
+    [
+        OpCodes.Newobj,
+        OpCodes.Stloc_0,
+        OpCodes.Ldloc_0,
+        OpCodes.Ldarg_0,
+        OpCodes.Stfld,
+        OpCodes.Ldsfld,
+        OpCodes.Ldloc_0,
+        OpCodes.Ldftn,
+        OpCodes.Newobj,
+        OpCodes.Callvirt,
+        OpCodes.Ret
+    ];
     
     /// <summary>
     /// Exact signature for ShowMessage (works for most builds)
@@ -70,6 +72,12 @@ public static class Notifications
     /// Reference to ShowMessage
     /// </summary>
     private static MethodInfo? _showMessageMethodReference = AssemblyUtils.OsuTypes
+        .Where(t => t.IsClass &&
+                    t.IsSealed &&
+                    t.IsAbstract &&
+                    t.IsNotPublic &&
+                    t.BaseType == typeof(object) // notification manager class does not inherit from anything; not specifying that would cause collisions with GameBase set title
+         )
         .SelectMany(t => t.GetMethods(BindingFlags.Static | BindingFlags.NonPublic))
         .FirstOrDefault(m =>
             m.GetParameters().Length == 1 &&
@@ -77,7 +85,7 @@ public static class Notifications
             m.ReturnType.FullName == "System.Void" &&
             SigScanning.CompareMultipleSigs(m, [
                 _showMessageSig, 
-                //_showMessageSigOld,
+                _showMessageSigOld,
                 _showMessageSig2016
             ])
     );
