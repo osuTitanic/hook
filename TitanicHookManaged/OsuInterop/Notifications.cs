@@ -8,24 +8,22 @@ namespace TitanicHookManaged.OsuInterop;
 public static class Notifications
 {
     #region Signatures
-    
-    /// <summary>
-    /// Exact signature for ShowMessage (2010)
-    /// </summary>
-    static OpCode[] _showMessageSigOld =
-    [
-        OpCodes.Newobj,
-        OpCodes.Stloc_0,
-        OpCodes.Ldloc_0,
-        OpCodes.Ldarg_0,
-        OpCodes.Stfld,
-        OpCodes.Ldsfld,
-        OpCodes.Ldloc_0,
-        OpCodes.Ldftn,
-        OpCodes.Newobj,
-        OpCodes.Callvirt,
-        OpCodes.Ret
-    ];
+
+    // 2010 ShowMessage signature, but it would collide with SetTitle in newer clients
+    // static OpCode[] _showMessageSigOld =
+    // [
+    //     OpCodes.Newobj,
+    //     OpCodes.Stloc_0,
+    //     OpCodes.Ldloc_0,
+    //     OpCodes.Ldarg_0,
+    //     OpCodes.Stfld,
+    //     OpCodes.Ldsfld,
+    //     OpCodes.Ldloc_0,
+    //     OpCodes.Ldftn,
+    //     OpCodes.Newobj,
+    //     OpCodes.Callvirt,
+    //     OpCodes.Ret
+    // ];
     
     /// <summary>
     /// Exact signature for ShowMessage (works for most builds)
@@ -79,7 +77,7 @@ public static class Notifications
             m.ReturnType.FullName == "System.Void" &&
             SigScanning.CompareMultipleSigs(m, [
                 _showMessageSig, 
-                _showMessageSigOld,
+                //_showMessageSigOld,
                 _showMessageSig2016
             ])
     );
