@@ -99,7 +99,8 @@ class Program
         Logging.Info("Loading early hooks");
         EntryPointHook.Initialize(loaded);
         ExecutablePathHook.Initialize(OsuPath);
-        ExtractIconHook.Initialize(AppDomain.CurrentDomain.FriendlyName);
+        // TODO: find out if it's nescessary to force the hook to point at loader's icon
+        //ExtractIconHook.Initialize(AppDomain.CurrentDomain.FriendlyName);
         GetArgsHook.Initialize(FakeArgs.ToArray());
         
         // Hook osu!.exe's entrypoint to execute other hooks there
