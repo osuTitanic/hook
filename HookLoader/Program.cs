@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using TitanicHookManaged;
 using TitanicHookManaged.Helpers;
@@ -63,7 +64,7 @@ class Program
         Assembly loaded;
         try
         {
-            OsuPath = Path.Combine(Path.GetDirectoryName(_originalEntryAssembly.Location), "osu!.exe");
+            OsuPath = FindOsuExecutable(Path.GetDirectoryName(_originalEntryAssembly.Location));
             loaded = Assembly.Load(File.ReadAllBytes(OsuPath));
         }
         catch (Exception e)
@@ -121,6 +122,18 @@ class Program
     private static string GetShortFrameworkVer(string framework)
     {
         return framework.Substring(1, 4);
+    }
+
+    /// <summary>
+    /// Finds the osu! executable from a list of valid filenames
+    /// </summary>
+    /// <param name="directory">Directory to search in</param>
+    /// <returns>Path to a first found osu! executable, null if none was found</returns>
+    private static string? FindOsuExecutable(string directory)
+    {
+        string[] validFiles =
+            ["osu!.exe", "osu.exe", "osu!test.exe", "osu!public.exe", "osu!shine1.exe", "osu!cuttingedge.exe"];
+        return validFiles.Select(file => Path.Combine(directory, file)).FirstOrDefault(File.Exists);
     }
 
     internal static string OsuPath = "";
