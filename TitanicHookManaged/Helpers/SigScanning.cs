@@ -9,6 +9,49 @@ namespace TitanicHookManaged.Helpers;
 
 public static class SigScanning
 {
+    public static bool StartsWith<T>(this T[] source, T[] prefix)
+    {
+        if (prefix.Length > source.Length)
+            return false;
+        
+        return source.Take(prefix.Length).SequenceEqual(prefix);
+    }
+
+    /// <summary>
+    /// Gets all strings from a method
+    /// </summary>
+    /// <param name="method"></param>
+    /// <returns></returns>
+    public static string[] GetStrings(MethodInfo method)
+    {
+        List<string> strings = [];
+        ILReader reader = new ILReader(method);
+        ILInstruction[] instructions = reader.ToArray();
+        for (int i = 0; i < instructions.Length; i++)
+        {
+            ILInstruction instruction = instructions[i];
+
+            // Normal, unobfuscated string
+            if (instruction is InlineStringInstruction strInstr)
+            {
+                strings.Add(strInstr.String);
+                continue;
+            }
+            
+            // Maybe obfuscated string? (calling the string decryption method)
+            if (ObfHelper.HasStringDecrypt && instruction is InlineMethodInstruction callInstr &&
+                callInstr.Token == ObfHelper.StringObfToken)
+            {
+                // Get argument for string decrypt method
+                if (instructions[i - 1] is not InlineIInstruction loadArg) continue;
+
+                int arg = loadArg.Int32;
+                strings.Add(ObfHelper.DecString(arg));
+            }
+        }
+        return strings.ToArray();
+    }
+    
     /// <summary>
     /// Compare method against multiple exact signatures
     /// </summary>
