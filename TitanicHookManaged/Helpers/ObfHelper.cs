@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 
@@ -53,11 +54,27 @@ public static class ObfHelper
     
     public static bool HasStringDecrypt => _stringObfReference != null;
     public static int StringObfToken => _stringObfReference?.MetadataToken ?? 0;
-    
+
     /// <summary>
     /// Decrypts an obfuscated string
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    public static string DecString(int id) => _stringObfReference?.Invoke(null, new object[] { id })?.ToString() ?? "";
+    public static string? DecString(int id)
+    {
+        // Try to get from cache
+        if (_stringCache.TryGetValue(id, out var value))
+            return value;
+
+        // It's not in cache, so call the deobfuscation method and add it to cache
+        value = _stringObfReference?.Invoke(null, [id])?.ToString() ?? "";
+        _stringCache.Add(id, value);
+        
+        return value;
+    }
+    
+    /// <summary>
+    /// Cache for deobfuscated strings
+    /// </summary>
+    private static Dictionary<int, string> _stringCache = new ();
 }

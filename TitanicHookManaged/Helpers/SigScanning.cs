@@ -46,7 +46,9 @@ public static class SigScanning
                 if (instructions[i - 1] is not InlineIInstruction loadArg) continue;
 
                 int arg = loadArg.Int32;
-                strings.Add(ObfHelper.DecString(arg));
+                string? str = ObfHelper.DecString(arg);
+                if (str != null)
+                    strings.Add(str);
             }
         }
         return strings.ToArray();
