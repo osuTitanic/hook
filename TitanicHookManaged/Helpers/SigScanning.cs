@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Runtime.CompilerServices;
 using ClrTest.Reflection;
 
 namespace TitanicHookManaged.Helpers;
@@ -52,6 +53,20 @@ public static class SigScanning
             }
         }
         return strings.ToArray();
+    }
+
+    public static bool MethodHasNoInlining(MethodInfo m)
+    {
+        var attributes = m.GetCustomAttributes(typeof(MethodImplAttribute), false);
+        foreach (var attr in attributes)
+        {
+            if (attr is MethodImplAttribute methodImplAttr)
+            {
+                return (methodImplAttr.Value & MethodImplOptions.NoInlining) != 0;
+            }
+        }
+        
+        return false;
     }
     
     /// <summary>

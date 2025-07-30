@@ -39,7 +39,7 @@ public static class ObfHelper
     /// <summary>
     /// Reference to SmartAssembly string decrypt method
     /// </summary>
-    static MethodInfo? _stringObfReference = AssemblyUtils.OsuTypes
+    static MethodInfo? _saStringObfReference = AssemblyUtils.OsuTypes
         .Where(t => t.IsClass &&
                     t.IsSealed &&
                     t.IsNotPublic && 
@@ -51,6 +51,26 @@ public static class ObfHelper
                              m.GetParameters()[0].ParameterType.FullName == "System.Int32" && 
                              m.ReturnType.FullName == "System.String" /*&&*/ 
                              /*SigScanning.GetOpcodes(m).StartsWith(_stringObfPrefix)*/); // TODO: control flow obfuscation in that method adds Br opcodes, this is not handled yet but for now the lookup works good enough
+
+    /// <summary>
+    /// Reference to Eazfuscator string decrypt method
+    /// </summary>
+    private static MethodInfo? _eazStringObfReference = AssemblyUtils.OsuTypes
+        .Where(t => t.IsClass &&
+                    t.IsAbstract &&
+                    t.IsSealed &&
+                    t.IsNotPublic &&
+                    !t.IsNested)
+        .SelectMany(t => t.GetMethods(BindingFlags.Static | BindingFlags.NonPublic))
+        .FirstOrDefault(m => m.GetParameters().Length == 1 &&
+                             m.GetParameters()[0].ParameterType.FullName == "System.Int32" &&
+                             m.ReturnType.FullName == "System.String" /*&&*/
+                             /*SigScanning.MethodHasNoInlining(m)*/); // TODO: fucked attribute check
+    
+    /// <summary>
+    /// Reference to the first found string decryption method
+    /// </summary>
+    private static MethodInfo? _stringObfReference = _saStringObfReference ?? _eazStringObfReference;
     
     public static bool HasStringDecrypt => _stringObfReference != null;
     public static int StringObfToken => _stringObfReference?.MetadataToken ?? 0;
