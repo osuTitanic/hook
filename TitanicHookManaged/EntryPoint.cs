@@ -73,6 +73,7 @@ public static class EntryPoint
         Logging.Info($"osu! version from reflection: {OsuVersion.GetVersion()}");
         
         WinformSetTitleHook.Initialize();
+        NowPlayingCommandHook.Initialize();
         
         if (Config.HookTcpConnections) TcpClientHook.Initialize();
         DnsHostByNameHook.Initialize();
