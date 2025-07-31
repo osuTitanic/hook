@@ -51,12 +51,14 @@ public static class EntryPoint
             if (Config.ClientSha256 == "")
                 Config.ClientSha256 = currentClientSha256;
 
+#if DEBUG
             if (currentClientSha256 != Config.ClientSha256)
             {
                 Logging.LogAndShowError("This configuration file was created for a different version of osu!\n" +
                                         $"Please delete {Constants.DefaultConfigName} and try again.");
                 Environment.Exit(1);
             }
+#endif
         }
         
         Logging.UseConsoleLogging = Config.EnableConsole;
