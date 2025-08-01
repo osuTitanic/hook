@@ -7,7 +7,7 @@ class Program
 {
     static void Main(string[] args)
     {
-        Console.Write("TargetFramework (net20 if empty): ");
+        Console.Write("TargetFramework (net35 if empty): ");
         string targetFramework = Console.ReadLine();
         
         Console.Write("Configuration (Debug if empty): ");
@@ -17,7 +17,7 @@ class Program
         string processName = Console.ReadLine();
         
         if (targetFramework == "")
-            targetFramework = "net20";
+            targetFramework = "net35";
         
         if (configuration == "")
             configuration = "Debug";

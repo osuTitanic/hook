@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
-        <TargetFrameworks>net20;net40</TargetFrameworks>
+        <TargetFrameworks>net35;net40</TargetFrameworks>
         <ImplicitUsings>disable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <LangVersion>13</LangVersion>
@@ -10,9 +10,9 @@
         <Company>Titanic!</Company>
     </PropertyGroup>
     
-    <PropertyGroup Condition="'$(TargetFramework)' == 'net20'">
-        <AssemblyName>Titanic!net20</AssemblyName>
-        <AssemblyDescription>Titanic! Loader (.NET Framework 2.0)</AssemblyDescription>
+    <PropertyGroup Condition="'$(TargetFramework)' == 'net35'">
+        <AssemblyName>Titanic!net35</AssemblyName>
+        <AssemblyDescription>Titanic! Loader (.NET Framework 3.5)</AssemblyDescription>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(TargetFramework)' == 'net40'">
@@ -34,10 +34,6 @@
       <ProjectReference Include="..\TitanicHookManaged\TitanicHookManaged.csproj" />
     </ItemGroup>
 
-    <ItemGroup Condition="'$(TargetFramework)' == 'net20'">
-      <PackageReference Include="LinqBridge" Version="1.3.0" />
-    </ItemGroup>
-
     <ItemGroup>
       <Reference Include="System.Windows.Forms" />
     </ItemGroup>
@@ -46,9 +42,9 @@
       <PackageReference Include="ILMerge" Version="3.0.41" />
     </ItemGroup>
     
-    <!-- ILMerge job for .NET Framework 2.0 build -->
-    <Target Name="ILMerge-net20" AfterTargets="Build" Condition="'$(Configuration)' == 'Release' And '$(TargetFramework)' == 'net20'">
-        <Exec Command="&quot;$(PkgILMerge)\tools\net452\ILMerge.exe&quot; /targetplatform:v2,&quot;C:\Windows\Microsoft.NET\Framework\v2.0.50727&quot; /out:&quot;$(OutputPath)$(AssemblyName)_merged.exe&quot; &quot;$(OutputPath)$(AssemblyName).exe&quot; &quot;$(OutputPath)0Harmony.dll&quot; &quot;$(OutputPath)ILReader.dll&quot; &quot;$(OutputPath)TitanicHookManaged.dll&quot; &quot;$(OutputPath)LinqBridge.dll&quot;"/>
+    <!-- ILMerge job for .NET Framework 3.5 build -->
+    <Target Name="ILMerge-net35" AfterTargets="Build" Condition="'$(Configuration)' == 'Release' And '$(TargetFramework)' == 'net35'">
+        <Exec Command="&quot;$(PkgILMerge)\tools\net452\ILMerge.exe&quot; /targetplatform:v2,&quot;C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v3.5\Profile\Client&quot; /out:&quot;$(OutputPath)$(AssemblyName)_merged.exe&quot; &quot;$(OutputPath)$(AssemblyName).exe&quot; &quot;$(OutputPath)0Harmony.dll&quot; &quot;$(OutputPath)ILReader.dll&quot; &quot;$(OutputPath)TitanicHookManaged.dll&quot;"/>
     </Target>
 
     <!-- ILMerge job for .NET Framework 4 build -->

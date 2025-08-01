@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFrameworks>net20;net40</TargetFrameworks>
+        <TargetFrameworks>net35;net40</TargetFrameworks>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <LangVersion>12</LangVersion>
@@ -12,10 +12,6 @@
 
     <ItemGroup>
       <Reference Include="System.Windows.Forms" />
-    </ItemGroup>
-    
-    <ItemGroup Condition="'$(TargetFramework)' == 'net20'">
-        <PackageReference Include="LinqBridge" Version="1.3.0" />
     </ItemGroup>
     
     <ItemGroup>
