@@ -1,4 +1,4 @@
-﻿#if NET20
+﻿#if NET35
 using System.IO;
 using System.Net;
 using System.Net.Sockets;

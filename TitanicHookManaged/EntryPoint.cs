@@ -78,7 +78,7 @@ public static class EntryPoint
         NowPlayingCommandHook.Initialize();
         
         //if (Config.HookTcpConnections) TcpClientHook.Initialize();
-#if NET20
+#if NET35
         WebSocketPatch.Initialize();
 #endif
         DnsHostByNameHook.Initialize();
