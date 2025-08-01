@@ -77,7 +77,10 @@ public static class EntryPoint
         WinformSetTitleHook.Initialize();
         NowPlayingCommandHook.Initialize();
         
-        if (Config.HookTcpConnections) TcpClientHook.Initialize();
+        //if (Config.HookTcpConnections) TcpClientHook.Initialize();
+#if NET20
+        WebSocketPatch.Initialize();
+#endif
         DnsHostByNameHook.Initialize();
         StartProcessHook.Initialize();
         
