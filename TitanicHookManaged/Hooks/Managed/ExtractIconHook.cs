@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.Linq;
 using System.Reflection;
-using Harmony;
+using HarmonyLib;
 using TitanicHookManaged.Helpers;
 
 namespace TitanicHookManaged.Hooks.Managed;
@@ -24,7 +24,7 @@ public static class ExtractIconHook
             return;
         
         _hookLoaderName = hookLoaderName;
-        var harmony = HarmonyInstance.Create(HookName);
+        var harmony = new Harmony(HookName);
         
         // We want specifically the overload that takes System.String
         MethodInfo? targetMethod = typeof(Icon)

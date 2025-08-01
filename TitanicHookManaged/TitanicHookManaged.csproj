@@ -19,7 +19,7 @@
     </ItemGroup>
     
     <ItemGroup>
-      <PackageReference Include="Lib.Harmony" Version="1.2.0.1" />
+      <PackageReference Include="Lib.Harmony.Thin" Version="2.3.6" />
     </ItemGroup>
 
 </Project>

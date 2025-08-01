@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using Harmony;
+using HarmonyLib;
 using TitanicHookManaged.Helpers;
 
 namespace TitanicHookManaged.Hooks.Managed;
@@ -21,7 +21,7 @@ public static class StartProcessHook
     {
         Logging.HookStart(HookName);
         
-        var harmony = HarmonyInstance.Create(HookName);
+        var harmony = new Harmony(HookName);
         
         MethodInfo? targetMethod = typeof(Process)
             .GetMethods(BindingFlags.Public | BindingFlags.Static)

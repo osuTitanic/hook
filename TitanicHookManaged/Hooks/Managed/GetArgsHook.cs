@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Reflection;
-using Harmony;
+using HarmonyLib;
 using TitanicHookManaged.Helpers;
 
 namespace TitanicHookManaged.Hooks.Managed;
@@ -18,7 +18,7 @@ public static class GetArgsHook
     {
         Logging.HookStart(HookName);
         
-        var harmony = HarmonyInstance.Create(HookName);
+        var harmony = new Harmony(HookName);
         _spoofedArgs = spoofedArgs;
         
         MethodInfo? targetMethod = typeof(Environment).GetMethod("GetCommandLineArgs", BindingFlags.Static | BindingFlags.Public);

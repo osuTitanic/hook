@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
-using Harmony;
+using HarmonyLib;
 using TitanicHookManaged.Helpers;
 
 namespace TitanicHookManaged.Hooks.Managed;
@@ -17,7 +17,7 @@ public static class AddHeaderFieldHook
     {
         Logging.HookStart(HookName);
         
-        var harmony = HarmonyInstance.Create(HookName);
+        var harmony = new Harmony(HookName);
 
         MethodInfo? targetMethod = GetTargetMethod(AssemblyUtils.CommonOrOsuTypes);
         if (targetMethod == null)

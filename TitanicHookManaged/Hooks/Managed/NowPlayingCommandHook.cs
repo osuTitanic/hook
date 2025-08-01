@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using Harmony;
+using HarmonyLib;
 using TitanicHookManaged.Helpers;
 
 namespace TitanicHookManaged.Hooks.Managed;
@@ -18,7 +18,7 @@ public static class NowPlayingCommandHook
     {
         Logging.HookStart(HookName);
         
-        var harmony = HarmonyInstance.Create(HookName);
+        var harmony = new Harmony(HookName);
         
         MethodInfo? targetMethod = GetTargetMethod();
         if (targetMethod == null)

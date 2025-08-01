@@ -4,8 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
-using System.Windows.Forms;
-using Harmony;
+using HarmonyLib;
 using TitanicHookManaged.Helpers;
 
 namespace TitanicHookManaged.Hooks.Managed;
@@ -28,7 +27,7 @@ public class TcpClientHook
         }
         Logging.HookStep(HookName, "Bancho service IP: " + _newIp);
         
-        var harmony = HarmonyInstance.Create(HookName);
+        var harmony = new Harmony(HookName);
         
         // Look for BeginConnect(string, int, AsyncCallback, object) overload
         MethodInfo? beginConnect = typeof(TcpClient)

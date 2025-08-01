@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using System.Windows.Forms;
-using Harmony;
+using HarmonyLib;
 using TitanicHookManaged.Helpers;
 
 namespace TitanicHookManaged.Hooks.Managed;
@@ -14,7 +14,7 @@ public static class WinformSetTitleHook
     {
         Logging.HookStart(HookName);
         
-        var harmony = HarmonyInstance.Create(HookName);
+        var harmony = new Harmony(HookName);
 
         MethodInfo? setTitle = typeof(Form)
             .GetMethod("set_Text");

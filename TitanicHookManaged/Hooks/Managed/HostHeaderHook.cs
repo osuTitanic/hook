@@ -3,7 +3,7 @@ using System;
 using System.Linq;
 using System.Net;
 using System.Reflection;
-using Harmony;
+using HarmonyLib;
 using TitanicHookManaged.Helpers;
 
 namespace TitanicHookManaged.Hooks.Managed;
@@ -19,7 +19,7 @@ public static class HostHeaderHook
     public static void Initialize()
     {
         Logging.HookStart(HookName);
-        var harmony = HarmonyInstance.Create(HookName);
+        var harmony = new Harmony(HookName);
         
         MethodInfo? targetMethod = GetTargetMethod(AssemblyUtils.CommonOrOsuTypes);
         if (targetMethod == null)

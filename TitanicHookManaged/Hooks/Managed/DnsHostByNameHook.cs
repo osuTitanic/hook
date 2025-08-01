@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Net;
 using System.Reflection;
-using Harmony;
+using HarmonyLib;
 using TitanicHookManaged.Helpers;
 
 namespace TitanicHookManaged.Hooks.Managed;
@@ -15,7 +15,7 @@ public static class DnsHostByNameHook
     {
         Logging.HookStart(HookName);
         
-        var harmony = HarmonyInstance.Create(HookName);
+        var harmony = new Harmony(HookName);
         
         MethodInfo? targetMethod = typeof(Dns)
             .GetMethods(BindingFlags.Static | BindingFlags.NonPublic)
