@@ -10,6 +10,11 @@ public class TcpOverWebsocket : TcpClient
 {
     private WebSocketStream _stream;
     private WebSocket? _webSocket;
+
+    public static TcpClient Connect(IPEndPoint endPoint, int msTimeout)
+    {
+        return new TcpOverWebsocket(endPoint, msTimeout) as TcpClient;
+    }
     
     public TcpOverWebsocket(IPEndPoint endPoint, int msTimeout)
     {
@@ -21,7 +26,7 @@ public class TcpOverWebsocket : TcpClient
         };
     }
 
-    public new NetworkStream GetStream() => _stream;
+    public new Stream GetStream() => _stream;
     public new bool Connected => _webSocket?.IsAlive ?? false;
     public new Socket Client => new FakeSocket();
 

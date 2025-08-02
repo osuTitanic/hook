@@ -10,11 +10,26 @@ namespace TitanicHookManaged.WebSocketCompat;
 /// <summary>
 /// NetworkStream for WebSocket operations
 /// </summary>
-public class WebSocketStream : NetworkStream
+public class WebSocketStream : Stream
 {
     public Queue<byte[]> ReceiveBuffer = new ();
     public Queue<byte[]> SendBuffer = new ();
     private WebSocket _webSocket;
+
+    public override void Flush()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public override long Seek(long offset, SeekOrigin origin)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public override void SetLength(long value)
+    {
+        throw new System.NotImplementedException();
+    }
 
     /// <summary>
     /// Dequeue bytes from the ReceiveBuffer and write these into a buffer
@@ -51,28 +66,15 @@ public class WebSocketStream : NetworkStream
     }
 
     public new bool DataAvailable => ReceiveBuffer.Count > 0;
-    public new bool CanRead => true;
-    public new bool CanWrite => true;
+    public override bool CanRead { get; }
+    public override bool CanSeek { get; }
+    public override bool CanWrite { get; }
+    public override long Length { get; }
+    public override long Position { get; set; }
 
-    public WebSocketStream(WebSocket ws) : base(new Socket(AddressFamily.Unknown, SocketType.Unknown, ProtocolType.Unknown))
+    public WebSocketStream(WebSocket ws)
     {
         _webSocket = ws;
-    }
-    
-    public WebSocketStream(Socket socket) : base(socket)
-    {
-    }
-
-    public WebSocketStream(Socket socket, bool ownsSocket) : base(socket, ownsSocket)
-    {
-    }
-
-    public WebSocketStream(Socket socket, FileAccess access) : base(socket, access)
-    {
-    }
-
-    public WebSocketStream(Socket socket, FileAccess access, bool ownsSocket) : base(socket, access, ownsSocket)
-    {
     }
 }
 #endif

@@ -68,15 +68,14 @@ public static class WebSocketPatch
 
     private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
     {
-        //return instructions;
         List<CodeInstruction> codes = new (instructions);
         foreach (CodeInstruction instr in codes)
         {
             if (instr.opcode == OpCodes.Call && instr.operand is MethodInfo method && IsClientConnectMethod(method))
             {
                 Logging.HookStep(HookName, "Replacing client connect in transpiler");
-                instr.opcode = OpCodes.Newobj;
-                instr.operand = AccessTools.Constructor(typeof(TcpOverWebsocket), [typeof(IPEndPoint), typeof(int)]);
+                //instr.operand = AccessTools.Constructor(typeof(TcpOverWebsocket), [typeof(IPEndPoint), typeof(int)]);
+                instr.operand = AccessTools.Method(typeof(TcpOverWebsocket), nameof(TcpOverWebsocket.Connect), [typeof(IPEndPoint), typeof(int)]);
             }
         }
         return codes.AsEnumerable();
@@ -87,7 +86,8 @@ public static class WebSocketPatch
         ParameterInfo[] prms = m.GetParameters();
         return prms.Length == 2 && 
                prms[0].ParameterType.FullName == "System.Net.IPEndPoint" &&
-               prms[1].ParameterType.FullName == "System.Net.Sockets.Socket" &&
+               prms[1].ParameterType.FullName == "System.Int32" &&
+               m.ReturnType.FullName == "System.Net.Sockets.TcpClient" &&
                SigScanning.GetOpcodes(m).StartsWith(ClientConnectSignature);
     }
 
