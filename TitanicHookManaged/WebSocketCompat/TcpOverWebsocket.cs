@@ -10,6 +10,11 @@ public class TcpOverWebsocket : TcpClient
 {
     private WebSocketStream _stream;
     private WebSocket? _webSocket;
+    
+    public static TcpClient FakeConnect(IPEndPoint endPoint, int msTimeout)
+    {
+        return new TcpClient();
+    }
 
     public static TcpClient Connect(IPEndPoint endPoint, int msTimeout)
     {
@@ -17,6 +22,16 @@ public class TcpOverWebsocket : TcpClient
     }
     
     public TcpOverWebsocket(IPEndPoint endPoint, int msTimeout)
+    {
+        _webSocket = new WebSocket($"wss://server.{EntryPoint.Config.ServerName}/ws");
+        _stream = new WebSocketStream(_webSocket);
+        _webSocket.OnMessage += (sender, e) =>
+        {
+            _stream.ReceiveBuffer.Enqueue(e.RawData);
+        };
+    }
+
+    public TcpOverWebsocket()
     {
         _webSocket = new WebSocket($"wss://server.{EntryPoint.Config.ServerName}/ws");
         _stream = new WebSocketStream(_webSocket);
