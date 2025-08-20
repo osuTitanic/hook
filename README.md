@@ -4,7 +4,7 @@ Small executable that allows to connect old osu! clients without `-devserver` su
 ## Supported clients
 Titanic Hook supports any osu!(stable) client released since 2008
 
-> ![WARNING]
+> [!CAUTION]
 > Titanic Hook is NOT compatible with the new osu!auth anti-cheat used since 2021. The game will automatically close if you try to use it in such clients.
 
 ## How does it work?
