@@ -10,10 +10,10 @@ public delegate void ConfigurationNotFoundCallback(string filename, Exception e)
 
 public class Configuration
 {
-    public const int CurrentConfigVersion = 1;
+    public const int CurrentConfigVersion = 2;
     
     // Version of the config file
-    public int Version { get; set; } = 1;
+    public int Version { get; set; } = 0;
     
     // Alloc console for logs
     public bool EnableConsole { get; set; } = false;
@@ -60,6 +60,8 @@ public class Configuration
     /// </summary>
     public string ClientSha256 { get; set; } = "";
     
+    public bool RemoveScoreFetchingDelay { get; set; } = true;
+    
     /// <summary>
     /// Whether it's the first config creation.
     /// This is not written to the config!
@@ -96,6 +98,12 @@ public class Configuration
             {
                 case "Version":
                     Version = int.Parse(splitLine[1]);
+                    if (Version < CurrentConfigVersion)
+                    {
+                        FirstRun = true;
+                        Version = CurrentConfigVersion;
+                        return;
+                    }
                     break;
                 case "EnableConsole":
                     EnableConsole = bool.Parse(splitLine[1]);
@@ -127,6 +135,9 @@ public class Configuration
                 case "ClientSha256":
                     ClientSha256 = splitLine[1];
                     break;
+                case "RemoveScoreFetchingDelay":
+                    RemoveScoreFetchingDelay = bool.Parse(splitLine[1]);
+                    break;
             }
         }
     }
@@ -154,6 +165,7 @@ public class Configuration
         sw.WriteLine($"HookCheckCertificate={HookCheckCertificate}");
         sw.WriteLine($"AllowMono={AllowMono}");
         sw.WriteLine($"ClientSha256={ClientSha256}");
+        sw.WriteLine($"RemoveScoreFetchingDelay={RemoveScoreFetchingDelay}");
     }
 
     /// <summary>

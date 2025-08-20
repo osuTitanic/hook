@@ -76,6 +76,7 @@ public static class EntryPoint
         
         WinformSetTitleHook.Initialize();
         NowPlayingCommandHook.Initialize();
+        if (Config.RemoveScoreFetchingDelay) RemoveScoreDelayHook.Initialize();
         
         if (Config.HookTcpConnections) TcpClientHook.Initialize();
         DnsHostByNameHook.Initialize();
