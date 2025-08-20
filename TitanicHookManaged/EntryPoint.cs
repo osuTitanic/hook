@@ -94,7 +94,7 @@ public static class EntryPoint
         Logging.Info("All hooked");
         Config.FirstRun = false;
         Config.SaveConfiguration(Config.Filename);
-        Notifications.ShowMessage("Welcome to Titanic!");
+        Notifications.ShowMessage($"Welcome to Titanic!\nPatch version: {Constants.PatchVersion}");
 
         foreach (string str in SigScanning.GetStrings(AssemblyUtils.OsuAssembly.EntryPoint))
         {

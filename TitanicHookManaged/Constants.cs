@@ -11,4 +11,5 @@ public static class Constants
 
     public const string DefaultConfigName = "TitanicHook.cfg";
     public const string LogFileName = "TitanicHook.log";
+    public const string PatchVersion = "0.1.2";
 }
