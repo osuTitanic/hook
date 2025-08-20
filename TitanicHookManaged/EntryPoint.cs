@@ -95,11 +95,6 @@ public static class EntryPoint
         Config.FirstRun = false;
         Config.SaveConfiguration(Config.Filename);
         Notifications.ShowMessage($"Welcome to Titanic!\nPatch version: {Constants.PatchVersion}");
-
-        foreach (string str in SigScanning.GetStrings(AssemblyUtils.OsuAssembly.EntryPoint))
-        {
-            Logging.Info($"String in main: {str}");
-        }
     }
 
     public static Configuration? Config = null;
