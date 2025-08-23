@@ -6,7 +6,7 @@ using System.Reflection;
 using Harmony;
 using TitanicHookManaged.Helpers;
 
-namespace TitanicHookManaged.Hooks.Managed;
+namespace TitanicHookManaged.Hooks;
 
 /// <summary>
 /// Hook for spoofing GetCommandLineArgs.

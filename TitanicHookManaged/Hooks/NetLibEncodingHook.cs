@@ -6,13 +6,12 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Runtime.InteropServices;
 using System.Text;
 using ClrTest.Reflection;
 using Harmony;
 using TitanicHookManaged.Helpers;
 
-namespace TitanicHookManaged.Hooks.Managed;
+namespace TitanicHookManaged.Hooks;
 
 public static class NetLibEncodingHook
 {

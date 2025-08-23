@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Windows.Forms;
 using TitanicHookManaged.Helpers;
-using TitanicHookManaged.Hooks.Managed;
+using TitanicHookManaged.Hooks;
 using TitanicHookManaged.OsuInterop;
 
 namespace TitanicHookManaged;

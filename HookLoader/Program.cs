@@ -8,7 +8,7 @@ using System.Linq;
 using System.Reflection;
 using TitanicHookManaged;
 using TitanicHookManaged.Helpers;
-using TitanicHookManaged.Hooks.Managed;
+using TitanicHookManaged.Hooks;
 using TitanicHookManaged.OsuInterop;
 
 namespace HookLoader;

@@ -7,11 +7,10 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
-using System.Windows.Forms;
 using Harmony;
 using TitanicHookManaged.Helpers;
 
-namespace TitanicHookManaged.Hooks.Managed;
+namespace TitanicHookManaged.Hooks;
 
 public class TcpClientHook
 {

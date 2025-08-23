@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 using Harmony;
 using TitanicHookManaged.Helpers;
 
-namespace TitanicHookManaged.Hooks.Managed;
+namespace TitanicHookManaged.Hooks;
 
 public static class StartProcessHook
 {

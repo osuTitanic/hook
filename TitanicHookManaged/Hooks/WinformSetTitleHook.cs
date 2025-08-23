@@ -7,7 +7,7 @@ using System.Windows.Forms;
 using Harmony;
 using TitanicHookManaged.Helpers;
 
-namespace TitanicHookManaged.Hooks.Managed;
+namespace TitanicHookManaged.Hooks;
 
 public static class WinformSetTitleHook
 {

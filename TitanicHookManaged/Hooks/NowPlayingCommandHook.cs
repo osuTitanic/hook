@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 using Harmony;
 using TitanicHookManaged.Helpers;
 
-namespace TitanicHookManaged.Hooks.Managed;
+namespace TitanicHookManaged.Hooks;
 
 /// <summary>
 /// Hook which will replace ppy.sh links to server link in /np command
