@@ -1,4 +1,7 @@
-﻿using System.Linq;
+﻿// SPDX-License-Identifier: GPL-3.0-or-later
+// SPDX-FileCopyrightText: 2025 Oreeeee
+
+using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using TitanicHookManaged.Helpers;

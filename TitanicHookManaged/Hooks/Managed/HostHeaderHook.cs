@@ -1,4 +1,7 @@
-﻿#if NET40
+﻿// SPDX-License-Identifier: GPL-3.0-or-later
+// SPDX-FileCopyrightText: 2025 Oreeeee
+
+#if NET40
 using System;
 using System.Linq;
 using System.Net;

@@ -26,3 +26,6 @@ The configuration file is pretty self-explanatory, and you probably don't need t
 
 ## Developing
 You can use your IDE's debugger to attach to osu!.exe process to get access to debugging features. TestInjector allows you to load Titanic Hook at runtime.
+
+## License
+This project is licensed under the GNU GPLv3 or later license. It would be greatly appreciated to change the Titanic! branding before redistribution.
