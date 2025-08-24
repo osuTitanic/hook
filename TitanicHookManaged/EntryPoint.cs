@@ -97,7 +97,7 @@ public static class EntryPoint
         Logging.Info("All hooked");
         Config.FirstRun = false;
         Config.SaveConfiguration(Config.Filename);
-        Notifications.ShowMessage($"Welcome to Titanic!\nPatch version: {Constants.PatchVersion}");
+        Notifications.ShowMessage($"Welcome to Titanic! (v{Constants.PatchVersion})");
     }
 
     public static Configuration? Config = null;
