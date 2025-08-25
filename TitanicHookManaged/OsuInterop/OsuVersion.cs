@@ -111,14 +111,14 @@ public static class OsuVersion
     /// <returns></returns>
     public static int GetVersionNumber()
     {
-        string fullVersion = GetVersion();
+        string? fullVersion = GetVersion();
         if (string.IsNullOrEmpty(fullVersion))
             return 0;
         
-        var match = Regex.Match(fullVersion, @"\b(?<version>\d+)");
+        var match = Regex.Match(fullVersion, @"b(\d{8})"); // This regex only supports 8-digit numbers, might be adjusted if old build numbers are ever needed 
         if (!match.Success) return 0;
         
-        string version = match.Groups["version"].Value;
+        string version = match.Groups[1].Value;
         return int.Parse(version);
     }
 }
