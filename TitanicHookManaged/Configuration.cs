@@ -16,7 +16,7 @@ public class Configuration
     public const int CurrentConfigVersion = 2;
     
     // Version of the config file
-    public int Version { get; set; } = 0;
+    public int Version { get; set; } = CurrentConfigVersion;
     
     // Alloc console for logs
     public bool EnableConsole { get; set; } = false;
