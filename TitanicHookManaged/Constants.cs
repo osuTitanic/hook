@@ -12,7 +12,7 @@ public static class Constants
     /// </summary>
     public const BindingFlags HookBindingFlags = BindingFlags.Static | BindingFlags.NonPublic;
 
-    public const string DefaultConfigName = "TitanicHook.cfg";
-    public const string LogFileName = "TitanicHook.log";
+    public const string DefaultConfigName = "Titanic!.cfg";
+    public const string LogFileName = "Titanic!.log";
     public const string PatchVersion = "0.2.0";
 }
