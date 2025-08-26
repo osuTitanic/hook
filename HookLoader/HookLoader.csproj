@@ -1,5 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
+        <AssemblyName>Titanic!</AssemblyName>
         <OutputType>WinExe</OutputType>
         <TargetFrameworks>net20;net40</TargetFrameworks>
         <ImplicitUsings>disable</ImplicitUsings>
@@ -11,12 +12,10 @@
     </PropertyGroup>
     
     <PropertyGroup Condition="'$(TargetFramework)' == 'net20'">
-        <AssemblyName>Titanic!net20</AssemblyName>
         <AssemblyDescription>Titanic! Loader (.NET Framework 2.0)</AssemblyDescription>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(TargetFramework)' == 'net40'">
-        <AssemblyName>Titanic!net40</AssemblyName>
         <AssemblyDescription>Titanic! Loader (.NET Framework 4)</AssemblyDescription>
     </PropertyGroup>
 
@@ -46,7 +45,7 @@
       <PackageReference Include="ILRepack" Version="2.1.0-beta1" />
     </ItemGroup>
     
-    <Target Name="ILRepack" AfterTargets="Build" Condition="'$(Configuration)' == 'Release' AND ('$(AssemblyName)' == 'Titanic!net20' OR '$(AssemblyName)' == 'Titanic!net40')">
+    <Target Name="ILRepack" AfterTargets="Build" Condition="'$(Configuration)' == 'Release' AND '$(AssemblyName)' == 'Titanic!'">
         <PropertyGroup>
             <OutputAssembly>$(OutputPath)$(AssemblyName).exe</OutputAssembly>
             <OutputMergedAssembly>$(OutputPath)$(AssemblyName)_merged.exe</OutputMergedAssembly>
