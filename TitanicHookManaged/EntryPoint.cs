@@ -84,6 +84,7 @@ public static class EntryPoint
         if (Config.HookTcpConnections) TcpClientHook.Initialize();
         DnsHostByNameHook.Initialize();
         StartProcessHook.Initialize();
+        BeatmapSubmissionLinksPatch.Initialize();
         
         if (Config.HookNetLibHeaders) AddHeaderFieldHook.Initialize();
         if (Config.HookNetLibEncoding) NetLibEncodingHook.Initialize();
