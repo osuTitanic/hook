@@ -53,7 +53,6 @@
         </PropertyGroup>
         
         <ItemGroup>
-            <ILRepackPackage Include="$(NuGetPackageRoot)\ilrepack\*\ilrepack.exe" />
             <AssembliesToMerge Include="$(OutputAssembly)" />
             <AssembliesToMerge Include="$(OutputPath)0Harmony.dll" />
             <AssembliesToMerge Include="$(OutputPath)ILReader.dll" />
@@ -61,6 +60,6 @@
             <AssembliesToMerge Include="$(OutputPath)LinqBridge.dll" Condition="'$(TargetFramework)' == 'net20'" />
         </ItemGroup>
         
-        <Exec Command="$(PkgILRepack)\tools\ilrepack.exe /target:winexe /parallel /out:$(OutputMergedAssembly) $(OutputAssembly) @(AssembliesToMerge,' ')" />
+        <Exec Command="$(PkgILRepack)\tools\ILRepack.exe /target:winexe /parallel /out:$(OutputMergedAssembly) $(OutputAssembly) @(AssembliesToMerge,' ')" />
     </Target>
 </Project>
