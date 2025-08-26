@@ -12,11 +12,11 @@
     </PropertyGroup>
     
     <PropertyGroup Condition="'$(TargetFramework)' == 'net20'">
-        <AssemblyDescription>Titanic! Loader (.NET Framework 2.0)</AssemblyDescription>
+        <AssemblyTitle>Titanic! Loader (.NET Framework 2.0)</AssemblyTitle>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(TargetFramework)' == 'net40'">
-        <AssemblyDescription>Titanic! Loader (.NET Framework 4)</AssemblyDescription>
+        <AssemblyTitle>Titanic! Loader (.NET Framework 4)</AssemblyTitle>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
