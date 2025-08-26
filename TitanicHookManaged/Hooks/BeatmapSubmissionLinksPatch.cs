@@ -56,11 +56,12 @@ public static class BeatmapSubmissionLinksPatch
         {
             var instruction = codes[i];
 
-            if (instruction.opcode == OpCodes.Ldstr && instruction.operand is string str && str.Contains("ppy.sh"))
+            if (instruction.opcode == OpCodes.Ldstr && instruction.operand is string str && (str.Contains("ppy.sh") || str.Contains("peppy.chigau.com")))
             {
                 // Unobfuscated string, can just easily replace the string
                 Logging.HookStep(HookName, $"Patching string {str}");
                 string newstr = str.Replace("ppy.sh", EntryPoint.Config.ServerName);
+                newstr = newstr.Replace("peppy.chigau.com", $"chigau.{EntryPoint.Config.ServerName}");
                 codes[i] = new CodeInstruction(OpCodes.Ldstr, newstr);
                 continue;
             }
@@ -78,11 +79,12 @@ public static class BeatmapSubmissionLinksPatch
                 if (deobfuscatedString == null)
                     continue;
                 
-                if (!deobfuscatedString.Contains("ppy.sh"))
+                if (!deobfuscatedString.Contains("ppy.sh") || !deobfuscatedString.Contains("peppy.chigau.com"))
                     continue;
                 
                 Logging.HookStep(HookName, $"Patching string {deobfuscatedString}");
                 string newstr = deobfuscatedString.Replace("ppy.sh", EntryPoint.Config.ServerName);
+                newstr = newstr.Replace("peppy.chigau.com", $"chigau.{EntryPoint.Config.ServerName}");
                 
                 codes[i] = new CodeInstruction(OpCodes.Ldstr, newstr); // Replace obfuscated string call with a normal ldstr
                 codes[i - 1] = new CodeInstruction(OpCodes.Nop); // Remove the argument load
