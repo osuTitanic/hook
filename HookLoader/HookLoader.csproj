@@ -46,7 +46,7 @@
       <PackageReference Include="ILRepack" Version="2.1.0-beta1" />
     </ItemGroup>
     
-    <Target Name="ILRepack" AfterTargets="Build" Condition="'$(Configuration)' == 'Release'">
+    <Target Name="ILRepack" AfterTargets="Build" Condition="'$(Configuration)' == 'Release' AND ('$(AssemblyName)' == 'Titanic!net20' OR '$(AssemblyName)' == 'Titanic!net40')">
         <PropertyGroup>
             <OutputAssembly>$(OutputPath)$(AssemblyName).exe</OutputAssembly>
             <OutputMergedAssembly>$(OutputPath)$(AssemblyName)_merged.exe</OutputMergedAssembly>
