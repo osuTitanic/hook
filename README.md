@@ -16,9 +16,10 @@ Titanic! Hook uses Harmony to alter the behavior of the client in order to redir
 ## Usage
 
 Throw in the release executable for the correct .NET Framework version to the osu! directory. A configuration file will be automatically created.
+The .NET Framework 4 loader executable should be compatible with osu! versions that use .NET Framework 2.0, however if you encounter any issues - try to use the .NET Framework 2.0 build and report an issue!
 
 > [!TIP]
-> osu! versions before 2015 require the .NET Framework 2.0 build. Cuttingedge since April 2015 and Stable since November 2015 require the .NET Framework 4 build. 
+> osu! versions before 2015 ran on .NET Framework 2.0. Cuttingedge since April 2015 and Stable since November 2015 use .NET Framework 4. 
 
 ### Configuration
 
@@ -31,7 +32,7 @@ The configuration file is pretty self-explanatory, and you most likely don't nee
 
 - Clone the repository including submodules
 - Build HookLoader in the Release configuration
-- In the build output directory you will get a `Titanic!netVERSION_merged.exe` that contains all dependencies built-in
+- In the build output directory you will get a `Titanic!_merged.exe` that contains all dependencies built-in
 
 ## Developing
 
