@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using TitanicHookManaged;
 using TitanicHookManaged.Helpers;
 using TitanicHookManaged.Hooks;
@@ -82,14 +84,25 @@ class Program
             return;
         }
         
-
+#if NET40
+        if (loaded.ImageRuntimeVersion == "v2.0.50727")
+        {
+            // CLR abuse to set v2 activation policy at runtime
+            // https://reedcopsey.com/2011/09/15/setting-uselegacyv2runtimeactivationpolicy-at-runtime/
+            ICLRRuntimeInfo clrRuntimeInfo =
+                (ICLRRuntimeInfo)RuntimeEnvironment.GetRuntimeInterfaceAsObject(
+                    Guid.Empty, 
+                    typeof(ICLRRuntimeInfo).GUID);
+            
+            clrRuntimeInfo.BindAsLegacyV2Runtime();
+        }
+#else
         if (loaded.ImageRuntimeVersion != Assembly.GetExecutingAssembly().ImageRuntimeVersion)
         {
-            Logging.LogAndShowError($".NET Framework runtime version mismatch!\n" +
-                                    $"This version of osu! requires .NET Framework {GetShortFrameworkVer(loaded.ImageRuntimeVersion)}, this executable of Titanic!Loader is .NET Framework {GetShortFrameworkVer(Assembly.GetExecutingAssembly().ImageRuntimeVersion)}\n" +
-                                    $"Get the correct version of Titanic!Loader for this version of osu!.");
+            ShowFrameworkMismatch(loaded.ImageRuntimeVersion, Assembly.GetExecutingAssembly().ImageRuntimeVersion);
             return;
         }
+#endif
         
         // Get entry point
         MethodInfo entry = loaded.EntryPoint;
@@ -123,6 +136,13 @@ class Program
         entry.Invoke(null, new object[] { });
     }
 
+    private static void ShowFrameworkMismatch(string osuVer, string hookVer)
+    {
+        Logging.LogAndShowError($".NET Framework runtime version mismatch!\n" +
+                                $"This version of osu! requires .NET Framework {GetShortFrameworkVer(osuVer)}, this executable of Titanic!Loader is .NET Framework {hookVer}\n" +
+                                $"Get the correct version of Titanic!Loader for this version of osu!.");
+    }
+
     /// <summary>
     /// Converts long framework version (e.g. v2.0.50727, v4.0.30319) to short (e.g. 2.0, 4.0)
     /// </summary>
@@ -148,4 +168,24 @@ class Program
     internal static string OsuPath = "";
     
     private static bool RunningOnMono => Type.GetType("Mono.Runtime") != null;
+    
+    [ComImport]
+    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    [Guid("BD39D1D2-BA2F-486A-89B0-B4B0CB466891")]
+    private interface ICLRRuntimeInfo
+    {
+        void xGetVersionString();
+        void xGetRuntimeDirectory();
+        void xIsLoaded();
+        void xIsLoadable();
+        void xLoadErrorString();
+        void xLoadLibrary();
+        void xGetProcAddress();
+        void xGetInterface();
+        void xSetDefaultStartupFlags();
+        void xGetDefaultStartupFlags();
+
+        [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        void BindAsLegacyV2Runtime();
+    }
 }
