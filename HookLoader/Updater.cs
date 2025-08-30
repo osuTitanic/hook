@@ -50,9 +50,11 @@ public static class Updater
         Environment.Exit(0);
     }
     
-    public static void DeleteTempFile()
+    public static bool DeleteTempFile()
     {
-        if (File.Exists($"{SelfFilename}.old"))
+        bool oldFileFound = File.Exists($"{SelfFilename}.old");
+        if (oldFileFound)
             File.Delete($"{SelfFilename}.old");
+        return oldFileFound;
     }
 }

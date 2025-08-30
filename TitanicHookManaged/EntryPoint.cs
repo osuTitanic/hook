@@ -29,7 +29,7 @@ public static class EntryPoint
     /// <summary>
     /// Start hooks
     /// </summary>
-    public static void InitializeHooks(Configuration? config = null, string osuPath = "")
+    public static void InitializeHooks(Configuration? config = null, string osuPath = "", bool autoUpdated = false)
     {
         AppDomain.CurrentDomain.UnhandledException += (sender, e) =>
         {
@@ -99,7 +99,10 @@ public static class EntryPoint
         Logging.Info("All hooked");
         Config.FirstRun = false;
         Config.SaveConfiguration(Config.Filename);
-        Notifications.ShowMessage($"Welcome to Titanic! (v{Constants.PatchVersion})");
+        string notifMessage = $"Welcome to Titanic! (v{Constants.PatchVersion})";
+        if (autoUpdated)
+            notifMessage += "\nUpdated successfully!";
+        Notifications.ShowMessage(notifMessage);
     }
 
     public static Configuration? Config = null;

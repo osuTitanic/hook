@@ -21,6 +21,7 @@ class Program
     private static Assembly? _originalEntryAssembly;
     
     public static Configuration Config;
+    public static bool AutoUpdated = false;
     
     /// <summary>
     /// Small program that will load osu!.exe into memory, execute hooks, and start osu!'s main function
@@ -31,7 +32,7 @@ class Program
     {
 #if !DEBUG
         // Update check
-        Updater.DeleteTempFile();
+        AutoUpdated = Updater.DeleteTempFile();
         Updater.CheckForUpdates();
 #endif
         

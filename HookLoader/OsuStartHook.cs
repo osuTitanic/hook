@@ -41,7 +41,7 @@ public static class OsuStartHook
     {
         // Load TitanicHook
         Logging.HookTrigger(HookName);
-        EntryPoint.InitializeHooks(Program.Config, Program.OsuPath);
+        EntryPoint.InitializeHooks(Program.Config, Program.OsuPath, Program.AutoUpdated);
     }
     
     #endregion
