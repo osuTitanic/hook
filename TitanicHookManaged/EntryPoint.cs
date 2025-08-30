@@ -85,6 +85,7 @@ public static class EntryPoint
         DnsHostByNameHook.Initialize();
         StartProcessHook.Initialize();
         BeatmapSubmissionLinksPatch.Initialize();
+        DisableRegistryPatch.Initialize();
         
         if (Config.HookNetLibHeaders) AddHeaderFieldHook.Initialize();
         if (Config.HookNetLibEncoding) NetLibEncodingHook.Initialize();
