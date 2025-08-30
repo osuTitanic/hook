@@ -23,6 +23,7 @@ class Program
     private static Assembly? _originalEntryAssembly;
     
     public static Configuration Config;
+    public static bool AutoUpdated = false;
     
     /// <summary>
     /// Small program that will load osu!.exe into memory, execute hooks, and start osu!'s main function
@@ -31,6 +32,12 @@ class Program
     [STAThread]
     static void Main(string[] args)
     {
+#if !DEBUG
+        // Update check
+        AutoUpdated = Updater.DeleteTempFile();
+        Updater.CheckForUpdates();
+#endif
+        
         if (File.Exists("osu!auth.dll") && new FileInfo("osu!auth.dll").Length > 0)
         {
             Logging.LogAndShowError("Non-empty osu!auth.dll detected, can't continue!");
