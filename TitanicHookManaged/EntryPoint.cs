@@ -91,7 +91,8 @@ public static class EntryPoint
         
 #if NET40
         
-        if (Config.HookModernHostMethod) HostHeaderHook.Initialize();
+        HostHeaderHook.Initialize();
+        CreateRequestHook.Initialize();
         if (Config.HookCheckCertificate) CheckCertificateHook.Initialize();
 #endif
         

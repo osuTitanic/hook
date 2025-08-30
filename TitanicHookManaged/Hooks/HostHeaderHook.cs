@@ -3,7 +3,6 @@
 
 #if NET40
 using System;
-using System.Linq;
 using System.Net;
 using System.Reflection;
 using Harmony;
@@ -13,7 +12,7 @@ namespace TitanicHookManaged.Hooks;
 
 /// <summary>
 /// Hook for Host header in clients using pWebRequest.
-/// pWebRequest uses HttpWebRequest.Host to set host
+/// This works by making a prefix in setter of HttpWebRequest.Host and changing the passed in domain.
 /// </summary>
 public static class HostHeaderHook
 {
@@ -24,23 +23,21 @@ public static class HostHeaderHook
         Logging.HookStart(HookName);
         var harmony = HarmonyInstance.Create(HookName);
         
-        MethodInfo? targetMethod = GetTargetMethod(AssemblyUtils.CommonOrOsuTypes);
+        MethodInfo? targetMethod = typeof(HttpWebRequest).GetMethod("set_Host", BindingFlags.Instance | BindingFlags.Public);
         if (targetMethod == null)
         {
-            Logging.HookError(HookName, "Target method not found", !EntryPoint.Config.FirstRun);
-            if (EntryPoint.Config.FirstRun)
-                EntryPoint.Config.HookModernHostMethod = false;
+            Logging.HookError(HookName, "Target method not found", false);
             return;
         }
         
-        Logging.HookStep(HookName,$"Resolved CreateWebRequest: {targetMethod.DeclaringType?.FullName}.{targetMethod.Name}");
+        Logging.HookStep(HookName,$"Resolved set_Host: {targetMethod.DeclaringType?.FullName}.{targetMethod.Name}");
         
-        var postfix = typeof(HostHeaderHook).GetMethod("CreateRequestPostfix", Constants.HookBindingFlags);
+        var prefix = typeof(HostHeaderHook).GetMethod("SetHostPrefix", Constants.HookBindingFlags);
 
         try
         {
             Logging.HookPatching(HookName);
-            harmony.Patch(targetMethod, null, new HarmonyMethod(postfix));
+            harmony.Patch(targetMethod, new HarmonyMethod(prefix));
         }
         catch (Exception e)
         {
@@ -52,36 +49,16 @@ public static class HostHeaderHook
     
     #region Hook
     
-    private static void CreateRequestPostfix(ref HttpWebRequest __result)
+    private static void SetHostPrefix(ref string __0)
     {
         Logging.HookTrigger(HookName);
-        if (__result.Host.Contains("ppy.sh"))
+        if (__0.Contains("ppy.sh"))
         {
-            Logging.HookOutput(HookName, $"Replacing ppy.sh domain with {EntryPoint.Config.ServerName} in CreateRequestPostfix");
-            __result.Host = __result.Host.Replace("ppy.sh", EntryPoint.Config.ServerName);
+            Logging.HookOutput(HookName, $"Replacing ppy.sh domain with {EntryPoint.Config.ServerName} in set_Host");
+            __0 = __0.Replace("ppy.sh", EntryPoint.Config.ServerName);
         }
     }
     
-    #endregion
-    
-    #region Find method
-
-    private static MethodInfo? GetTargetMethod(Type[] types)
-    {
-        // Protected virtual method with 0 args returning HttpWebRequest
-        MethodInfo? targetMethod = pWebRequestHelper.ReflectedType?
-            .GetMethods(BindingFlags.NonPublic | BindingFlags.Instance)
-            .FirstOrDefault(m => m.GetParameters().Length == 0 && m.ReturnType.FullName == "System.Net.HttpWebRequest");
-
-        if (targetMethod == null)
-        {
-            Logging.HookError(HookName, "Couldn't find CreateWebRequest");
-            return null;
-        }
-        
-        return targetMethod;
-    }
-
     #endregion
 }
 #endif // NET40
