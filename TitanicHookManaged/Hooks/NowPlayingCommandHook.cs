@@ -26,7 +26,7 @@ public static class NowPlayingCommandHook
         MethodInfo? targetMethod = GetTargetMethod();
         if (targetMethod == null)
         {
-            Logging.HookError(HookName, "Couldn't find target method");
+            Logging.HookError(HookName, "Couldn't find target method", false);
             return;
         }
         
