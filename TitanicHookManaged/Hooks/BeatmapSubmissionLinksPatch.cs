@@ -72,14 +72,13 @@ public static class BeatmapSubmissionLinksPatch
             {
                 // Here we have an obfuscated string - we need to find out if it contains "ppy.sh" by deobfuscating it
                 var stringIdInstr = codes[i - 1];
-                if (stringIdInstr.operand is not int stringId)
-                    continue;
+                int stringId = (int)stringIdInstr.operand;
 
                 string? deobfuscatedString = ObfHelper.DecString(stringId);
                 if (deobfuscatedString == null)
                     continue;
                 
-                if (!deobfuscatedString.Contains("ppy.sh") || !deobfuscatedString.Contains("peppy.chigau.com"))
+                if (!deobfuscatedString.Contains("ppy.sh") && !deobfuscatedString.Contains("peppy.chigau.com"))
                     continue;
                 
                 Logging.HookStep(HookName, $"Patching string {deobfuscatedString}");
