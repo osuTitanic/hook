@@ -14,6 +14,7 @@ public static class DisableRegistryPatch
     public static void Initialize()
     {
         Logging.HookStart(HookName);
+        var harmony = HarmonyInstance.Create(HookName);
 
         MethodInfo? targetMethod = AssemblyUtils.OsuTypes
             .Where(t => t is { IsClass: true, IsSealed: true, IsNested: false })
@@ -28,10 +29,12 @@ public static class DisableRegistryPatch
             return;
         }
 
+        var prefix = typeof(DisableRegistryPatch).GetMethod("StubMethod", Constants.HookBindingFlags);
+        
         try
         {
             Logging.HookPatching(HookName);
-            Memory.DetourMethod(targetMethod, typeof(DisableRegistryPatch).GetMethod("StubMethod", Constants.HookBindingFlags));
+            harmony.Patch(targetMethod, new HarmonyMethod(prefix));
         }
         catch (Exception e)
         {
@@ -41,5 +44,5 @@ public static class DisableRegistryPatch
         Logging.HookDone(HookName);
     }
     
-    private static void StubMethod() {}
+    private static bool StubMethod() => false;
 }
