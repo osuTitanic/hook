@@ -29,6 +29,12 @@ class Program
     [STAThread]
     static void Main(string[] args)
     {
+#if !DEBUG
+        // Update check
+        Updater.DeleteTempFile();
+        Updater.CheckForUpdates();
+#endif
+        
         if (File.Exists("osu!auth.dll") && new FileInfo("osu!auth.dll").Length > 0)
         {
             Logging.LogAndShowError("Non-empty osu!auth.dll detected, can't continue!");
