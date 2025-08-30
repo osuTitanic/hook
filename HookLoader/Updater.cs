@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Reflection;
+using System.Windows.Forms;
 using TitanicHookManaged;
 using TitanicHookManaged.Helpers;
 
@@ -37,7 +38,13 @@ public static class Updater
                 return;
             }
         }
-        if (data.Length == 0)
+        bool updateFound = data.Length > 0;
+        if (updateFound)
+        {
+            var result = MessageBox.Show("A new version of Titanic! is available! Update now?", "Titanic! Updater", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+            if (result == DialogResult.No) return;
+        }
+        else
         {
             Logging.Info("Up to date!");
             return;
