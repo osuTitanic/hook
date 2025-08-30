@@ -29,6 +29,12 @@ class Program
     [STAThread]
     static void Main(string[] args)
     {
+        if (File.Exists("osu!auth.dll") && new FileInfo("osu!auth.dll").Length > 0)
+        {
+            Logging.LogAndShowError("Non-empty osu!auth.dll detected, can't continue!");
+            return;
+        }
+        
         Config = new Configuration(Constants.DefaultConfigName);
 #if !DEBUG
         // Initialize console if not in debug
