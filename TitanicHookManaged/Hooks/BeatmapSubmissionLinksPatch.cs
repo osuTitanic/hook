@@ -20,7 +20,7 @@ public static class BeatmapSubmissionLinksPatch
         var harmony = HarmonyInstance.Create(HookName);
 
         MethodInfo? targetMethod = AssemblyUtils.OsuTypes
-            .Where(t => t is { IsClass: true, IsSealed: true, IsNested: false, IsNotPublic: true } && t.BaseType != typeof(object))
+            .Where(t => t is { IsClass: true, IsNested: false, IsNotPublic: true } && t.BaseType != typeof(object))
             .SelectMany(t => t.GetMethods(BindingFlags.Instance | BindingFlags.NonPublic))
             .FirstOrDefault(m => m.ReturnType.FullName == "System.Void" &&
                                  m.GetParameters().Length is 0 or 2 &&
