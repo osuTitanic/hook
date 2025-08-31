@@ -20,9 +20,12 @@ public static class BeatmapSubmissionLinksPatch
         var harmony = HarmonyInstance.Create(HookName);
 
         MethodInfo? targetMethod = AssemblyUtils.OsuTypes
+            .Where(t => t is { IsClass: true, IsNested: false, IsNotPublic: true } && t.BaseType != typeof(object))
             .SelectMany(t => t.GetMethods(BindingFlags.Instance | BindingFlags.NonPublic))
-            .FirstOrDefault(m => SigScanning.GetStrings(m)
-                .Any(s => s.Contains("This beatmap was submitted using in-game submission on"))
+            .FirstOrDefault(m => m.ReturnType.FullName == "System.Void" &&
+                                 m.GetParameters().Length is 0 or 2 &&
+                                 SigScanning.GetStrings(m)
+                                     .Any(s => s.Contains("This beatmap was submitted using in-game submission on"))
             );
 
         if (targetMethod == null)
