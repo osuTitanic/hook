@@ -42,23 +42,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="ILRepack" Version="2.1.0-beta1" />
+      <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.43" />
+      <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="All" />
     </ItemGroup>
-    
-    <Target Name="ILRepack" AfterTargets="Build" Condition="'$(Configuration)' == 'Release' AND '$(AssemblyName)' == 'Titanic!'">
-        <PropertyGroup>
-            <OutputAssembly>$(OutputPath)$(AssemblyName).exe</OutputAssembly>
-            <OutputMergedAssembly>$(OutputPath)$(AssemblyName)_merged.exe</OutputMergedAssembly>
-        </PropertyGroup>
-        
-        <ItemGroup>
-            <AssembliesToMerge Include="$(OutputAssembly)" />
-            <AssembliesToMerge Include="$(OutputPath)0Harmony.dll" />
-            <AssembliesToMerge Include="$(OutputPath)ILReader.dll" />
-            <AssembliesToMerge Include="$(OutputPath)TitanicHookManaged.dll" />
-            <AssembliesToMerge Include="$(OutputPath)LinqBridge.dll" Condition="'$(TargetFramework)' == 'net20'" />
-        </ItemGroup>
-        
-        <Exec Command="$(PkgILRepack)\tools\ILRepack.exe /target:winexe /parallel /out:$(OutputMergedAssembly) $(OutputAssembly) @(AssembliesToMerge,' ')" />
-    </Target>
 </Project>
