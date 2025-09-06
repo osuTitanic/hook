@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <SignAssemblyAfterBuild>false</SignAssemblyAfterBuild>
+    <CertificateName>Open Source Developer</CertificateName>
+    <TimeServerUrl>http://time.certum.pl</TimeServerUrl>
+    <OutputAssembly>$(OutputPath)$(AssemblyName).exe</OutputAssembly>
+    <OutputMergedAssembly>$(OutputPath)$(AssemblyName)_merged.exe</OutputMergedAssembly>
+  </PropertyGroup>
+
+  <Target Name="SignMergedAssembly" AfterTargets="ILRepacker" Condition="'$(SignAssemblyAfterBuild)' == 'true' AND '$(Configuration)' == 'Release'">
+    <Message Text="Signing assemblies with certificate '$(CertificateName)'" Importance="high" />
+    <Exec Command='signtool sign /n "$(CertificateName)" /t $(TimeServerUrl) /fd sha1 /v "$(OutputMergedAssembly)"' />
+  </Target>
+</Project>
