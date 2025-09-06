@@ -11,6 +11,7 @@
 
   <Target Name="SignMergedAssembly" AfterTargets="ILRepacker" Condition="'$(SignAssemblyAfterBuild)' == 'true' AND '$(Configuration)' == 'Release'">
     <Message Text="Signing assemblies with certificate '$(CertificateName)'" Importance="high" />
-    <Exec Command='$(SignToolPath) sign /n "$(CertificateName)" /t $(TimeServerUrl) /fd sha1 /v "$(OutputMergedAssembly)"' />
+    <Exec Command='$(SignToolPath) sign /n "$(CertificateName)" /t $(TimeServerUrl) /fd sha1 /v "$(OutputMergedAssembly)"' 
+          Condition="'$(OS)' == 'Windows_NT' and Exists('$(SignToolPath)')" />
   </Target>
 </Project>
