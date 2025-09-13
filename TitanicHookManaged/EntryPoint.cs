@@ -97,6 +97,8 @@ public static class EntryPoint
         if (Config.HookCheckCertificate) CheckCertificateHook.Initialize();
 #endif
         
+        BenchmarkSubmitPatch.Initialize();
+        
         Logging.Info("All hooked");
         Config.FirstRun = false;
         Config.SaveConfiguration(Config.Filename);
