@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 
 namespace TitanicHookManaged.OsuInterop;
 
-public static class OsuVersion
+public static partial class OsuVersion
 {
     /// <summary>
     /// 2015 signature for deobfuscated builds
@@ -98,12 +98,31 @@ public static class OsuVersion
                                  _getVersionSignatureOldOldObf
                              ])
         );
-    
+
+    private static string? _osuVersionCache = null;
+
     /// <summary>
     /// Gets full name of the build (e.g. b20150101cuttingedge)
     /// </summary>
     /// <returns></returns>
-    public static string? GetVersion() => _getVersionRef?.Invoke(null, null) as string;
+    public static string? GetVersion()
+    {
+        if (_osuVersionCache == "")
+            return null;
+        
+        if (_osuVersionCache != null)
+            return _osuVersionCache;
+
+        if (_getVersionRef != null)
+        {
+            _osuVersionCache = _getVersionRef.Invoke(null, null) as string;
+        }
+        else
+        {
+            _osuVersionCache = GetOsuVersionFromBancho();
+        }
+        return _osuVersionCache;
+    }
 
     /// <summary>
     /// Gets version number (e.g. 20150101) from long one (e.g. b20150101cuttingedge)
