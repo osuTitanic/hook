@@ -15,30 +15,27 @@ namespace TitanicHookManaged.OsuInterop;
 public partial class OsuVersion
 {
     /// <summary>
-    /// Reference to BanchoClient Connect
-    /// </summary>
-    private static MethodInfo? _banchoConnect = AssemblyUtils.OsuTypes
-        .FirstOrDefault(t => t.IsClass &&
-                             t.IsNotPublic &&
-                             t.IsSealed &&
-                             t.IsAbstract &&
-                             (t.BaseType == typeof(object) || t.BaseType == null) &&
-                             t.GetFields(BindingFlags.Static | BindingFlags.NonPublic)
-                                 .Any(f => f.FieldType == typeof(TcpClient)))
-        .GetMethods(BindingFlags.Static | BindingFlags.NonPublic)
-        .FirstOrDefault(m => m.GetParameters().Length == 0 &&
-                             m.ReturnType.FullName == "System.Void" &&
-                             (SigScanning.GetStrings(m).Any(s => s.StartsWith("{0}|{1}|{2}|{3}")) || SigScanning.GetStrings(m).Contains("Connecting to Bancho...")));
-
-    /// <summary>
     /// Looks for osu! version by BanchoClient Connect IL instructions
     /// </summary>
     private static string? GetOsuVersionFromBancho()
     {
-        if (_banchoConnect == null)
+        MethodInfo? banchoConnect = AssemblyUtils.OsuTypes
+            .FirstOrDefault(t => t.IsClass &&
+                                 t.IsNotPublic &&
+                                 t.IsSealed &&
+                                 t.IsAbstract &&
+                                 (t.BaseType == typeof(object) || t.BaseType == null) &&
+                                 t.GetFields(BindingFlags.Static | BindingFlags.NonPublic)
+                                     .Any(f => f.FieldType == typeof(TcpClient)))
+            .GetMethods(BindingFlags.Static | BindingFlags.NonPublic)
+            .FirstOrDefault(m => m.GetParameters().Length == 0 &&
+                                 m.ReturnType.FullName == "System.Void" &&
+                                 (SigScanning.GetStrings(m).Any(s => s.StartsWith("{0}|{1}|{2}|{3}")) || SigScanning.GetStrings(m).Contains("Connecting to Bancho...")));
+        
+        if (banchoConnect == null)
             return null;
         
-        var reader = new ILReader(_banchoConnect);
+        var reader = new ILReader(banchoConnect);
         ILInstruction[] instructions = reader.ToArray();
         bool nextStringRefIsOsuVersion = false;
         for (int i = 0; i < instructions.Length; i++)
