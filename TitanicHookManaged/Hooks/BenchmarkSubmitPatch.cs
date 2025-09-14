@@ -245,6 +245,14 @@ public static class BenchmarkSubmitPatch
             Logging.Info($"Motherboard: {hw.motherboard}");
         }
         
+        // Do some pre-submit checks
+        string osuVersion = OsuVersion.GetVersion();
+        if (string.IsNullOrEmpty(osuVersion))
+        {
+            Notifications.ShowMessage("Couldn't get the osu! version. This score won't get submitted");
+            return;
+        }
+        
         // Submit the score
         string hardwareInfo = submitFullHardware
             ? $"{{\"renderer\":\"{hw.renderer}\", \"cpu\":\"{hw.cpu}\", \"cores\":{hw.cores}, \"threads\":{hw.threads}, " +
