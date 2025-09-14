@@ -63,12 +63,24 @@ public static class BenchmarkSubmitPatch
             CodeInstruction instr = input[i];
             
             output.Add(instr);
-            if (instr.opcode == OpCodes.Ldstr && instr.operand is string str && str == "\nRaw Score: ")
+            
+            // Deobfuscate string if obfuscated
+            string? deobfuscatedString = "";
+            if (ObfHelper.HasStringDecrypt && instr.opcode == OpCodes.Call && instr.operand is MethodInfo methodInfo &&
+                methodInfo.MetadataToken == ObfHelper.StringObfToken)
+            {
+                var stringIdInstr = input[i - 1];
+                int stringId = (int)stringIdInstr.operand;
+
+                deobfuscatedString = ObfHelper.DecString(stringId);
+            }
+            
+            if (instr.opcode == OpCodes.Ldstr && instr.operand is string str && str == "\nRaw Score: " || deobfuscatedString == "\nRaw Score: ")
             {
                 insertBenchmarkCallbackAfterCallvirt = true;
             }
             
-            if (instr.opcode == OpCodes.Ldstr && instr.operand is string str2 && str2 == "\n\nOverall Smoothness: ")
+            if (instr.opcode == OpCodes.Ldstr && instr.operand is string str2 && str2 == "\n\nOverall Smoothness: " || deobfuscatedString == "\n\nOverall Smoothness: ")
             {
                 // Get the opcodes for locals required to calculate the smoothness
                 smoothnessOpCodes.Add(input[i + 1].opcode);
