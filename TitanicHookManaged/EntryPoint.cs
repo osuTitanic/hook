@@ -104,6 +104,7 @@ public static class EntryPoint
         if (autoUpdated)
             notifMessage += "\nUpdated successfully!";
         Notifications.ShowMessage(notifMessage);
+        Logging.Info($"chuj {OsuModes.TryGetMode("Rank")}");
     }
 
     public static Configuration? Config = null;

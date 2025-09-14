@@ -1,0 +1,43 @@
+﻿// SPDX-License-Identifier: GPL-3.0-or-later
+// SPDX-FileCopyrightText: 2025 Oreeeee
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using TitanicHookManaged.Helpers;
+
+namespace TitanicHookManaged.OsuInterop;
+
+public static class OsuModes
+{
+    /// <summary>
+    /// Reference to OsuModes enum.
+    /// It's accessible in unobfuscated form so we can reflect it by name
+    /// </summary>
+    static Type? _osuModeEnum = AssemblyUtils.OsuTypes
+        .FirstOrDefault(t => t.IsEnum && t.IsPublic && t.Name == "OsuModes");
+    
+    private static Dictionary<string, int> osuModesEnumDict = new();
+    
+    static OsuModes()
+    {
+        foreach (var field in _osuModeEnum?.GetFields(BindingFlags.Public | BindingFlags.Static))
+        {
+            string name = field.Name;
+            object rawValue = field.GetValue(null);
+            object underlyingValue = Convert.ChangeType(rawValue, Enum.GetUnderlyingType(_osuModeEnum));
+            int intValue = Convert.ToInt32(underlyingValue);
+            osuModesEnumDict.Add(name, intValue);
+        }
+    }
+
+    public static int? TryGetMode(string key)
+    {
+        if (osuModesEnumDict.TryGetValue(key, out int mode))
+        {
+            return mode;
+        }
+        return null;
+    }
+}
