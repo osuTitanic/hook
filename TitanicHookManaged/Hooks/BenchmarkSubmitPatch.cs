@@ -253,6 +253,12 @@ public static class BenchmarkSubmitPatch
             return;
         }
         
+#if NET20
+        osuVersion += " (.NET 2.0)";
+#elif NET40
+        osuVersion += " (.NET 4.0)";
+#endif
+        
         // Submit the score
         string hardwareInfo = submitFullHardware
             ? $"{{\"renderer\":\"{hw.renderer}\", \"cpu\":\"{hw.cpu}\", \"cores\":{hw.cores}, \"threads\":{hw.threads}, " +
@@ -268,7 +274,7 @@ public static class BenchmarkSubmitPatch
             {"s", smoothness.ToString()},
             {"f", idleFramerate.ToString()},
             {"r", rawScore.ToString()},
-            {"c", OsuVersion.GetVersion()},
+            {"c", osuVersion},
             {"h", hardwareInfo},
         };
         using (var wc = new WebClient())
