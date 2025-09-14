@@ -56,6 +56,7 @@ public static class BenchmarkSubmitPatch
     {
         CodeInstruction[] input = instructions.ToArray();
         List<CodeInstruction> output = new ();
+        List<OpCode> smoothnessOpCodes = new ();
         bool insertBenchmarkCallbackAfterCallvirt = false;
         for (int i = 0; i < input.Length; i++)
         {
@@ -66,6 +67,13 @@ public static class BenchmarkSubmitPatch
             {
                 insertBenchmarkCallbackAfterCallvirt = true;
             }
+            
+            if (instr.opcode == OpCodes.Ldstr && instr.operand is string str2 && str2 == "\n\nOverall Smoothness: ")
+            {
+                // Get the opcodes for locals required to calculate the smoothness
+                smoothnessOpCodes.Add(input[i + 1].opcode);
+                smoothnessOpCodes.Add(input[i + 2].opcode);
+            }
 
             if (instr.opcode == OpCodes.Callvirt && insertBenchmarkCallbackAfterCallvirt)
             {
@@ -74,6 +82,9 @@ public static class BenchmarkSubmitPatch
                 MethodInfo a = AccessTools.Method(typeof(BenchmarkSubmitPatch), nameof(BenchmarkCallback));
                 Logging.HookStep(HookName, $"a={a.Name}");
                 output.Add(new CodeInstruction(OpCodes.Ldarg_0)); // Load the class instance
+                output.Add(new CodeInstruction(smoothnessOpCodes[0])); // Load cumulative score
+                output.Add(new CodeInstruction(smoothnessOpCodes[1])); // Load testRun
+                output.Add(new CodeInstruction(OpCodes.Div)); // Divide these to an int32
                 output.Add(new CodeInstruction(OpCodes.Call, a)); // Call the callback
             }
         }
@@ -81,7 +92,7 @@ public static class BenchmarkSubmitPatch
         return output.AsEnumerable();
     }
 
-    private static void BenchmarkCallback(object benchmark)
+    private static void BenchmarkCallback(object benchmark, int smoothness)
     {
         Logging.Info($"Called benchmark callback with object of type {benchmark.GetType().FullName}");
         
@@ -122,5 +133,6 @@ public static class BenchmarkSubmitPatch
         {
             Logging.Info($"{kv.Key}: {kv.Value}");
         }
+        Logging.Info($"Overall Smoothness: {smoothness}");
     }
 }
