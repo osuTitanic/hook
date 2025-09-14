@@ -146,5 +146,15 @@ public static class BenchmarkSubmitPatch
             Logging.Info($"{kv.Key}: {kv.Value}");
         }
         Logging.Info($"Overall Smoothness: {smoothness}");
+
+        int rawScore = 0;
+        foreach (var value in scores.Values)
+        {
+            rawScore += value;
+        }
+        int idleFramerate = scores["IdleFramerate"] / 6; // why specifically 6?
+
+        Logging.Info($"Raw Score: {rawScore}");
+        Logging.Info($"Idle framerate (divided): {idleFramerate}");
     }
 }
