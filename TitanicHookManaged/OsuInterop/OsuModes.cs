@@ -45,10 +45,21 @@ public static class OsuModes
         }
         return null;
     }
-    
+
     /// <summary>
     /// Tries to change the gamemode
     /// </summary>
-    /// <param name="mode">Mode ID</param>
-    public static void ChangeMode(int mode) => _changeModeMethod?.Invoke(null, new object[] { mode, true });
+    /// <param name="modeName">Mode name</param>
+    public static void ChangeMode(string modeName)
+    {
+        int? mode = TryGetMode(modeName);
+        if (mode == null)
+        {
+            Logging.Info($"Couldn't find ID for mode {modeName}");
+            return;
+        }
+        
+        Logging.Info($"Switching mode to {modeName} (ID: {mode})");
+        _changeModeMethod?.Invoke(null, [mode, true]);
+    }
 }
