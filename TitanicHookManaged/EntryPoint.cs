@@ -105,6 +105,9 @@ public static class EntryPoint
             notifMessage += "\nUpdated successfully!";
         Notifications.ShowMessage(notifMessage);
         Logging.Info($"chuj {OsuModes.TryGetMode("Rank")}");
+        int? benchmarkMode = OsuModes.TryGetMode("Benchmark");
+        if (benchmarkMode != null)
+            OsuModes.ChangeMode(benchmarkMode.Value);
     }
 
     public static Configuration? Config = null;

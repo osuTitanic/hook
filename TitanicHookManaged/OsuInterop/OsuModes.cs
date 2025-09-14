@@ -17,6 +17,11 @@ public static class OsuModes
     /// </summary>
     static Type? _osuModeEnum = AssemblyUtils.OsuTypes
         .FirstOrDefault(t => t.IsEnum && t.IsPublic && t.Name == "OsuModes");
+
+    private static MethodInfo? _changeModeMethod = AssemblyUtils.OsuTypes
+        .Where(t => t is { IsClass: true, IsNested: false })
+        .SelectMany(t => t.GetMethods(BindingFlags.Static | BindingFlags.NonPublic))
+        .FirstOrDefault(m => m.ReturnType.FullName == "System.Void" && m.GetParameters().Length == 2 && m.GetParameters()[0].ParameterType.Name == "OsuModes" && m.GetParameters()[1].ParameterType.FullName == "System.Boolean");
     
     private static Dictionary<string, int> osuModesEnumDict = new();
     
@@ -40,4 +45,10 @@ public static class OsuModes
         }
         return null;
     }
+    
+    /// <summary>
+    /// Tries to change the gamemode
+    /// </summary>
+    /// <param name="mode">Mode ID</param>
+    public static void ChangeMode(int mode) => _changeModeMethod?.Invoke(null, new object[] { mode, true });
 }
