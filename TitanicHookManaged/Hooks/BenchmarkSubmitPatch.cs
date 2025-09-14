@@ -182,10 +182,11 @@ public static class BenchmarkSubmitPatch
             $"{{\"renderer\":\"{hw.renderer}\", \"cpu\":\"{hw.cpu}\", \"cores\":{hw.cores}, \"threads\":{hw.threads}, " +
             $"\"gpu\":\"{hw.gpu}\", \"ram\":{hw.ram}, \"os\":\"{hw.osInfo} ({hw.osArchitecture})\", " +
             $"\"motherboard_manufacturer\":\"{hw.motherboardManufacturer}\", \"motherboard\":\"{hw.motherboard}\"}}";
+        ConfigReader osuCfg = new ();
         NameValueCollection scoreData = new()
         {
-            {"u", "foo"},
-            {"p", "bar"},
+            {"u", osuCfg.TryGetValue("Username")},
+            {"p", osuCfg.TryGetValue("Password")},
             {"s", smoothness.ToString()},
             {"f", idleFramerate.ToString()},
             {"r", rawScore.ToString()},

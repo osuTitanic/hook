@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Management;
 using System.Windows.Forms;
 using Microsoft.Win32;
+using TitanicHookManaged.OsuInterop;
 
 namespace TitanicHookManaged.Helpers.Benchmark;
 
@@ -24,7 +25,8 @@ public static class HardwareDetection
     {
         var hw = new Hardware();
         
-        string rendererInput = "d3d"; // TODO: Get this from config
+        ConfigReader osuCfg = new ();
+        string rendererInput = osuCfg.TryGetValue("Renderer"); // TODO: Get this from config
 
         if (rendererInput == "opengl")
             hw.renderer = "OpenGL";
