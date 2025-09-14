@@ -30,27 +30,51 @@ public static class BenchmarkSubmitPatch
         
         var harmony = HarmonyInstance.Create(HookName);
 
-        MethodInfo? targetMethod = AssemblyUtils.OsuTypes
-            .Where(t => t.FullName == "osu.GameModes.Options.Benchmark") // TODO: Newer builds obfuscate this symbol name
-            .SelectMany(t => t.GetMethods(BindingFlags.Instance | BindingFlags.NonPublic))
+        Type? benchmarkType = AssemblyUtils.OsuTypes
+            .FirstOrDefault(t => t.FullName == "osu.GameModes.Options.Benchmark"); // TODO: Newer builds obfuscate this symbol name
+
+        if (benchmarkType == null)
+        {
+            Logging.HookError(HookName, "Failed to find benchmark type");
+            return;
+        }
+
+        MethodInfo? benchmarkStageMethod = benchmarkType
+            .GetMethods(BindingFlags.Instance | BindingFlags.NonPublic)
             .FirstOrDefault(m => m.ReturnType.FullName == "System.Void" &&
                                  m.GetParameters().Length == 0 &&
                                  SigScanning.GetStrings(m)
                                      .Any(s => s.Contains("Running stage {0} of {1}\n{2}"))
             );
-
-        if (targetMethod == null)
+        
+        if (benchmarkStageMethod == null)
         {
-            Logging.HookError(HookName, "Failed to find benchmark");
+            Logging.HookError(HookName, "Failed to find benchmark stage method");
+            return;
+        }
+        
+        MethodInfo? benchmarkInitializeMethod = benchmarkType
+            .GetMethods(BindingFlags.Instance | BindingFlags.Public)
+            .FirstOrDefault(m => m.ReturnType.FullName == "System.Void" &&
+                                 m.GetParameters().Length == 0 &&
+                                 SigScanning.GetStrings(m)
+                                     .Any(s => s.Contains("Please click to start the benchmark.\nWhile running do not move your mouse or switch windows."))
+            );
+        
+        if (benchmarkInitializeMethod == null)
+        {
+            Logging.HookError(HookName, "Failed to find benchmark initialize");
             return;
         }
 
+        var prefix = typeof(BenchmarkSubmitPatch).GetMethod("BenchmarkInitializePrefix", Constants.HookBindingFlags);
         var transpiler = typeof(BenchmarkSubmitPatch).GetMethod("BenchmarkTranspiler", Constants.HookBindingFlags);
 
         try
         {
             Logging.HookPatching(HookName);
-            harmony.Patch(targetMethod, transpiler: new HarmonyMethod(transpiler));
+            harmony.Patch(benchmarkInitializeMethod, prefix: new HarmonyMethod(prefix));
+            harmony.Patch(benchmarkStageMethod, transpiler: new HarmonyMethod(transpiler));
         }
         catch (Exception e)
         {
@@ -58,6 +82,46 @@ public static class BenchmarkSubmitPatch
         }
         
         Logging.HookDone(HookName);
+    }
+
+    private static void BenchmarkInitializePrefix()
+    {
+        Logging.HookTrigger(HookName);
+        
+        // Try to see if we can get user credentials from the config
+        ConfigReader osuCfg = new ();
+        string username = osuCfg.TryGetValue("Username");
+        string password = osuCfg.TryGetValue("Password");
+        if (username == "" || password == "")
+        {
+            Notifications.ShowMessage("Couldn't get username and password. Make sure you log in with \"Save password\" option checked and restart the game. This benchmark score won't get submitted");
+            return;
+        }
+
+        if (EntryPoint.Config?.BenchmarkConsent == BenchmarkDataConsent.NotAsked)
+        {
+            // Ask user if we can submit benchmark hardware details
+            string messageBody =
+                "Are you okay with submitting your hardware info for the benchmark test? This is NOT required and it is up to you if you want to enable this.\nThis is the information it will send:\n" +
+                "- Renderer you selected in osu! (OpenGL or DirectX)\n" +
+                "- CPU, Number of CPU Cores, Number of Logical Processors (threads)\n" +
+                "- Your GPU name\n" +
+                "- Your total RAM\n" +
+                "- Your Operating System name\n" +
+                "- Your OS Architecture (64-bit or 32-bit)\n" +
+                "- Motherboard Manufacturer, Motherboard";
+            DialogResult res = MessageBox.Show(messageBody, "", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            
+            if (res == DialogResult.Yes)
+                EntryPoint.Config.BenchmarkConsent = BenchmarkDataConsent.Allowed;
+            else if (res == DialogResult.No)
+                EntryPoint.Config.BenchmarkConsent = BenchmarkDataConsent.NotAllowed;
+            
+            EntryPoint.Config.SaveConfiguration(EntryPoint.Config.Filename);
+        }
+        
+        Notifications.ShowMessage($"Hardware details will{(EntryPoint.Config.BenchmarkConsent == BenchmarkDataConsent.Allowed ? "" : " NOT")} be submitted");
+        Notifications.ShowMessage("Make sure your FPS limiter is set to Unlimited to get better score!");
     }
 
     private static IEnumerable<CodeInstruction> BenchmarkTranspiler(IEnumerable<CodeInstruction> instructions)
@@ -165,23 +229,29 @@ public static class BenchmarkSubmitPatch
         Logging.Info($"Raw Score: {rawScore}");
         Logging.Info($"Idle framerate (divided): {idleFramerate}");
 
-        Hardware hw = HardwareDetection.GetHardwareInfo(true);
+        bool submitFullHardware = EntryPoint.Config?.BenchmarkConsent == BenchmarkDataConsent.Allowed;
+        Hardware hw = HardwareDetection.GetHardwareInfo(submitFullHardware);
         Logging.Info($"Renderer: {hw.renderer}");
-        Logging.Info($"CPU: {hw.cpu}");
-        Logging.Info($"Cores: {hw.cores}");
-        Logging.Info($"Threads: {hw.threads}");
-        Logging.Info($"GPU: {hw.gpu}");
-        Logging.Info($"RAM: {hw.ram}");
-        Logging.Info($"OS: {hw.osInfo}");
-        Logging.Info($"OS Architecture: {hw.osArchitecture}");
-        Logging.Info($"Motherboard manufacturer: {hw.motherboardManufacturer}");
-        Logging.Info($"Motherboard: {hw.motherboard}");
+        if (submitFullHardware)
+        {
+            Logging.Info($"CPU: {hw.cpu}");
+            Logging.Info($"Cores: {hw.cores}");
+            Logging.Info($"Threads: {hw.threads}");
+            Logging.Info($"GPU: {hw.gpu}");
+            Logging.Info($"RAM: {hw.ram}");
+            Logging.Info($"OS: {hw.osInfo}");
+            Logging.Info($"OS Architecture: {hw.osArchitecture}");
+            Logging.Info($"Motherboard manufacturer: {hw.motherboardManufacturer}");
+            Logging.Info($"Motherboard: {hw.motherboard}");
+        }
         
         // Submit the score
-        string hardwareInfo =
-            $"{{\"renderer\":\"{hw.renderer}\", \"cpu\":\"{hw.cpu}\", \"cores\":{hw.cores}, \"threads\":{hw.threads}, " +
-            $"\"gpu\":\"{hw.gpu}\", \"ram\":{hw.ram}, \"os\":\"{hw.osInfo} ({hw.osArchitecture})\", " +
-            $"\"motherboard_manufacturer\":\"{hw.motherboardManufacturer}\", \"motherboard\":\"{hw.motherboard}\"}}";
+        string hardwareInfo = submitFullHardware
+            ? $"{{\"renderer\":\"{hw.renderer}\", \"cpu\":\"{hw.cpu}\", \"cores\":{hw.cores}, \"threads\":{hw.threads}, " +
+              $"\"gpu\":\"{hw.gpu}\", \"ram\":{hw.ram}, \"os\":\"{hw.osInfo} ({hw.osArchitecture})\", " +
+              $"\"motherboard_manufacturer\":\"{hw.motherboardManufacturer}\", \"motherboard\":\"{hw.motherboard}\"}}" 
+            : $"{{\"renderer\":\"{hw.renderer}\"}}";
+        
         ConfigReader osuCfg = new ();
         NameValueCollection scoreData = new()
         {
@@ -208,19 +278,25 @@ public static class BenchmarkSubmitPatch
             }
             Notifications.ShowMessage("Successfully submitted benchmark score");
         }
-        string message = $"Benchmark Results:\n" +
-                         $"Raw score: {rawScore}\n" +
-                         $"Framerate: {idleFramerate}fps\n" +
-                         $"Smoothness: {smoothness}%\n\n" +
-                         $"Renderer: {hw.renderer}\n" +
-                         $"CPU: {hw.cpu}\n" +
-                         $"Number of Cores: {hw.cores}\n" +
-                         $"Logical Processors (Threads): {hw.threads}\n" +
-                         $"Graphics Card: {hw.gpu}\n" +
-                         $"Total Ram: {hw.ram} GB\n" +
-                         $"Operating System: {hw.osInfo} ({hw.osArchitecture})\n" +
-                         $"Motherboard Manufacturer: {hw.motherboardManufacturer}\n" +
-                         $"Motherboard: {hw.motherboard}";
+        string message = !submitFullHardware 
+            ? $"Benchmark Results:\n" +
+           $"Raw score: {rawScore}\n" +
+           $"Framerate: {idleFramerate}fps\n" +
+           $"Smoothness: {smoothness}%\n\n" +
+           $"Renderer: {hw.renderer}\n"
+           : $"Benchmark Results:\n" +
+             $"Raw score: {rawScore}\n" +
+             $"Framerate: {idleFramerate}fps\n" +
+             $"Smoothness: {smoothness}%\n\n" +
+             $"Renderer: {hw.renderer}\n" +
+             $"CPU: {hw.cpu}\n" +
+             $"Number of Cores: {hw.cores}\n" +
+             $"Logical Processors (Threads): {hw.threads}\n" +
+             $"Graphics Card: {hw.gpu}\n" +
+             $"Total Ram: {hw.ram} GB\n" +
+             $"Operating System: {hw.osInfo} ({hw.osArchitecture})\n" +
+             $"Motherboard Manufacturer: {hw.motherboardManufacturer}\n" +
+             $"Motherboard: {hw.motherboard}";
         MessageBox.Show(message);
         return;
     }

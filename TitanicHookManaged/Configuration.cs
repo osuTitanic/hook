@@ -3,6 +3,7 @@
  
 using System;
 using System.IO;
+using TitanicHookManaged.Helpers.Benchmark;
 
 namespace TitanicHookManaged;
 
@@ -64,6 +65,11 @@ public class Configuration
     public string ClientSha256 { get; set; } = "";
     
     public bool RemoveScoreFetchingDelay { get; set; } = true;
+    
+    /// <summary>
+    /// Whether we can submit user's hardware data to benchmark submission
+    /// </summary>
+    public BenchmarkDataConsent BenchmarkConsent { get; set; } = BenchmarkDataConsent.NotAsked;
     
     /// <summary>
     /// Whether it's the first config creation.
@@ -141,6 +147,9 @@ public class Configuration
                 case "RemoveScoreFetchingDelay":
                     RemoveScoreFetchingDelay = bool.Parse(splitLine[1]);
                     break;
+                case "BenchmarkConsent":
+                    BenchmarkConsent = (BenchmarkDataConsent)int.Parse(splitLine[1]);
+                    break;
             }
         }
     }
@@ -169,6 +178,7 @@ public class Configuration
         sw.WriteLine($"AllowMono={AllowMono}");
         sw.WriteLine($"ClientSha256={ClientSha256}");
         sw.WriteLine($"RemoveScoreFetchingDelay={RemoveScoreFetchingDelay}");
+        sw.WriteLine($"BenchmarkConsent={(int)BenchmarkConsent}");
     }
 
     /// <summary>
