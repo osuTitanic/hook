@@ -1,12 +1,19 @@
-﻿using System;
+﻿// SPDX-License-Identifier: GPL-3.0-or-later
+// SPDX-FileCopyrightText: 2025 Oreeeee
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Windows.Forms;
 using Harmony;
 using TitanicHookManaged.Helpers;
 using TitanicHookManaged.Helpers.Benchmark;
+using TitanicHookManaged.OsuInterop;
 
 namespace TitanicHookManaged.Hooks;
 
@@ -169,5 +176,51 @@ public static class BenchmarkSubmitPatch
         Logging.Info($"OS Architecture: {hw.osArchitecture}");
         Logging.Info($"Motherboard manufacturer: {hw.motherboardManufacturer}");
         Logging.Info($"Motherboard: {hw.motherboard}");
+        
+        // Submit the score
+        string hardwareInfo =
+            $"{{\"renderer\":\"{hw.renderer}\", \"cpu\":\"{hw.cpu}\", \"cores\":{hw.cores}, \"threads\":{hw.threads}, " +
+            $"\"gpu\":\"{hw.gpu}\", \"ram\":{hw.ram}, \"os\":\"{hw.osInfo} ({hw.osArchitecture})\", " +
+            $"\"motherboard_manufacturer\":\"{hw.motherboardManufacturer}\", \"motherboard\":\"{hw.motherboard}\"}}";
+        NameValueCollection scoreData = new()
+        {
+            {"u", "foo"},
+            {"p", "bar"},
+            {"s", smoothness.ToString()},
+            {"f", idleFramerate.ToString()},
+            {"r", rawScore.ToString()},
+            {"c", OsuVersion.GetVersion()},
+            {"h", hardwareInfo},
+        };
+        using (var wc = new WebClient())
+        {
+            byte[] result;
+            try
+            {
+                result = wc.UploadValues($"http://osu.{EntryPoint.Config?.ServerName}/web/osu-benchmark.php",
+                    scoreData);
+            }
+            catch (Exception e)
+            {
+                Notifications.ShowMessage($"Failed to submit benchmark score: {e.Message}");
+                return;
+            }
+            Notifications.ShowMessage("Successfully submitted benchmark score");
+        }
+        string message = $"Benchmark Results:\n" +
+                         $"Raw score: {rawScore}\n" +
+                         $"Framerate: {idleFramerate}fps\n" +
+                         $"Smoothness: {smoothness}%\n\n" +
+                         $"Renderer: {hw.renderer}\n" +
+                         $"CPU: {hw.cpu}\n" +
+                         $"Number of Cores: {hw.cores}\n" +
+                         $"Logical Processors (Threads): {hw.threads}\n" +
+                         $"Graphics Card: {hw.gpu}\n" +
+                         $"Total Ram: {hw.ram} GB\n" +
+                         $"Operating System: {hw.osInfo} ({hw.osArchitecture})\n" +
+                         $"Motherboard Manufacturer: {hw.motherboardManufacturer}\n" +
+                         $"Motherboard: {hw.motherboard}";
+        MessageBox.Show(message);
+        return;
     }
 }
