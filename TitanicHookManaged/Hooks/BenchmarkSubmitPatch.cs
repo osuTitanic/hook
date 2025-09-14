@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using Harmony;
 using TitanicHookManaged.Helpers;
+using TitanicHookManaged.Helpers.Benchmark;
 
 namespace TitanicHookManaged.Hooks;
 
@@ -156,5 +157,17 @@ public static class BenchmarkSubmitPatch
 
         Logging.Info($"Raw Score: {rawScore}");
         Logging.Info($"Idle framerate (divided): {idleFramerate}");
+
+        Hardware hw = HardwareDetection.GetHardwareInfo(true);
+        Logging.Info($"Renderer: {hw.renderer}");
+        Logging.Info($"CPU: {hw.cpu}");
+        Logging.Info($"Cores: {hw.cores}");
+        Logging.Info($"Threads: {hw.threads}");
+        Logging.Info($"GPU: {hw.gpu}");
+        Logging.Info($"RAM: {hw.ram}");
+        Logging.Info($"OS: {hw.osInfo}");
+        Logging.Info($"OS Architecture: {hw.osArchitecture}");
+        Logging.Info($"Motherboard manufacturer: {hw.motherboardManufacturer}");
+        Logging.Info($"Motherboard: {hw.motherboard}");
     }
 }

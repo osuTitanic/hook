@@ -3,7 +3,7 @@ using System.IO;
 
 namespace TitanicHookManaged.Helpers.Benchmark;
 
-public class LinuxDetection
+public static class LinuxDetection
 {
     public static string GetLinuxDistroInfo()
     {
