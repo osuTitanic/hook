@@ -26,7 +26,7 @@ public static class HardwareDetection
         var hw = new Hardware();
         
         ConfigReader osuCfg = new ();
-        string rendererInput = osuCfg.TryGetValue("Renderer"); // TODO: Get this from config
+        string rendererInput = osuCfg.TryGetValue("Renderer");
 
         if (rendererInput == "opengl")
             hw.renderer = "OpenGL";
