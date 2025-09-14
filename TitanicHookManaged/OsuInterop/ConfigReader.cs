@@ -57,11 +57,7 @@ public class ConfigReader
             kvp[key] = value;
         }
 
-        foreach (var pair in kvp)
-        {
-            Logging.Info($"Read from {filename}");
-            Logging.Info($"{pair.Key} = {pair.Value}");
-        }
+        Logging.Info($"Read osu! config from {filename}");
     }
 
     public Dictionary<string, string> kvp = new();
