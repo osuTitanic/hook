@@ -37,7 +37,7 @@ public static class CreateRequestHook
         
         Logging.HookStep(HookName,$"Resolved create request method: {targetMethod.DeclaringType?.FullName}.{targetMethod.Name}");
         
-        var prefix = typeof(CreateRequestHook).GetMethod("CreateRequestPrefix", Constants.HookBindingFlags);
+        var prefix = AccessTools.Method(typeof(CreateRequestHook), nameof(CreateRequestPrefix));
 
         try
         {

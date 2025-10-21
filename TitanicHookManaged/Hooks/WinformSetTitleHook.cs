@@ -27,8 +27,7 @@ public static class WinformSetTitleHook
             return;
         }
         
-        var prefix = typeof(WinformSetTitleHook)
-            .GetMethod("SetTitlePrefix", Constants.HookBindingFlags);
+        var prefix = AccessTools.Method(typeof(WinformSetTitleHook), nameof(SetTitlePrefix));
 
         try
         {

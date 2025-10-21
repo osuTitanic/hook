@@ -32,7 +32,7 @@ public static class HostHeaderHook
         
         Logging.HookStep(HookName,$"Resolved set_Host: {targetMethod.DeclaringType?.FullName}.{targetMethod.Name}");
         
-        var prefix = typeof(HostHeaderHook).GetMethod("SetHostPrefix", Constants.HookBindingFlags);
+        var prefix = AccessTools.Method(typeof(HostHeaderHook), nameof(SetHostPrefix));
 
         try
         {

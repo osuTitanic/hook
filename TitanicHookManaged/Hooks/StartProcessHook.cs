@@ -37,8 +37,8 @@ public static class StartProcessHook
             Logging.HookError(HookName, "Couldn't find Process.Start(ProcessStartInfo)");
             return;
         }
-
-        var prefix = typeof(StartProcessHook).GetMethod("ProcessStartPrefix", Constants.HookBindingFlags);
+        
+        var prefix = AccessTools.Method(typeof(StartProcessHook), nameof(ProcessStartPrefix));
 
         try
         {

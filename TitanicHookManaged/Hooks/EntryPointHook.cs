@@ -31,7 +31,7 @@ public static class EntryPointHook
             return;
         }
         
-        var prefix = typeof(EntryPointHook).GetMethod("GetEntryAssemblyPrefix", Constants.HookBindingFlags);
+        var prefix = AccessTools.Method(typeof(EntryPointHook), nameof(GetEntryAssemblyPrefix));
 
         try
         {

@@ -28,8 +28,8 @@ public static class DisableRegistryPatch
             //Logging.HookError(HookName, "Failed to find GameBase HandleAssociations");
             return;
         }
-
-        var prefix = typeof(DisableRegistryPatch).GetMethod("StubMethod", Constants.HookBindingFlags);
+        
+        var prefix = AccessTools.Method(typeof(DisableRegistryPatch), nameof(StubMethod));
         
         try
         {

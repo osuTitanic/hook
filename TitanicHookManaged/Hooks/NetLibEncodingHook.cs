@@ -42,7 +42,7 @@ public static class NetLibEncodingHook
         
         Logging.HookStep(HookName, $"Resolved StringStream ctor: {targetMethod.DeclaringType.FullName}.{targetMethod.Name}");
         
-        var postfix = typeof(NetLibEncodingHook).GetMethod("StringStreamCtorPostfix", Constants.HookBindingFlags);
+        var postfix = AccessTools.Method(typeof(NetLibEncodingHook), nameof(StringStreamCtorPostfix));
 
         try
         {

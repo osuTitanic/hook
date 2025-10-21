@@ -31,7 +31,7 @@ public static class ExecutablePathHook
             return;
         }
         
-        var prefix = typeof(ExecutablePathHook).GetMethod("GetExecutablePathPrefix", Constants.HookBindingFlags);
+        var prefix = AccessTools.Method(typeof(ExecutablePathHook), nameof(GetExecutablePathPrefix));
 
         try
         {

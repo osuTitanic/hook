@@ -31,7 +31,7 @@ public static class GetArgsHook
             return;
         }
         
-        var prefix = typeof(GetArgsHook).GetMethod("GetArgsPrefix", Constants.HookBindingFlags);
+        var prefix = AccessTools.Method(typeof(GetArgsHook), nameof(GetArgsPrefix));
         
         try
         {

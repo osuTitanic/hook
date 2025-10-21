@@ -42,7 +42,7 @@ public static class ExtractIconHook
             return;
         }
         
-        var prefix = typeof(ExtractIconHook).GetMethod("ExtractAssociatedIconPrefix", Constants.HookBindingFlags);
+        var prefix = AccessTools.Method(typeof(ExtractIconHook), nameof(ExtractAssociatedIconPrefix));
 
         try
         {

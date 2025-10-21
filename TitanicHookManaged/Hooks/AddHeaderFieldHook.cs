@@ -32,7 +32,7 @@ public static class AddHeaderFieldHook
         }
         Logging.HookStep(HookName, $"Resolved AddHeaderField: {targetMethod.Name}");
         
-        var prefix = typeof(AddHeaderFieldHook).GetMethod("AddHeaderFieldPrefix", Constants.HookBindingFlags);
+        var prefix = AccessTools.Method(typeof(AddHeaderFieldHook), nameof(AddHeaderFieldPrefix));
 
         try
         {

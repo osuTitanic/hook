@@ -32,7 +32,7 @@ public static class CheckCertificateHook
         
         Logging.HookStep(HookName, $"Resolved checkCertificate: {targetMethod.DeclaringType?.FullName}.{targetMethod.Name}");
         
-        var prefix = typeof(CheckCertificateHook).GetMethod("CheckCertificatePrefix", Constants.HookBindingFlags);
+        var prefix = AccessTools.Method(typeof(CheckCertificateHook), nameof(CheckCertificatePrefix));
 
         try
         {

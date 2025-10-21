@@ -40,8 +40,8 @@ public static class RemoveScoreDelayHook
         }
         
         Logging.HookStep(HookName, $"Found target method: {targetMethod.Name}");
-
-        var prefix = typeof(RemoveScoreDelayHook).GetMethod("GetScoresPrefix", Constants.HookBindingFlags);
+        
+        var prefix = AccessTools.Method(typeof(RemoveScoreDelayHook), nameof(GetScoresPrefix));
 
         try
         {

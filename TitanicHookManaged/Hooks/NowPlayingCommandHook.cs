@@ -30,7 +30,7 @@ public static class NowPlayingCommandHook
             return;
         }
         
-        var prefix = typeof(NowPlayingCommandHook).GetMethod("SendMessagePrefix", Constants.HookBindingFlags);
+        var prefix = AccessTools.Method(typeof(NowPlayingCommandHook), nameof(SendMessagePrefix));
 
         try
         {

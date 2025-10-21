@@ -33,8 +33,8 @@ public static class BeatmapSubmissionLinksPatch
             Logging.HookError(HookName, "Failed to find Beatmap SubmissionPostMethod");
             return;
         }
-
-        var transpiler = typeof(BeatmapSubmissionLinksPatch).GetMethod("LinksTranspiler", Constants.HookBindingFlags);
+        
+        var transpiler = AccessTools.Method(typeof(BeatmapSubmissionLinksPatch), nameof(LinksTranspiler));
 
         try
         {

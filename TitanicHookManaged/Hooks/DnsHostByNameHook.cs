@@ -29,8 +29,8 @@ public static class DnsHostByNameHook
             Logging.HookError(HookName, "Failed to find Dns.InternalGetHostByName(string, bool)");
             return;
         }
-
-        var prefix = typeof(DnsHostByNameHook).GetMethod("InternalGetHostByNamePrefix", Constants.HookBindingFlags);
+        
+        var prefix = AccessTools.Method(typeof(DnsHostByNameHook), nameof(InternalGetHostByNamePrefix));
 
         try
         {

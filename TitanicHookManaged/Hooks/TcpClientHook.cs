@@ -54,7 +54,7 @@ public class TcpClientHook
             Logging.HookError(HookName, "Could not find TcpClient.BeginConnect(string, int, AsyncCallback, object)");
         }
         
-        var prefix = typeof(TcpClientHook).GetMethod("TcpConnectPrefix", Constants.HookBindingFlags);
+        var prefix = AccessTools.Method(typeof(TcpClientHook), nameof(TcpConnectPrefix));
 
         try
         {
