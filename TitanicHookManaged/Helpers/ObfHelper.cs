@@ -121,8 +121,8 @@ public static class ObfHelper
                 if (deobfuscatedString == null)
                     continue;
                 
-                codes[i] = new CodeInstruction(OpCodes.Ldstr, deobfuscatedString); // Replace with decoded string
-                codes[i - 1] = new CodeInstruction(OpCodes.Nop); // Remove the argument load
+                codes[i].operand = deobfuscatedString; // Replace with decoded string
+                codes[i - 1].opcode = OpCodes.Nop; // Remove the argument load
             }
         }
         

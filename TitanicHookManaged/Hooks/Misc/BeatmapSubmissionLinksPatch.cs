@@ -41,8 +41,7 @@ public class BeatmapSubmissionLinksPatch : TitanicPatch
                 Logging.HookStep(HookName, $"Patching string {str}");
                 string newstr = str.Replace("ppy.sh", EntryPoint.Config.ServerName);
                 newstr = newstr.Replace("peppy.chigau.com", $"chigau.{EntryPoint.Config.ServerName}");
-                yield return new CodeInstruction(OpCodes.Ldstr, newstr);
-                continue;
+                instruction.operand = newstr;
             }
             
             yield return instruction;
