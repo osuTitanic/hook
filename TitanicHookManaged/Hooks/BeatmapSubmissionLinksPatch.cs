@@ -34,47 +34,19 @@ public class BeatmapSubmissionLinksPatch : TitanicPatch
 
     private static IEnumerable<CodeInstruction> LinksTranspiler(IEnumerable<CodeInstruction> instructions)
     {
-        List<CodeInstruction> codes = new (instructions);
-
-        for (int i = 0; i < codes.Count; i++)
+        foreach (CodeInstruction instruction in ObfHelper.DecAllStrings(instructions))
         {
-            var instruction = codes[i];
-
             if (instruction.opcode == OpCodes.Ldstr && instruction.operand is string str && (str.Contains("ppy.sh") || str.Contains("peppy.chigau.com")))
             {
-                // Unobfuscated string, can just easily replace the string
                 Logging.HookStep(HookName, $"Patching string {str}");
                 string newstr = str.Replace("ppy.sh", EntryPoint.Config.ServerName);
                 newstr = newstr.Replace("peppy.chigau.com", $"chigau.{EntryPoint.Config.ServerName}");
-                codes[i] = new CodeInstruction(OpCodes.Ldstr, newstr);
+                yield return new CodeInstruction(OpCodes.Ldstr, newstr);
                 continue;
             }
-
-            if (ObfHelper.HasStringDecrypt && instruction.opcode == OpCodes.Call &&
-                instruction.operand is MethodInfo methodInfo &&
-                methodInfo.MetadataToken == ObfHelper.StringObfToken)
-            {
-                // Here we have an obfuscated string - we need to find out if it contains "ppy.sh" by deobfuscating it
-                var stringIdInstr = codes[i - 1];
-                int stringId = (int)stringIdInstr.operand;
-
-                string? deobfuscatedString = ObfHelper.DecString(stringId);
-                if (deobfuscatedString == null)
-                    continue;
-                
-                if (!deobfuscatedString.Contains("ppy.sh") && !deobfuscatedString.Contains("peppy.chigau.com"))
-                    continue;
-                
-                Logging.HookStep(HookName, $"Patching string {deobfuscatedString}");
-                string newstr = deobfuscatedString.Replace("ppy.sh", EntryPoint.Config.ServerName);
-                newstr = newstr.Replace("peppy.chigau.com", $"chigau.{EntryPoint.Config.ServerName}");
-                
-                codes[i] = new CodeInstruction(OpCodes.Ldstr, newstr); // Replace obfuscated string call with a normal ldstr
-                codes[i - 1] = new CodeInstruction(OpCodes.Nop); // Remove the argument load
-            }
+            
+            yield return instruction;
         }
-        
-        return codes.AsEnumerable();
     }
     
     #endregion

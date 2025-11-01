@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
+using Harmony;
 
 namespace TitanicHookManaged.Helpers;
 
@@ -94,6 +95,38 @@ public static class ObfHelper
         _stringCache.Add(id, value);
         
         return value;
+    }
+
+    /// <summary>
+    /// Decrypts all encrypted strings in a specified CodeInstruction enumerable
+    /// </summary>
+    /// <param name="instructions"></param>
+    /// <returns></returns>
+    public static IEnumerable<CodeInstruction> DecAllStrings(IEnumerable<CodeInstruction> instructions)
+    {
+        List<CodeInstruction> codes = new (instructions);
+
+        for (int i = 0; i < codes.Count; i++)
+        {
+            var instr = codes[i];
+
+            if (HasStringDecrypt && instr.opcode == OpCodes.Call &&
+                instr.operand is MethodInfo methodInfo &&
+                methodInfo.MetadataToken == StringObfToken)
+            {
+                var stringIdInstr = codes[i - 1];
+                int stringId = (int)stringIdInstr.operand;
+
+                string? deobfuscatedString = DecString(stringId);
+                if (deobfuscatedString == null)
+                    continue;
+                
+                codes[i] = new CodeInstruction(OpCodes.Ldstr, deobfuscatedString); // Replace with decoded string
+                codes[i - 1] = new CodeInstruction(OpCodes.Nop); // Remove the argument load
+            }
+        }
+        
+        return codes.AsEnumerable();
     }
     
     /// <summary>
