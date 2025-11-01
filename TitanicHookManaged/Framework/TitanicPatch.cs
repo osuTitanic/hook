@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 using Harmony;
 using TitanicHookManaged.Helpers;
@@ -45,7 +46,14 @@ public abstract class TitanicPatch
                     continue;
                 
                 Logging.Info($"[{HookName}] Applying prefix {prefix.Name} onto {method.Name}");
-                Harmony.Patch(method, prefix: new HarmonyMethod(prefix));
+                try
+                {
+                    Harmony.Patch(method, prefix: new HarmonyMethod(prefix));
+                }
+                catch (Exception e)
+                {
+                    Logging.HookError(HookName, $"Fail at prefixing {method.Name} with {prefix.Name}: {e}");
+                }
             }
             
             foreach (MethodInfo postfix in Postfixes)
@@ -54,7 +62,14 @@ public abstract class TitanicPatch
                     continue;
                 
                 Logging.Info($"[{HookName}] Applying postfix {postfix.Name} onto {method.Name}");
-                Harmony.Patch(method, postfix: new HarmonyMethod(postfix));
+                try
+                {
+                    Harmony.Patch(method, postfix: new HarmonyMethod(postfix));
+                }
+                catch (Exception e)
+                {
+                    Logging.HookError(HookName, $"Fail at postfixing {method.Name} with {postfix.Name}: {e}");
+                }
             }
             
             foreach (MethodInfo transpiler in Transpilers)
@@ -63,7 +78,14 @@ public abstract class TitanicPatch
                     continue;
                 
                 Logging.Info($"[{HookName}] Transpiling {method.Name} with {transpiler.Name}");
-                Harmony.Patch(method, transpiler: new HarmonyMethod(transpiler));
+                try
+                {
+                    Harmony.Patch(method, transpiler: new HarmonyMethod(transpiler));
+                }
+                catch (Exception e)
+                {
+                    Logging.HookError(HookName, $"Fail at transpiling {method.Name} with {transpiler.Name}: {e}");
+                }
             }
         }
         
@@ -80,7 +102,14 @@ public abstract class TitanicPatch
                     continue;
                 
                 Logging.Info($"[{HookName}] Applying prefix {prefix.Name} onto {constructor.Name}");
-                Harmony.Patch(constructor, prefix: new HarmonyMethod(prefix));
+                try
+                {
+                    Harmony.Patch(constructor, prefix: new HarmonyMethod(prefix));
+                }
+                catch (Exception e)
+                {
+                    Logging.HookError(HookName, $"Fail at prefixing {constructor.Name} with {prefix.Name}: {e}");
+                }
             }
             
             foreach (MethodInfo postfix in Postfixes)
@@ -89,7 +118,14 @@ public abstract class TitanicPatch
                     continue;
                 
                 Logging.Info($"[{HookName}] Applying postfix {postfix.Name} onto {constructor.Name}");
-                Harmony.Patch(constructor, postfix: new HarmonyMethod(postfix));
+                try
+                {
+                    Harmony.Patch(constructor, postfix: new HarmonyMethod(postfix));
+                }
+                catch (Exception e)
+                {
+                    Logging.HookError(HookName, $"Fail at postfixing {constructor.Name} with {postfix.Name}: {e}");
+                }
             }
             
             foreach (MethodInfo transpiler in Transpilers)
@@ -98,7 +134,14 @@ public abstract class TitanicPatch
                     continue;
                 
                 Logging.Info($"[{HookName}] Transpiling {constructor.Name} with {transpiler.Name}");
-                Harmony.Patch(constructor, transpiler: new HarmonyMethod(transpiler));
+                try
+                {
+                    Harmony.Patch(constructor, transpiler: new HarmonyMethod(transpiler));
+                }
+                catch (Exception e)
+                {
+                    Logging.HookError(HookName, $"Fail at transpiling {constructor.Name} with {transpiler.Name}: {e}");
+                }
             }
         }
     }
