@@ -2,7 +2,6 @@
 // SPDX-FileCopyrightText: 2025 Oreeeee
 
 #if NET40
-using System;
 using System.Linq;
 using System.Net;
 using System.Reflection;
@@ -11,7 +10,7 @@ using Harmony;
 using TitanicHookManaged.Framework;
 using TitanicHookManaged.Helpers;
 
-namespace TitanicHookManaged.Hooks;
+namespace TitanicHookManaged.Hooks.Connection;
 
 /// <summary>
 /// Hook for create request method in WebRequest class

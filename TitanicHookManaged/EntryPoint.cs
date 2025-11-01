@@ -4,7 +4,10 @@
 using System;
 using TitanicHookManaged.Framework;
 using TitanicHookManaged.Helpers;
-using TitanicHookManaged.Hooks;
+using TitanicHookManaged.Hooks.Connection;
+using TitanicHookManaged.Hooks.Fixes;
+using TitanicHookManaged.Hooks.Loading;
+using TitanicHookManaged.Hooks.Misc;
 using TitanicHookManaged.OsuInterop;
 
 namespace TitanicHookManaged;

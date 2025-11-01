@@ -8,7 +8,7 @@ using Harmony;
 using TitanicHookManaged.Framework;
 using TitanicHookManaged.Helpers;
 
-namespace TitanicHookManaged.Hooks;
+namespace TitanicHookManaged.Hooks.Misc;
 
 /// <summary>
 /// Hook which will replace ppy.sh links to server link in /np command

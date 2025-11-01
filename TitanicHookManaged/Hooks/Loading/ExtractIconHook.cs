@@ -8,7 +8,7 @@ using Harmony;
 using TitanicHookManaged.Framework;
 using TitanicHookManaged.Helpers;
 
-namespace TitanicHookManaged.Hooks;
+namespace TitanicHookManaged.Hooks.Loading;
 
 /// <summary>
 /// Hook for ExtractAssociatedIcon so that osu! will have correct icon.

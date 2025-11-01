@@ -8,7 +8,7 @@ using Harmony;
 using TitanicHookManaged.Framework;
 using TitanicHookManaged.Helpers;
 
-namespace TitanicHookManaged.Hooks;
+namespace TitanicHookManaged.Hooks.Connection;
 
 public class DnsHostByNameHook : TitanicPatch
 {

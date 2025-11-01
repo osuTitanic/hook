@@ -6,7 +6,7 @@ using Harmony;
 using TitanicHookManaged.Framework;
 using TitanicHookManaged.Helpers;
 
-namespace TitanicHookManaged.Hooks;
+namespace TitanicHookManaged.Hooks.Loading;
 
 /// <summary>
 /// Hook for spoofing GetEntryAssembly.

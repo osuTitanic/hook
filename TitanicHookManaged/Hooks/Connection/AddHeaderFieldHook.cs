@@ -8,7 +8,7 @@ using Harmony;
 using TitanicHookManaged.Framework;
 using TitanicHookManaged.Helpers;
 
-namespace TitanicHookManaged.Hooks;
+namespace TitanicHookManaged.Hooks.Connection;
 
 /// <summary>
 /// Managed hook that will replace the value of the Host HTTP header with the desired private server domain

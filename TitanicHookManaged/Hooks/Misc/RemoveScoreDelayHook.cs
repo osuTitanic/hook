@@ -7,7 +7,7 @@ using Harmony;
 using TitanicHookManaged.Framework;
 using TitanicHookManaged.Helpers;
 
-namespace TitanicHookManaged.Hooks;
+namespace TitanicHookManaged.Hooks.Misc;
 
 /// <summary>
 /// Patch which removes score loading delay in clients that use /web/osu-osz2-getscores.php endpoint

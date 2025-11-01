@@ -12,6 +12,7 @@ using TitanicHookManaged;
 using TitanicHookManaged.Framework;
 using TitanicHookManaged.Helpers;
 using TitanicHookManaged.Hooks;
+using TitanicHookManaged.Hooks.Loading;
 using TitanicHookManaged.OsuInterop;
 
 namespace HookLoader;
