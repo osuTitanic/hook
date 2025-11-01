@@ -1,8 +1,6 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Reflection;
 using Harmony;
-using Harmony.ILCopying;
 using TitanicHookManaged.Framework;
 using TitanicHookManaged.Helpers;
 

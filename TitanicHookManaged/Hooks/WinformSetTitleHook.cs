@@ -1,8 +1,6 @@
 ﻿// SPDX-License-Identifier: GPL-3.0-or-later
 // SPDX-FileCopyrightText: 2025 Oreeeee
 
-using System;
-using System.Reflection;
 using System.Windows.Forms;
 using Harmony;
 using TitanicHookManaged.Framework;
