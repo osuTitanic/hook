@@ -5,6 +5,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 using Harmony;
+using TitanicHookManaged.Framework;
 using TitanicHookManaged.Helpers;
 
 namespace TitanicHookManaged.Hooks;
@@ -12,16 +13,18 @@ namespace TitanicHookManaged.Hooks;
 /// <summary>
 /// Patch which removes score loading delay in clients that use /web/osu-osz2-getscores.php endpoint
 /// </summary>
-public static class RemoveScoreDelayHook
+public class RemoveScoreDelayHook : TitanicPatch
 {
     public const string HookName = "sh.Titanic.Hook.RemoveScoreDelay";
-    
-    public static void Initialize()
+
+    public RemoveScoreDelayHook() : base(HookName)
     {
-        Logging.HookStart(HookName);
-        
-        var harmony = HarmonyInstance.Create(HookName);
-        
+        TargetMethods = [GetTargetMethod()];
+        Prefixes = [AccessTools.Method(typeof(RemoveScoreDelayHook), nameof(GetScoresPrefix))];
+    }
+
+    private static MethodInfo? GetTargetMethod()
+    {
         // TODO: Might want to add some stricter class checks
         MethodInfo? targetMethod = AssemblyUtils.OsuTypes
             .SelectMany(t => t.GetMethods(BindingFlags.NonPublic | BindingFlags.Instance))
@@ -36,25 +39,10 @@ public static class RemoveScoreDelayHook
             Logging.HookError(HookName, "Couldn't find target method", !EntryPoint.Config.FirstRun);
             if (EntryPoint.Config.FirstRun)
                 EntryPoint.Config.RemoveScoreFetchingDelay = false;
-            return;
+            return null;
         }
         
-        Logging.HookStep(HookName, $"Found target method: {targetMethod.Name}");
-        
-        var prefix = AccessTools.Method(typeof(RemoveScoreDelayHook), nameof(GetScoresPrefix));
-
-        try
-        {
-            Logging.HookPatching(HookName);
-            harmony.Patch(targetMethod, new HarmonyMethod(prefix));
-        }
-        catch (Exception e)
-        {
-            Logging.HookError(HookName, e.ToString());
-            return;
-        }
-        
-        Logging.HookDone(HookName);
+        return targetMethod;
     }
 
     #region Hook

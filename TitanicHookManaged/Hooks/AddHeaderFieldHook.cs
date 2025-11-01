@@ -2,9 +2,11 @@
 // SPDX-FileCopyrightText: 2025 Oreeeee
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Harmony;
+using TitanicHookManaged.Framework;
 using TitanicHookManaged.Helpers;
 
 namespace TitanicHookManaged.Hooks;
@@ -12,39 +14,14 @@ namespace TitanicHookManaged.Hooks;
 /// <summary>
 /// Managed hook that will replace the value of the Host HTTP header with the desired private server domain
 /// </summary>
-public static class AddHeaderFieldHook
+public class AddHeaderFieldHook : TitanicPatch
 {
     public const string HookName = "sh.Titanic.Hook.AddHeaderField";
-    
-    public static void Initialize()
+
+    public AddHeaderFieldHook() : base(HookName)
     {
-        Logging.HookStart(HookName);
-        
-        var harmony = HarmonyInstance.Create(HookName);
-
-        MethodInfo? targetMethod = GetTargetMethod(AssemblyUtils.CommonOrOsuTypes);
-        if (targetMethod == null)
-        {
-            Logging.HookError(HookName, "Target method not found", !EntryPoint.Config.FirstRun);
-            if (EntryPoint.Config.FirstRun)
-                EntryPoint.Config.HookNetLibHeaders = false;
-            return;
-        }
-        Logging.HookStep(HookName, $"Resolved AddHeaderField: {targetMethod.Name}");
-        
-        var prefix = AccessTools.Method(typeof(AddHeaderFieldHook), nameof(AddHeaderFieldPrefix));
-
-        try
-        {
-            Logging.HookPatching(HookName);
-            harmony.Patch(targetMethod, new HarmonyMethod(prefix));
-        }
-        catch (Exception e)
-        {
-            Logging.HookError(HookName, e.ToString());
-        }
-        
-        Logging.HookDone(HookName);
+        TargetMethods = [GetTargetMethod(AssemblyUtils.CommonOrOsuTypes)];
+        Prefixes = [AccessTools.Method(typeof(AddHeaderFieldHook), nameof(AddHeaderFieldPrefix))];
     }
     
     #region Hook

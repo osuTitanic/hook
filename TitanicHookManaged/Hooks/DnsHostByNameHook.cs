@@ -6,43 +6,26 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using Harmony;
+using TitanicHookManaged.Framework;
 using TitanicHookManaged.Helpers;
 
 namespace TitanicHookManaged.Hooks;
 
-public static class DnsHostByNameHook
+public class DnsHostByNameHook : TitanicPatch
 {
     public const string HookName = "sh.Titanic.Hook.DnsHostByName";
-    
-    public static void Initialize()
+
+    public DnsHostByNameHook() : base(HookName)
     {
-        Logging.HookStart(HookName);
-        
-        var harmony = HarmonyInstance.Create(HookName);
-        
-        MethodInfo? targetMethod = typeof(Dns)
+        TargetMethods = [GetTargetMethod()];
+        Prefixes = [AccessTools.Method(typeof(DnsHostByNameHook), nameof(InternalGetHostByNamePrefix))];
+    }
+
+    private static MethodInfo GetTargetMethod()
+    {
+        return typeof(Dns)
             .GetMethods(BindingFlags.Static | BindingFlags.NonPublic)
             .FirstOrDefault(m => m.Name == "InternalGetHostByName" && m.GetParameters().Length == 2);
-
-        if (targetMethod == null)
-        {
-            Logging.HookError(HookName, "Failed to find Dns.InternalGetHostByName(string, bool)");
-            return;
-        }
-        
-        var prefix = AccessTools.Method(typeof(DnsHostByNameHook), nameof(InternalGetHostByNamePrefix));
-
-        try
-        {
-            Logging.HookPatching(HookName);
-            harmony.Patch(targetMethod, new HarmonyMethod(prefix));
-        }
-        catch (Exception e)
-        {
-            Logging.HookError(HookName, e.ToString());
-        }
-        
-        Logging.HookDone(HookName);
     }
     
     #region Hook

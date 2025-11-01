@@ -4,6 +4,7 @@
 using System;
 using System.Reflection;
 using Harmony;
+using TitanicHookManaged.Framework;
 using TitanicHookManaged.Helpers;
 
 namespace TitanicHookManaged.Hooks;
@@ -12,38 +13,20 @@ namespace TitanicHookManaged.Hooks;
 /// Hook for spoofing Application.ExecutablePath getter.
 /// Only to be used by HookLoader
 /// </summary>
-public static class ExecutablePathHook
+public class ExecutablePathHook : TitanicPatch
 {
     private static string? _spoofedExePath;
     public const string HookName = "sh.Titanic.Hook.ExecutablePath";
-    
-    public static void Initialize(string? spoofedExePath)
+
+    public ExecutablePathHook(string? spoofedExePath) : base(HookName)
     {
-        Logging.HookStart(HookName);
-        
-        var harmony = HarmonyInstance.Create(HookName);
         _spoofedExePath = spoofedExePath;
-
-        MethodInfo? targetMethod = typeof(System.Windows.Forms.Application).GetMethod("get_ExecutablePath", BindingFlags.Static | BindingFlags.Public);
-        if (targetMethod == null)
-        {
-            Logging.HookError(HookName, "Could not find get_ExecutablePath method");
-            return;
-        }
-        
-        var prefix = AccessTools.Method(typeof(ExecutablePathHook), nameof(GetExecutablePathPrefix));
-
-        try
-        {
-            Logging.HookPatching(HookName);
-            harmony.Patch(targetMethod, new HarmonyMethod(prefix));
-        }
-        catch (Exception e)
-        {
-            Logging.HookError(HookName, e.ToString());
-        }
-        
-        Logging.HookDone(HookName);
+        TargetMethods =
+        [
+            typeof(System.Windows.Forms.Application).GetMethod("get_ExecutablePath",
+                BindingFlags.Static | BindingFlags.Public)
+        ];
+        Prefixes = [AccessTools.Method(typeof(ExecutablePathHook), nameof(GetExecutablePathPrefix))];
     }
     
     #region Hook

@@ -8,18 +8,17 @@ using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
 using Harmony;
+using TitanicHookManaged.Framework;
 using TitanicHookManaged.Helpers;
 
 namespace TitanicHookManaged.Hooks;
 
-public class TcpClientHook
+public class TcpClientHook : TitanicPatch
 {
     public const string HookName = "sh.Titanic.Hook.TcpClient";
-    
-    public static void Initialize()
+
+    public TcpClientHook() : base(HookName)
     {
-        Logging.HookStart(HookName);
-        
         // Get Titanic's Bancho IP address
         Logging.HookStep(HookName, $"Resolving server.{EntryPoint.Config.ServerName} IP");
         _newIp = Dns.GetHostAddresses($"server.{EntryPoint.Config.ServerName}")[0];
@@ -30,7 +29,13 @@ public class TcpClientHook
         }
         Logging.HookStep(HookName, "Bancho service IP: " + _newIp);
         
-        var harmony = HarmonyInstance.Create(HookName);
+        TargetMethods = GetTargetMethods();
+        Prefixes = [AccessTools.Method(typeof(TcpClientHook), nameof(TcpConnectPrefix))];
+    }
+
+    private static List<MethodInfo> GetTargetMethods()
+    {
+        List<MethodInfo> methods = [];
         
         // Look for BeginConnect(string, int, AsyncCallback, object) overload
         MethodInfo? beginConnect = typeof(TcpClient)
@@ -41,6 +46,10 @@ public class TcpClientHook
         if (beginConnect == null)
         {
             Logging.HookError(HookName, "Could not find TcpClient.BeginConnect(string, int, AsyncCallback, object)");
+        }
+        else
+        {
+            methods.Add(beginConnect);
         }
         
         // Look for Connect(string, int) overload
@@ -53,21 +62,12 @@ public class TcpClientHook
         {
             Logging.HookError(HookName, "Could not find TcpClient.BeginConnect(string, int, AsyncCallback, object)");
         }
-        
-        var prefix = AccessTools.Method(typeof(TcpClientHook), nameof(TcpConnectPrefix));
-
-        try
+        else
         {
-            Logging.HookStep(HookName, "Patching");
-            if (beginConnect != null) harmony.Patch(beginConnect, new HarmonyMethod(prefix));
-            if (connect != null) harmony.Patch(connect, new HarmonyMethod(prefix));
-        }
-        catch (Exception e)
-        {
-            Logging.HookError(HookName, e.ToString());
+            methods.Add(connect);
         }
         
-        Logging.HookDone(HookName);
+        return methods;
     }
 
     #region Hook

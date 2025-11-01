@@ -4,6 +4,7 @@
 using System;
 using System.Reflection;
 using Harmony;
+using TitanicHookManaged.Framework;
 using TitanicHookManaged.Helpers;
 
 namespace TitanicHookManaged.Hooks;
@@ -12,38 +13,16 @@ namespace TitanicHookManaged.Hooks;
 /// Hook for spoofing GetEntryAssembly.
 /// Only to be used in HookLoader
 /// </summary>
-public static class EntryPointHook
+public class EntryPointHook : TitanicPatch
 {
     private static Assembly? _spoofedEntryPointAssembly;
     public const string HookName = "sh.Titanic.Hook.GetEntryAssembly";
-    
-    public static void Initialize(Assembly? spoofedAssembly)
+
+    public EntryPointHook(Assembly? spoofedAssembly) : base(HookName)
     {
-        Logging.HookTrigger(HookName);
-        
-        var harmony = HarmonyInstance.Create(HookName);
         _spoofedEntryPointAssembly = spoofedAssembly;
-
-        MethodInfo? targetMethod = typeof(Assembly).GetMethod("GetEntryAssembly", BindingFlags.Static | BindingFlags.Public);
-        if (targetMethod == null)
-        {
-            Logging.HookError(HookName, "Could not find entry assembly target method");
-            return;
-        }
-        
-        var prefix = AccessTools.Method(typeof(EntryPointHook), nameof(GetEntryAssemblyPrefix));
-
-        try
-        {
-            Logging.HookPatching(HookName);
-            harmony.Patch(targetMethod, new HarmonyMethod(prefix));
-        }
-        catch (Exception e)
-        {
-            Logging.HookError(HookName, e.ToString());
-        }
-        
-        Logging.HookDone(HookName);
+        TargetMethods = [typeof(Assembly).GetMethod("GetEntryAssembly", BindingFlags.Static | BindingFlags.Public)];
+        Prefixes = [AccessTools.Method(typeof(EntryPointHook), nameof(GetEntryAssemblyPrefix))];
     }
     
     #region Hook

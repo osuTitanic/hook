@@ -5,21 +5,24 @@ using System.Net;
 using System.Reflection;
 using System.Reflection.Emit;
 using Harmony;
+using TitanicHookManaged.Framework;
 using TitanicHookManaged.Helpers;
 
 namespace TitanicHookManaged.Hooks;
 
-public static class BeatmapSubmissionLinksPatch
+public class BeatmapSubmissionLinksPatch : TitanicPatch
 {
     public const string HookName = "sh.Titanic.Hook.BeatmapSubmissionLinksPatch";
-    
-    public static void Initialize()
-    {
-        Logging.HookStart(HookName);
-        
-        var harmony = HarmonyInstance.Create(HookName);
 
-        MethodInfo? targetMethod = AssemblyUtils.OsuTypes
+    public BeatmapSubmissionLinksPatch() : base(HookName)
+    {
+        TargetMethods = [GetTargetMethod()];
+        Transpilers = [AccessTools.Method(typeof(BeatmapSubmissionLinksPatch), nameof(LinksTranspiler))];
+    }
+
+    private static MethodInfo? GetTargetMethod()
+    {
+        return AssemblyUtils.OsuTypes
             .Where(t => t is { IsClass: true, IsNested: false, IsNotPublic: true } && t.BaseType != typeof(object))
             .SelectMany(t => t.GetMethods(BindingFlags.Instance | BindingFlags.NonPublic))
             .FirstOrDefault(m => m.ReturnType.FullName == "System.Void" &&
@@ -27,26 +30,6 @@ public static class BeatmapSubmissionLinksPatch
                                  SigScanning.GetStrings(m)
                                      .Any(s => s.Contains("This beatmap was submitted using in-game submission on"))
             );
-
-        if (targetMethod == null)
-        {
-            Logging.HookError(HookName, "Failed to find Beatmap SubmissionPostMethod");
-            return;
-        }
-        
-        var transpiler = AccessTools.Method(typeof(BeatmapSubmissionLinksPatch), nameof(LinksTranspiler));
-
-        try
-        {
-            Logging.HookPatching(HookName);
-            harmony.Patch(targetMethod, transpiler: new HarmonyMethod(transpiler));
-        }
-        catch (Exception e)
-        {
-            Logging.HookError(HookName, e.ToString());
-        }
-        
-        Logging.HookDone(HookName);
     }
     
     #region Hook

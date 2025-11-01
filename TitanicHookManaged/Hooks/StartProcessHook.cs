@@ -7,11 +7,12 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using Harmony;
+using TitanicHookManaged.Framework;
 using TitanicHookManaged.Helpers;
 
 namespace TitanicHookManaged.Hooks;
 
-public static class StartProcessHook
+public class StartProcessHook : TitanicPatch
 {
     public const string HookName = "sh.Titanic.Hook.StartProcess";
     
@@ -20,37 +21,19 @@ public static class StartProcessHook
     /// </summary>
     private static readonly Regex CopyrightRegex = new Regex(@"^https?:\/\/osu\.ppy\.sh\/?$");
     
-    public static void Initialize()
+    public StartProcessHook() : base(HookName)
     {
-        Logging.HookStart(HookName);
-        
-        var harmony = HarmonyInstance.Create(HookName);
-        
-        MethodInfo? targetMethod = typeof(Process)
+        TargetMethods = [GetTargetMethod()];
+        Prefixes = [AccessTools.Method(typeof(StartProcessHook), nameof(ProcessStartPrefix))];
+    }
+
+    private static MethodInfo? GetTargetMethod()
+    {
+        return typeof(Process)
             .GetMethods(BindingFlags.Public | BindingFlags.Static)
             .FirstOrDefault(m => m.Name == "Start" &
-                m.GetParameters().Length == 1 &&
-                m.GetParameters()[0].ParameterType.FullName == "System.Diagnostics.ProcessStartInfo");
-
-        if (targetMethod == null)
-        {
-            Logging.HookError(HookName, "Couldn't find Process.Start(ProcessStartInfo)");
-            return;
-        }
-        
-        var prefix = AccessTools.Method(typeof(StartProcessHook), nameof(ProcessStartPrefix));
-
-        try
-        {
-            Logging.HookPatching(HookName);
-            harmony.Patch(targetMethod, new HarmonyMethod(prefix));
-        }
-        catch (Exception e)
-        {
-            Logging.HookError(HookName,e.ToString());
-        }
-        
-        Logging.HookDone(HookName);
+                                 m.GetParameters().Length == 1 &&
+                                 m.GetParameters()[0].ParameterType.FullName == "System.Diagnostics.ProcessStartInfo");
     }
 
     #region Hook

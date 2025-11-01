@@ -5,42 +5,19 @@ using System;
 using System.Reflection;
 using System.Windows.Forms;
 using Harmony;
+using TitanicHookManaged.Framework;
 using TitanicHookManaged.Helpers;
 
 namespace TitanicHookManaged.Hooks;
 
-public static class WinformSetTitleHook
+public class WinformSetTitleHook : TitanicPatch
 {
     public const string HookName = "sh.Titanic.Hook.WinformSetTitle";
-    
-    public static void Initialize()
+
+    public WinformSetTitleHook() : base(HookName)
     {
-        Logging.HookStart(HookName);
-        
-        var harmony = HarmonyInstance.Create(HookName);
-
-        MethodInfo? setTitle = typeof(Form)
-            .GetMethod("set_Text");
-        if (setTitle == null)
-        {
-            Logging.HookError(HookName, "Unable to find set_Text method");
-            return;
-        }
-        
-        var prefix = AccessTools.Method(typeof(WinformSetTitleHook), nameof(SetTitlePrefix));
-
-        try
-        {
-            Logging.HookPatching(HookName);
-            harmony.Patch(setTitle, new HarmonyMethod(prefix));
-        }
-        catch (Exception e)
-        {
-            Logging.HookError(HookName, e.ToString());
-            return;
-        }
-        
-        Logging.HookDone(HookName);
+        TargetMethods = [typeof(Form).GetMethod("set_Text")];
+        Prefixes = [AccessTools.Method(typeof(WinformSetTitleHook), nameof(SetTitlePrefix))];
     }
 
     #region Hook

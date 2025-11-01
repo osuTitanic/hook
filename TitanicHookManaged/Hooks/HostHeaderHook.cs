@@ -6,6 +6,7 @@ using System;
 using System.Net;
 using System.Reflection;
 using Harmony;
+using TitanicHookManaged.Framework;
 using TitanicHookManaged.Helpers;
 
 namespace TitanicHookManaged.Hooks;
@@ -14,37 +15,14 @@ namespace TitanicHookManaged.Hooks;
 /// Hook for Host header in clients using pWebRequest.
 /// This works by making a prefix in setter of HttpWebRequest.Host and changing the passed in domain.
 /// </summary>
-public static class HostHeaderHook
+public class HostHeaderHook : TitanicPatch
 {
     public const string HookName = "sh.Titanic.Hook.HostHeader";
-    
-    public static void Initialize()
-    {
-        Logging.HookStart(HookName);
-        var harmony = HarmonyInstance.Create(HookName);
-        
-        MethodInfo? targetMethod = typeof(HttpWebRequest).GetMethod("set_Host", BindingFlags.Instance | BindingFlags.Public);
-        if (targetMethod == null)
-        {
-            Logging.HookError(HookName, "Target method not found", false);
-            return;
-        }
-        
-        Logging.HookStep(HookName,$"Resolved set_Host: {targetMethod.DeclaringType?.FullName}.{targetMethod.Name}");
-        
-        var prefix = AccessTools.Method(typeof(HostHeaderHook), nameof(SetHostPrefix));
 
-        try
-        {
-            Logging.HookPatching(HookName);
-            harmony.Patch(targetMethod, new HarmonyMethod(prefix));
-        }
-        catch (Exception e)
-        {
-            Logging.HookError(HookName, e.ToString());
-        }
-        
-        Logging.HookDone(HookName);
+    public HostHeaderHook() : base(HookName)
+    {
+        TargetMethods = [typeof(HttpWebRequest).GetMethod("set_Host", BindingFlags.Instance | BindingFlags.Public)];
+        Prefixes = [AccessTools.Method(typeof(HostHeaderHook), nameof(SetHostPrefix))];
     }
     
     #region Hook

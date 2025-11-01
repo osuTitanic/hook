@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Windows.Forms;
+using TitanicHookManaged.Framework;
 using TitanicHookManaged.Helpers;
 using TitanicHookManaged.Hooks;
 using TitanicHookManaged.OsuInterop;
@@ -76,25 +77,24 @@ public static class EntryPoint
         }
         
         Logging.Info($"osu! version from reflection: {OsuVersion.GetVersion()}");
+
+        PatchManager.Apply(new WinformSetTitleHook());
+        PatchManager.Apply(new NowPlayingCommandHook());
+        if (Config.RemoveScoreFetchingDelay) PatchManager.Apply(new RemoveScoreDelayHook());
         
-        WinformSetTitleHook.Initialize();
-        NowPlayingCommandHook.Initialize();
-        if (Config.RemoveScoreFetchingDelay) RemoveScoreDelayHook.Initialize();
+        if (Config.HookTcpConnections) PatchManager.Apply(new TcpClientHook());
+        PatchManager.Apply(new DnsHostByNameHook());
+        PatchManager.Apply(new StartProcessHook());
+        PatchManager.Apply(new BeatmapSubmissionLinksPatch());
+        PatchManager.Apply(new DisableRegistryPatch());
         
-        if (Config.HookTcpConnections) TcpClientHook.Initialize();
-        DnsHostByNameHook.Initialize();
-        StartProcessHook.Initialize();
-        BeatmapSubmissionLinksPatch.Initialize();
-        DisableRegistryPatch.Initialize();
-        
-        if (Config.HookNetLibHeaders) AddHeaderFieldHook.Initialize();
-        if (Config.HookNetLibEncoding) NetLibEncodingHook.Initialize();
+        if (Config.HookNetLibHeaders) PatchManager.Apply(new AddHeaderFieldHook());
+        if (Config.HookNetLibEncoding) PatchManager.Apply(new NetLibEncodingHook());
         
 #if NET40
-        
-        HostHeaderHook.Initialize();
-        CreateRequestHook.Initialize();
-        if (Config.HookCheckCertificate) CheckCertificateHook.Initialize();
+        PatchManager.Apply(new HostHeaderHook());
+        PatchManager.Apply(new CreateRequestHook());
+        if (Config.HookCheckCertificate) PatchManager.Apply(new CheckCertificateHook());
 #endif
         
         Logging.Info("All hooked");
