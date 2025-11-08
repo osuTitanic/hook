@@ -90,6 +90,8 @@ public static class EntryPoint
         if (Config.HookNetLibHeaders) PatchManager.Apply(new AddHeaderFieldHook());
         if (Config.HookNetLibEncoding) PatchManager.Apply(new NetLibEncodingHook());
         
+        if (Config.RemovePeppyDmCheck) PatchManager.Apply(new AskPeppyFix());
+        
 #if NET40
         PatchManager.Apply(new HostHeaderHook());
         PatchManager.Apply(new CreateRequestHook());
