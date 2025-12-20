@@ -10,5 +10,5 @@ public static class Constants
     public const string DefaultConfigName = "Titanic!.cfg";
     public const string LogFileName = "Titanic!.log";
     public const string UpdateServer = "http://hook.titanic.sh";
-    public const string PatchVersion = "1.0.0";
+    public const string PatchVersion = "1.0.1";
 }
