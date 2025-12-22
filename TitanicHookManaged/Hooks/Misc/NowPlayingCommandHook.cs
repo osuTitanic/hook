@@ -1,48 +1,26 @@
 ﻿// SPDX-License-Identifier: GPL-3.0-or-later
 // SPDX-FileCopyrightText: 2025 Oreeeee
 
-using System;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using Harmony;
+using TitanicHookManaged.Framework;
 using TitanicHookManaged.Helpers;
 
-namespace TitanicHookManaged.Hooks;
+namespace TitanicHookManaged.Hooks.Misc;
 
 /// <summary>
 /// Hook which will replace ppy.sh links to server link in /np command
 /// </summary>
-public static class NowPlayingCommandHook
+public class NowPlayingCommandHook : TitanicPatch
 {
     public const string HookName = "sh.Titanic.Hook.NowPlayingCommandHook";
-    
-    public static void Initialize()
-    {
-        Logging.HookStart(HookName);
-        
-        var harmony = HarmonyInstance.Create(HookName);
-        
-        MethodInfo? targetMethod = GetTargetMethod();
-        if (targetMethod == null)
-        {
-            Logging.HookError(HookName, "Couldn't find target method", false);
-            return;
-        }
-        
-        var prefix = typeof(NowPlayingCommandHook).GetMethod("SendMessagePrefix", Constants.HookBindingFlags);
 
-        try
-        {
-            Logging.HookPatching(HookName);
-            harmony.Patch(targetMethod, new HarmonyMethod(prefix));
-        }
-        catch (Exception e)
-        {
-            Logging.HookError(HookName, e.ToString());
-            return;
-        }
-        Logging.HookDone(HookName);
+    public NowPlayingCommandHook() : base(HookName)
+    {
+        TargetMethods = [GetTargetMethod()];
+        Prefixes = [AccessTools.Method(typeof(NowPlayingCommandHook), nameof(SendMessagePrefix))];
     }
 
     #region Hook

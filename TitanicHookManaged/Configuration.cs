@@ -65,6 +65,8 @@ public class Configuration
     
     public bool RemoveScoreFetchingDelay { get; set; } = true;
     
+    public bool RemovePeppyDmCheck { get; set; } = true;
+    
     /// <summary>
     /// Whether it's the first config creation.
     /// This is not written to the config!
@@ -141,6 +143,9 @@ public class Configuration
                 case "RemoveScoreFetchingDelay":
                     RemoveScoreFetchingDelay = bool.Parse(splitLine[1]);
                     break;
+                case "RemovePeppyDmCheck":
+                    RemovePeppyDmCheck = bool.Parse(splitLine[1]);
+                    break;
             }
         }
     }
@@ -169,6 +174,7 @@ public class Configuration
         sw.WriteLine($"AllowMono={AllowMono}");
         sw.WriteLine($"ClientSha256={ClientSha256}");
         sw.WriteLine($"RemoveScoreFetchingDelay={RemoveScoreFetchingDelay}");
+        sw.WriteLine($"RemovePeppyDmCheck={RemovePeppyDmCheck}");
     }
 
     /// <summary>

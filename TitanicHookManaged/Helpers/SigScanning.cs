@@ -1,7 +1,6 @@
 ﻿// SPDX-License-Identifier: GPL-3.0-or-later
 // SPDX-FileCopyrightText: 2025 Oreeeee
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -29,8 +28,7 @@ public static class SigScanning
     public static string[] GetStrings(MethodInfo method)
     {
         List<string> strings = [];
-        ILReader reader = new ILReader(method);
-        ILInstruction[] instructions = reader.ToArray();
+        ILInstruction[] instructions = GetCleanInstructions(method);
         for (int i = 0; i < instructions.Length; i++)
         {
             ILInstruction instruction = instructions[i];
@@ -132,6 +130,47 @@ public static class SigScanning
         }
         
         return cleanOpcodes.ToArray();
+    }
+    
+    // TODO: use it for opcodes function too
+    public static ILInstruction[] GetCleanInstructions(MethodInfo method)
+    {
+        // TODO: Might want to add a variant when control flow obfuscation is not used.
+        // Running the deobfuscation code on unobfuscated executables is probably not the best.
+        // Original code for unobfuscated methods:
+        // ILReader reader = new ILReader(method);
+        // return reader.Select(instr => instr.OpCode)
+        //    .ToArray();
+        
+        // Get an Offset:ILInstruction map of the method
+        Dictionary<int, ILInstruction> offsetAndInstr = new ILReader(method)
+            .ToArray()
+            .ToDictionary(instr => instr.Offset);
+        
+        HashSetCompat<int> visitedOffsets = new(); // Store unique visited offsets
+        HashSetCompat<int> cleanOffsets = new(); // Store offsets containing actual offsets (not jumps)
+        List<ILInstruction> cleanInstructions = []; // Store the clean OpCodes (without jumps)
+        
+        // Iterate over all instructions here
+        foreach (KeyValuePair<int, ILInstruction> instr in offsetAndInstr)
+        {
+            // Skip already visited offsets
+            if (visitedOffsets.Contains(instr.Key))
+                continue;
+            
+            // Get actual instruction offset, add it to clean offsets
+            cleanOffsets.Add(GetRealOffset(instr.Key, offsetAndInstr, ref visitedOffsets));
+            
+            // Do not add this offset here as it was already added by GetRealOffset
+        }
+
+        // Get all OpCodes from the clean offsets
+        foreach (int offset in cleanOffsets)
+        {
+            cleanInstructions.Add(offsetAndInstr[offset]);
+        }
+        
+        return cleanInstructions.ToArray();
     }
 
     /// <summary>

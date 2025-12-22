@@ -7,16 +7,16 @@
         <Nullable>enable</Nullable>
         <LangVersion>13</LangVersion>
         <ApplicationIcon>titanic.ico</ApplicationIcon>
-        <Version>1.0.0</Version>
+        <Version>1.0.1</Version>
         <Company>Titanic!</Company>
     </PropertyGroup>
     
     <PropertyGroup Condition="'$(TargetFramework)' == 'net20'">
-        <AssemblyTitle>Titanic! Loader (.NET Framework 2.0)</AssemblyTitle>
+        <AssemblyTitle>Titanic! Loader (fallback)</AssemblyTitle>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(TargetFramework)' == 'net40'">
-        <AssemblyTitle>Titanic! Loader (.NET Framework 4)</AssemblyTitle>
+        <AssemblyTitle>Titanic! Loader</AssemblyTitle>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
