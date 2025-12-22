@@ -4,6 +4,7 @@
 using System;
 using TitanicHookManaged.Framework;
 using TitanicHookManaged.Helpers;
+using TitanicHookManaged.Hooks.Benchmarking;
 using TitanicHookManaged.Hooks.Connection;
 using TitanicHookManaged.Hooks.Fixes;
 using TitanicHookManaged.Hooks.Loading;
@@ -97,8 +98,9 @@ public static class EntryPoint
         PatchManager.Apply(new CreateRequestHook());
         if (Config.HookCheckCertificate) PatchManager.Apply(new CheckCertificateHook());
 #endif
-        
-        BenchmarkSubmitPatch.Initialize();
+
+        PatchManager.Apply(new BenchmarkInitializePatch());
+        PatchManager.Apply(new BenchmarkStagePatch());
         
         Logging.Info("All hooked");
         Config.FirstRun = false;
