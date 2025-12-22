@@ -9,18 +9,17 @@ using System.Reflection.Emit;
 using System.Text;
 using ClrTest.Reflection;
 using Harmony;
+using TitanicHookManaged.Framework;
 using TitanicHookManaged.Helpers;
 
-namespace TitanicHookManaged.Hooks;
+namespace TitanicHookManaged.Hooks.Fixes;
 
-public static class NetLibEncodingHook
+public class NetLibEncodingHook : TitanicPatch
 {
     public const string HookName = "sh.Titanic.Hook.NetLibEncoding";
-    
-    public static void Initialize()
+
+    public NetLibEncodingHook() : base(HookName)
     {
-        Logging.HookStart(HookName);
-        
         if (WinApi.RunningUnderWine && WinApi.GetACP() == 1252)
         {
             // Fix for old version of Wine (like Wine-GE 8.21), seems to work fine on newer Wine versions tho from my
@@ -29,32 +28,29 @@ public static class NetLibEncodingHook
             return;
         }
         
-        var harmony = HarmonyInstance.Create(HookName);
+        TargetConstructors = [GetTargetMethod()];
+        Postfixes = [AccessTools.Method(typeof(NetLibEncodingHook), nameof(StringStreamCtorPostfix))];
+    }
 
-        ConstructorInfo? targetMethod = GetTargetMethod(AssemblyUtils.CommonOrOsuTypes);
+    private static ConstructorInfo? GetTargetMethod()
+    {
+        ConstructorInfo? targetMethod = AssemblyUtils.CommonOrOsuTypes
+            .SelectMany(t => t.GetConstructors(BindingFlags.Public | BindingFlags.Instance) // hardcoded name fallback for clients using Confuser (b20131216)
+            ).FirstOrDefault(m => m.GetParameters().Length == 2 &&
+                                  m.GetParameters()[0].ParameterType.FullName == "System.String" &&
+                                  m.GetParameters()[1].ParameterType.FullName == "System.Object[]" &&
+                                  (UsesStreamWriter(m) ||
+                                   m.DeclaringType?.Name ==
+                                   "StringStream"));
         if (targetMethod == null)
         {
             Logging.HookError(HookName, "Target method not found", !EntryPoint.Config.FirstRun);
             if (EntryPoint.Config.FirstRun)
                 EntryPoint.Config.HookNetLibEncoding = false;
-            return;
+            return null;
         }
         
-        Logging.HookStep(HookName, $"Resolved StringStream ctor: {targetMethod.DeclaringType.FullName}.{targetMethod.Name}");
-        
-        var postfix = typeof(NetLibEncodingHook).GetMethod("StringStreamCtorPostfix", Constants.HookBindingFlags);
-
-        try
-        {
-            Logging.HookPatching(HookName);
-            harmony.Patch(targetMethod, null, new HarmonyMethod(postfix));
-        }
-        catch (Exception e)
-        {
-            Logging.HookError(HookName, e.ToString());
-        }
-        
-        Logging.HookDone(HookName);
+        return targetMethod;
     }
     
     #region Hook
@@ -96,24 +92,7 @@ public static class NetLibEncodingHook
     #endregion
     
     #region Find method
-
-    /// <summary>
-    /// Find target method to hook
-    /// </summary>
-    /// <param name="types"></param>
-    /// <returns></returns>
-    private static ConstructorInfo? GetTargetMethod(Type[] types)
-    {
-        var validMethods = types
-            .SelectMany(t => t.GetConstructors(BindingFlags.Public | BindingFlags.Instance))
-            .Where(m => m.GetParameters().Length == 2 &&
-                        m.GetParameters()[0].ParameterType.FullName == "System.String" &&
-                        m.GetParameters()[1].ParameterType.FullName == "System.Object[]" &&
-                        (UsesStreamWriter(m) || m.DeclaringType?.Name == "StringStream") // hardcoded name fallback for clients using Confuser (b20131216)
-                        );
-        
-        return validMethods.FirstOrDefault();
-    }
+    
 
     /// <summary>
     /// Check whether the constructor is using StreamWriter

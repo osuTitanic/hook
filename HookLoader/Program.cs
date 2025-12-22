@@ -9,8 +9,10 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using TitanicHookManaged;
+using TitanicHookManaged.Framework;
 using TitanicHookManaged.Helpers;
 using TitanicHookManaged.Hooks;
+using TitanicHookManaged.Hooks.Loading;
 using TitanicHookManaged.OsuInterop;
 
 namespace HookLoader;
@@ -126,17 +128,17 @@ class Program
         
         // Load hooks specific to the loader
         Logging.Info("Loading early hooks");
-        EntryPointHook.Initialize(loaded);
-        ExecutablePathHook.Initialize(OsuPath);
+        PatchManager.Apply(new EntryPointHook(loaded));
+        PatchManager.Apply(new ExecutablePathHook(OsuPath));
         // TODO: find out if it's necessary to force the hook to point at loader's icon
         //ExtractIconHook.Initialize(AppDomain.CurrentDomain.FriendlyName);
-        GetArgsHook.Initialize(FakeArgs.ToArray());
+        PatchManager.Apply(new GetArgsHook(FakeArgs.ToArray()));
         
         // Hook osu!.exe's entrypoint to execute other hooks there
         // This is required because osu!common has to be loaded by osu! for hooking
         // If we would've loaded osu!common manually it wouldn't work
         Logging.Info("Hooking osu!'s main function");
-        OsuStartHook.Initialize(entry);
+        PatchManager.Apply(new OsuStartHook(entry));
         
         // Start the exe's entry point
         Logging.Info("Starting osu!");

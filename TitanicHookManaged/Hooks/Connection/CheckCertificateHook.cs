@@ -7,44 +7,19 @@ using System.Reflection;
 using System.Reflection.Emit;
 using ClrTest.Reflection;
 using Harmony;
+using TitanicHookManaged.Framework;
 using TitanicHookManaged.Helpers;
 
-namespace TitanicHookManaged.Hooks;
+namespace TitanicHookManaged.Hooks.Connection;
 
-public static class CheckCertificateHook
+public class CheckCertificateHook : TitanicPatch
 {
     public const string HookName = "sh.Titanic.Hook.CheckCertificate";
-    
-    public static void Initialize()
+
+    public CheckCertificateHook() : base(HookName)
     {
-        Logging.HookStart(HookName);
-        
-        var harmony = HarmonyInstance.Create(HookName);
-
-        MethodInfo? targetMethod = GetTargetMethod(AssemblyUtils.CommonOrOsuTypes.ToArray());
-        if (targetMethod == null)
-        {
-            Logging.HookError(HookName, "Target method not found", !EntryPoint.Config.FirstRun);
-            if (EntryPoint.Config.FirstRun)
-                EntryPoint.Config.HookCheckCertificate = false;
-            return;
-        }
-        
-        Logging.HookStep(HookName, $"Resolved checkCertificate: {targetMethod.DeclaringType?.FullName}.{targetMethod.Name}");
-        
-        var prefix = typeof(CheckCertificateHook).GetMethod("CheckCertificatePrefix", Constants.HookBindingFlags);
-
-        try
-        {
-            Logging.HookPatching(HookName);
-            harmony.Patch(targetMethod, new HarmonyMethod(prefix));
-        }
-        catch (Exception e)
-        {
-            Logging.HookError(HookName, e.ToString());
-        }
-        
-        Logging.HookDone(HookName);
+        TargetMethods = [GetTargetMethod(AssemblyUtils.CommonOrOsuTypes.ToArray())];
+        Prefixes = [AccessTools.Method(typeof(CheckCertificateHook), nameof(CheckCertificatePrefix))];
     }
     
     #region Hook

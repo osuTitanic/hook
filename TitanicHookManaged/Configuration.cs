@@ -66,6 +66,8 @@ public class Configuration
     
     public bool RemoveScoreFetchingDelay { get; set; } = true;
     
+    public bool RemovePeppyDmCheck { get; set; } = true;
+    
     /// <summary>
     /// Whether we can submit user's hardware data to benchmark submission
     /// </summary>
@@ -150,6 +152,9 @@ public class Configuration
                 case "BenchmarkConsent":
                     BenchmarkConsent = (BenchmarkDataConsent)int.Parse(splitLine[1]);
                     break;
+                case "RemovePeppyDmCheck":
+                    RemovePeppyDmCheck = bool.Parse(splitLine[1]);
+                    break;
             }
         }
     }
@@ -179,6 +184,7 @@ public class Configuration
         sw.WriteLine($"ClientSha256={ClientSha256}");
         sw.WriteLine($"RemoveScoreFetchingDelay={RemoveScoreFetchingDelay}");
         sw.WriteLine($"BenchmarkConsent={(int)BenchmarkConsent}");
+        sw.WriteLine($"RemovePeppyDmCheck={RemovePeppyDmCheck}");
     }
 
     /// <summary>

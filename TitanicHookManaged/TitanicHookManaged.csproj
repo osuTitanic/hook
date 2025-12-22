@@ -10,6 +10,10 @@
         <Prefer32Bit>true</Prefer32Bit>
     </PropertyGroup>
 
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+      <DebugType>full</DebugType>
+    </PropertyGroup>
+
     <ItemGroup>
       <Reference Include="System.Management" />
       <Reference Include="System.Windows.Forms" />
