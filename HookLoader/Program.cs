@@ -11,7 +11,6 @@ using System.Runtime.InteropServices;
 using TitanicHookManaged;
 using TitanicHookManaged.Framework;
 using TitanicHookManaged.Helpers;
-using TitanicHookManaged.Hooks;
 using TitanicHookManaged.Hooks.Loading;
 using TitanicHookManaged.OsuInterop;
 
@@ -123,7 +122,7 @@ class Program
         
         List<string> FakeArgs = new();
         FakeArgs.Add(OsuPath);
-        if (OsuVersion.I.GetVersionNumber() >= 20140811)
+        if (OsuVersion.GetVersionNumber() >= 20140811)
             FakeArgs.Add("-go"); // -go arg will bypass the updater in older builds. Always adding it won't work, osu! will show unknown file message
         
         // Load hooks specific to the loader

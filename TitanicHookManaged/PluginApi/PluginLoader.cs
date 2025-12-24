@@ -6,7 +6,7 @@ using System.Reflection;
 using TitanicHook.Framework;
 using TitanicHookManaged.Helpers;
 
-namespace TitanicHookManaged;
+namespace TitanicHookManaged.PluginApi;
 
 /// <summary>
 /// Manager for plugins that handles loading and their lifecycle

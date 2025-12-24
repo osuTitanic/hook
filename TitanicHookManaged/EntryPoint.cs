@@ -9,6 +9,7 @@ using TitanicHookManaged.Hooks.Fixes;
 using TitanicHookManaged.Hooks.Loading;
 using TitanicHookManaged.Hooks.Misc;
 using TitanicHookManaged.OsuInterop;
+using TitanicHookManaged.PluginApi;
 
 namespace TitanicHookManaged;
 
@@ -75,7 +76,7 @@ public static class EntryPoint
                 Config.HookTcpConnections = false;
         }
         
-        Logging.Info($"osu! version from reflection: {OsuVersion.I.GetVersion()}");
+        Logging.Info($"osu! version from reflection: {OsuVersion.GetVersion()}");
 
         PatchManager.Apply(new WinformSetTitleHook());
         PatchManager.Apply(new NowPlayingCommandHook());
@@ -106,7 +107,7 @@ public static class EntryPoint
         string notifMessage = $"Welcome to Titanic! (v{Constants.PatchVersion})";
         if (autoUpdated)
             notifMessage += "\nUpdated successfully!";
-        Notifications.I.ShowMessage(notifMessage);
+        Notifications.ShowMessage(notifMessage);
     }
 
     public static Configuration? Config = null;

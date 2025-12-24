@@ -4,12 +4,11 @@
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
-using TitanicHook.Framework.OsuInterop;
 using TitanicHookManaged.Helpers;
 
 namespace TitanicHookManaged.OsuInterop;
 
-public class Notifications : INotificationManager
+public class Notifications
 {
     #region Signatures
 
@@ -98,7 +97,5 @@ public class Notifications : INotificationManager
     /// Calls ShowMessage
     /// </summary>
     /// <param name="message">Message to show</param>
-    public void ShowMessage(string message) => _showMessageMethodReference?.Invoke(null, [message]);
-    
-    public static Notifications I { get; } = new Notifications();
+    public static void ShowMessage(string message) => _showMessageMethodReference?.Invoke(null, [message]);
 }
