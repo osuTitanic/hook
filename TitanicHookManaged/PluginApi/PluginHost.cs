@@ -9,4 +9,5 @@ public class PluginHost : IPluginHost
     public INotificationManager NotificationManager { get; } = new NotificationsApi();
     public IOsuVersions OsuVersions { get; } = new OsuVersionApi();
     public ILogger Logger { get; } = new LoggerApi();
+    public IPatchManager PatchManager { get; } = new PatchManagerApi();
 }

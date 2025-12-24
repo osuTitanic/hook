@@ -10,4 +10,5 @@ public interface IPluginHost
     INotificationManager NotificationManager { get; }
     IOsuVersions OsuVersions { get; }
     ILogger Logger { get; }
+    IPatchManager PatchManager { get; }
 }
