@@ -106,7 +106,7 @@ public static class EntryPoint
         string notifMessage = $"Welcome to Titanic! (v{Constants.PatchVersion})";
         if (autoUpdated)
             notifMessage += "\nUpdated successfully!";
-        Notifications.ShowMessage(notifMessage);
+        Notifications.I.ShowMessage(notifMessage);
     }
 
     public static Configuration? Config = null;
