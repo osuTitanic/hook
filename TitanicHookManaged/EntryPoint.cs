@@ -100,6 +100,10 @@ public static class EntryPoint
 #endif
         
         PluginLoader.LoadPlugins();
+        if (PluginLoader.Plugins.Count > 0)
+        {
+            Notifications.ShowMessage($"Loaded {PluginLoader.Plugins.Count} plugins");
+        }
         
         Logging.Info("All hooked");
         Config.FirstRun = false;

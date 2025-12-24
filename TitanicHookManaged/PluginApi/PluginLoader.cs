@@ -11,16 +11,15 @@ namespace TitanicHookManaged.PluginApi;
 /// <summary>
 /// Manager for plugins that handles loading and their lifecycle
 /// </summary>
-public class PluginLoader
+public static class PluginLoader
 {
+    public static List<IPlugin> Plugins { get; } = [];
+    
     /// <summary>
     /// Loads all plugins from the default directory
     /// </summary>
-    /// <returns>List of plugin objects</returns>
-    public static List<IPlugin> LoadPlugins()
+    public static void LoadPlugins()
     {
-        List<IPlugin> plugins = [];
-        
         // TODO: Directory.EnumerateFiles is allegedly faster, but it requires .NET Framework 4.
         // Might put that behind an ifdef?
         var manifestFiles = Directory.GetFiles("HookPlugins", "PluginManifest.txt", SearchOption.AllDirectories);
@@ -40,7 +39,11 @@ public class PluginLoader
                 {
                     var plugin = (IPlugin)Activator.CreateInstance(pluginType);
                     plugin.Initialize(new PluginHost());
-                    plugins.Add(plugin);
+                    Plugins.Add(plugin);
+                    
+#if DEBUG
+                    Logging.Info($"Loaded plugin {plugin.Name} by {plugin.Author}");
+#endif
                 }
             }
             catch (Exception e)
@@ -48,7 +51,5 @@ public class PluginLoader
                 Logging.Info("Failed to load plugin");
             }
         }
-        
-        return plugins;
     }
 }
