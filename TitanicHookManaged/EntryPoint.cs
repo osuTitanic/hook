@@ -98,6 +98,8 @@ public static class EntryPoint
         if (Config.HookCheckCertificate) PatchManager.Apply(new CheckCertificateHook());
 #endif
         
+        PluginLoader.LoadPlugins();
+        
         Logging.Info("All hooked");
         Config.FirstRun = false;
         Config.SaveConfiguration(Config.Filename);

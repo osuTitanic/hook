@@ -25,6 +25,7 @@
     <ItemGroup>
         <ProjectReference Include="../Libraries/Harmony/Harmony/Harmony.csproj" />
         <ProjectReference Include="..\Libraries\ILReader\ILReader.csproj" />
+        <ProjectReference Include="..\TitanicHook.Framework\TitanicHook.Framework.csproj" />
     </ItemGroup>
 
 </Project>
