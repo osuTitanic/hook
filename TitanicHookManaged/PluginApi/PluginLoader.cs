@@ -20,13 +20,19 @@ public class PluginLoader
     public static List<IPlugin> LoadPlugins()
     {
         List<IPlugin> plugins = [];
-        var pluginFiles = Directory.GetFiles("Plugins", "*.dll");
+        
+        // TODO: Directory.EnumerateFiles is allegedly faster, but it requires .NET Framework 4.
+        // Might put that behind an ifdef?
+        var manifestFiles = Directory.GetFiles("HookPlugins", "PluginManifest.txt", SearchOption.AllDirectories);
 
-        foreach (var file in pluginFiles)
+        foreach (var manifest in manifestFiles)
         {
             try
             {
-                var assembly = Assembly.LoadFrom(file);
+                // Read the manifest to find which dll is the plugin file
+                string pluginFileName = File.ReadAllText(manifest).Trim();
+                
+                var assembly = Assembly.LoadFrom(Directory.GetParent(manifest).FullName + "\\" + pluginFileName);
                 var pluginTypes = assembly.GetTypes()
                     .Where(t => typeof(IPlugin).IsAssignableFrom(t) && !t.IsInterface);
 
