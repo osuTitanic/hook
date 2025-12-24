@@ -8,4 +8,5 @@ namespace TitanicHook.Framework;
 public interface IPluginHost
 {
     INotificationManager NotificationManager { get; }
+    IOsuVersions OsuVersions { get; }
 }

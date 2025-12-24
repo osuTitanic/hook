@@ -75,7 +75,7 @@ public static class EntryPoint
                 Config.HookTcpConnections = false;
         }
         
-        Logging.Info($"osu! version from reflection: {OsuVersion.GetVersion()}");
+        Logging.Info($"osu! version from reflection: {OsuVersion.I.GetVersion()}");
 
         PatchManager.Apply(new WinformSetTitleHook());
         PatchManager.Apply(new NowPlayingCommandHook());

@@ -6,10 +6,11 @@ using System.Reflection.Emit;
 using TitanicHookManaged.Helpers;
 using System.Linq;
 using System.Text.RegularExpressions;
+using TitanicHook.Framework.OsuInterop;
 
 namespace TitanicHookManaged.OsuInterop;
 
-public static class OsuVersion
+public class OsuVersion : IOsuVersions
 {
     /// <summary>
     /// 2015 signature for deobfuscated builds
@@ -103,15 +104,15 @@ public static class OsuVersion
     /// Gets full name of the build (e.g. b20150101cuttingedge)
     /// </summary>
     /// <returns></returns>
-    public static string? GetVersion() => _getVersionRef?.Invoke(null, null) as string;
+    public string? GetVersion() => _getVersionRef?.Invoke(null, null) as string;
 
     /// <summary>
     /// Gets version number (e.g. 20150101) from long one (e.g. b20150101cuttingedge)
     /// </summary>
     /// <returns></returns>
-    public static int GetVersionNumber()
+    public int GetVersionNumber()
     {
-        string? fullVersion = GetVersion();
+        string? fullVersion = I.GetVersion();
         if (string.IsNullOrEmpty(fullVersion))
             return 0;
         
@@ -121,4 +122,6 @@ public static class OsuVersion
         string version = match.Groups[1].Value;
         return int.Parse(version);
     }
+
+    public static OsuVersion I { get; } = new OsuVersion();
 }
