@@ -92,12 +92,39 @@ public static class ObfHelper
         if (_stringCache.TryGetValue(id, out var value))
             return value;
 
+        if (_stringObfReference == null)
+            return null;
+
+        if (_decStringDelegate == null)
+        {
+            // Create a delegate to quickly call string decryption without reflection invoking
+            var dm = new DynamicMethod(
+                "Invoke_StringDec", 
+                typeof(string), 
+                [typeof(int)], 
+                _stringObfReference.DeclaringType.Module, 
+                true);
+            
+            var il = dm.GetILGenerator();
+            
+            il.Emit(OpCodes.Ldarg_0); // Load the int argument
+            il.Emit(OpCodes.Call, _stringObfReference); // Call the string decryption method
+            il.Emit(OpCodes.Box, typeof(string)); // Box the method into a string
+            il.Emit(OpCodes.Ret); // Return the decrypted string
+            
+            // Create the delegate
+            _decStringDelegate = (DecStringDelegate) dm.CreateDelegate(typeof(DecStringDelegate));
+        }
+
         // It's not in cache, so call the deobfuscation method and add it to cache
-        value = _stringObfReference?.Invoke(null, [id])?.ToString() ?? "";
+        value = _decStringDelegate(id) ?? "";
         _stringCache.Add(id, value);
         
         return value;
     }
+    
+    private static DecStringDelegate? _decStringDelegate;
+    private delegate string? DecStringDelegate(int id);
 
     /// <summary>
     /// Decrypts all encrypted strings in a specified CodeInstruction enumerable
