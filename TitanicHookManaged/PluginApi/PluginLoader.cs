@@ -48,7 +48,7 @@ public static class PluginLoader
             }
             catch (Exception e)
             {
-                Logging.Info("Failed to load plugin");
+                Logging.Info($"Failed to load plugin: {e}");
             }
         }
     }
