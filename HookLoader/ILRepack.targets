@@ -12,6 +12,7 @@
             <AssembliesToMerge Include="$(OutputPath)0Harmony.dll" />
             <AssembliesToMerge Include="$(OutputPath)ILReader.dll" />
             <AssembliesToMerge Include="$(OutputPath)TitanicHookManaged.dll" />
+            <AssembliesToMerge Include="$(OutputPath)TitanicHook.Framework.dll" />
             <AssembliesToMerge Include="$(OutputPath)LinqBridge.dll" Condition="'$(TargetFramework)' == 'net20'" />
         </ItemGroup>
 
