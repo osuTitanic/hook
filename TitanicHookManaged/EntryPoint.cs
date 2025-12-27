@@ -37,9 +37,7 @@ public static class EntryPoint
             Logging.LogAndShowError("Unhandled exception in injected module " + e.ExceptionObject.ToString());
         };
 
-        if (config == null)
-            Config ??= new Configuration(Constants.DefaultConfigName);
-        else
+        if (config != null)
             Config = config;
         
         if (Config.EnableConsole)
@@ -114,5 +112,5 @@ public static class EntryPoint
         Notifications.ShowMessage(notifMessage);
     }
 
-    public static Configuration? Config = null;
+    public static Configuration Config = new ();
 }

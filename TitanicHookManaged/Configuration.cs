@@ -75,6 +75,19 @@ public class Configuration
 
     public string Filename;
 
+    /// <summary>
+    /// Parameterless constructor for default config values. Nothing is getting parsed here
+    /// </summary>
+    public Configuration()
+    {
+        Filename = Constants.DefaultConfigName;
+    }
+
+    /// <summary>
+    /// Loads a config from specified file
+    /// </summary>
+    /// <param name="filename">Path to the target file</param>
+    /// <param name="callback">Optional: callback that will be called if the config is not found</param>
     public Configuration(string filename, ConfigurationNotFoundCallback? callback = null)
     {
         Filename = filename;
