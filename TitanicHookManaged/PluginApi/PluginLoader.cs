@@ -20,10 +20,20 @@ public static class PluginLoader
     /// </summary>
     public static void LoadPlugins()
     {
-        // TODO: Directory.EnumerateFiles is allegedly faster, but it requires .NET Framework 4.
-        // Might put that behind an ifdef?
-        var manifestFiles = Directory.GetFiles("HookPlugins", "PluginManifest.txt", SearchOption.AllDirectories);
-
+        string[] manifestFiles;
+        try
+        {
+            // TODO: Directory.EnumerateFiles is allegedly faster, but it requires .NET Framework 4.
+            // Might put that behind an ifdef?
+            manifestFiles = Directory.GetFiles("HookPlugins", "PluginManifest.txt", SearchOption.AllDirectories);
+        }
+        catch (Exception e)
+        {
+            // Probably couldn't open the directory, not critical, don't load anything
+            Logging.Info($"Failed to enumerate plugin manifests: {e}");
+            return;
+        }
+        
         foreach (var manifest in manifestFiles)
         {
             try
