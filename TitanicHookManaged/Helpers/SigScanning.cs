@@ -186,13 +186,19 @@ public static class SigScanning
         while (true)
         {
             visitedOffsets.Add(instr.Offset);
+
+            if (instr.OpCode == OpCodes.Br_S)
+            {
+                ShortInlineBrTargetInstruction jump = (ShortInlineBrTargetInstruction)instr;
+                instr = offsetAndInstr[jump.TargetOffset];
+                
+            } else if (instr.OpCode == OpCodes.Br)
+            {
+                InlineBrTargetInstruction jump = (InlineBrTargetInstruction)instr;
+                instr = offsetAndInstr[jump.TargetOffset];
+            }
             
-            if (instr.OpCode != OpCodes.Br_S)
-                return instr.Offset;
-            
-            ShortInlineBrTargetInstruction jump = (ShortInlineBrTargetInstruction)instr;
-            
-            instr = offsetAndInstr[jump.TargetOffset];
+            return instr.Offset;
         }
     }
 }
