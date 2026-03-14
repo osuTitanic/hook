@@ -20,7 +20,7 @@ public abstract class TitanicPatch
     /// <summary>
     /// Indicates how errors will get handled when applying the patch
     /// </summary>
-    public PatchImportance Importance() => PatchImportance.Standard;
+    public virtual PatchImportance Importance => PatchImportance.Standard;
 
     public List<MethodInfo> TargetMethods { get; set; } = [];
     public List<ConstructorInfo> TargetConstructors { get; set; } = [];
@@ -157,7 +157,7 @@ public abstract class TitanicPatch
     /// <param name="message"></param>
     protected void HandleError(string message)
     {
-        switch (Importance())
+        switch (Importance)
         {
             case PatchImportance.None:
                 Logging.HookError(HookName, message, false);
