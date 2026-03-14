@@ -16,6 +16,7 @@ public class ExecutablePathHook : TitanicPatch
 {
     private static string? _spoofedExePath;
     public const string HookName = "sh.Titanic.Hook.ExecutablePath";
+    public override PatchImportance Importance => PatchImportance.Important;
 
     public ExecutablePathHook(string? spoofedExePath) : base(HookName)
     {

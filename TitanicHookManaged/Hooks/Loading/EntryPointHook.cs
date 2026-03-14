@@ -16,6 +16,7 @@ public class EntryPointHook : TitanicPatch
 {
     private static Assembly? _spoofedEntryPointAssembly;
     public const string HookName = "sh.Titanic.Hook.GetEntryAssembly";
+    public override PatchImportance Importance => PatchImportance.Important;
 
     public EntryPointHook(Assembly? spoofedAssembly) : base(HookName)
     {

@@ -15,6 +15,7 @@ namespace TitanicHookManaged.Hooks.Fixes;
 public class AskPeppyFix : TitanicPatch
 {
     private static readonly string HookName = "sh.Titanic.Hook.AskPeppyFix";
+    public override PatchImportance Importance => PatchImportance.None;
 
     public AskPeppyFix() : base(HookName)
     {
@@ -22,7 +23,7 @@ public class AskPeppyFix : TitanicPatch
         Transpilers = [AccessTools.Method(typeof(AskPeppyFix), nameof(Transpiler))];
     }
 
-    private static MethodInfo? GetTargetMethod()
+    private MethodInfo? GetTargetMethod()
     {
         MethodInfo? method = AssemblyUtils.OsuTypes
             .Where(t => t.IsNotPublic && !t.IsNested && t.BaseType != null && t.BaseType != typeof(object))
@@ -34,7 +35,7 @@ public class AskPeppyFix : TitanicPatch
 
         if (method == null)
         {
-            Logging.HookError(HookName, "Failed to find target method", EntryPoint.Config.FirstRun);
+            HandleError("Failed to find target method");
             if (EntryPoint.Config.FirstRun)
                 EntryPoint.Config.RemovePeppyDmCheck = false;
             return null;
