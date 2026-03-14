@@ -12,6 +12,11 @@
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
       <DebugType>full</DebugType>
+        <DefineConstants>PLUGIN_SUPPORT</DefineConstants>
+    </PropertyGroup>
+    
+    <PropertyGroup Condition=" '$(Configuration)' == 'ReleaseWithPlugins' ">
+        <DefineConstants>PLUGIN_SUPPORT</DefineConstants>
     </PropertyGroup>
 
     <ItemGroup>

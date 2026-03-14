@@ -97,11 +97,13 @@ public static class EntryPoint
         if (Config.HookCheckCertificate) PatchManager.Apply(new CheckCertificateHook());
 #endif
         
+#if PLUGIN_SUPPORT
         PluginLoader.LoadPlugins();
         if (PluginLoader.Plugins.Count > 0)
         {
             Notifications.ShowMessage($"Loaded {PluginLoader.Plugins.Count} plugins");
         }
+#endif
         
         Logging.Info("All hooked");
         Config.FirstRun = false;
