@@ -48,7 +48,7 @@ public static class PluginLoader
                 foreach (var pluginType in pluginTypes)
                 {
                     var plugin = (IPlugin)Activator.CreateInstance(pluginType);
-                    plugin.Initialize(new PluginHost());
+                    plugin.Initialize();
                     Plugins.Add(plugin);
                     
 #if DEBUG

@@ -11,5 +11,5 @@ public interface IPlugin
     public string Version { get; }
     public string License { get; }
 
-    public void Initialize(IPluginHost host);
+    public void Initialize();
 }
