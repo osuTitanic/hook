@@ -1,0 +1,203 @@
+﻿// SPDX-License-Identifier: GPL-3.0-or-later
+// SPDX-FileCopyrightText: 2025 Oreeeee
+ 
+using System;
+using System.IO;
+
+namespace TitanicHook.Core;
+
+/// <summary>
+/// Callback delegate for config not found
+/// </summary>
+public delegate void ConfigurationNotFoundCallback(string filename, Exception e);
+
+public class Configuration
+{
+    public const int CurrentConfigVersion = 2;
+    
+    // Version of the config file
+    public int Version { get; set; } = CurrentConfigVersion;
+    
+    // Alloc console for logs
+    public bool EnableConsole { get; set; } = false;
+    
+    // Log to a file
+    public bool LogToFile { get; set; } = false;
+    
+    // Domain of the server (e.g. titanic.sh)
+    public string ServerName { get; set; } = "titanic.sh";
+    
+    // Whether to hook WSAConnect (TCP Bancho)
+    public bool HookTcpConnections { get; set; } = true;
+    
+    // Whether to hook NetLib AddHeaderField
+    public bool HookNetLibHeaders { get; set; } = true;
+    
+    // Whether to hook NetLib StringStream ctor
+    public bool HookNetLibEncoding { get; set; } = true;
+    
+    // Whether to hook Host header in pWebRequest (.NET Framework 4.x only)
+    public bool HookModernHostMethod { get; set; }
+#if NET40
+         = true;
+#else
+        = false;
+#endif
+    
+    // Whether to hook pWebRequest certificate check (.NET Framework 4.x only)
+    public bool HookCheckCertificate { get; set; }
+#if NET40
+         = true;
+#else
+        = false;
+#endif
+    
+    /// <summary>
+    /// Whether to allow running under Mono
+    /// </summary>
+    public bool AllowMono { get; set; } = false;
+    
+    /// <summary>
+    /// SHA256 of client that the config is generated for.
+    /// This is to prevent people from sharing config files.
+    /// </summary>
+    public string ClientSha256 { get; set; } = "";
+    
+    public bool RemoveScoreFetchingDelay { get; set; } = true;
+    
+    public bool RemovePeppyDmCheck { get; set; } = true;
+    
+    /// <summary>
+    /// Whether it's the first config creation.
+    /// This is not written to the config!
+    /// </summary>
+    public bool FirstRun { get; set; } = false;
+
+    public string Filename;
+
+    /// <summary>
+    /// Parameterless constructor for default config values. Nothing is getting parsed here
+    /// </summary>
+    public Configuration()
+    {
+        Filename = Constants.DefaultConfigName;
+    }
+
+    /// <summary>
+    /// Loads a config from specified file
+    /// </summary>
+    /// <param name="filename">Path to the target file</param>
+    /// <param name="callback">Optional: callback that will be called if the config is not found</param>
+    public Configuration(string filename, ConfigurationNotFoundCallback? callback = null)
+    {
+        Filename = filename;
+        string[] lines;
+        try
+        {
+            lines = File.ReadAllLines(filename);
+        }
+        catch (Exception e)
+        {
+            callback ??= DefaultConfigNotFoundCallback; // Assign default callback if not specified
+            callback(filename, e);
+            return;
+        }
+
+        foreach (string line in lines)
+        {
+            string cleanLine = line.Trim();
+            if (cleanLine.StartsWith("#") || cleanLine == "")
+            {
+                continue;
+            }
+            
+            string[] splitLine = cleanLine.Split(['='], 2);
+            switch (splitLine[0])
+            {
+                case "Version":
+                    Version = int.Parse(splitLine[1]);
+                    if (Version < CurrentConfigVersion)
+                    {
+                        FirstRun = true;
+                        Version = CurrentConfigVersion;
+                        return;
+                    }
+                    break;
+                case "EnableConsole":
+                    EnableConsole = bool.Parse(splitLine[1]);
+                    break;
+                case "LogToFile":
+                    LogToFile = bool.Parse(splitLine[1]);
+                    break;
+                case "ServerName":
+                    ServerName = splitLine[1];
+                    break;
+                case "HookTcpConnections":
+                    HookTcpConnections = bool.Parse(splitLine[1]);
+                    break;
+                case "HookNetLibHeaders":
+                    HookNetLibHeaders = bool.Parse(splitLine[1]);
+                    break;
+                case "HookNetLibEncoding":
+                    HookNetLibEncoding = bool.Parse(splitLine[1]);
+                    break;
+                case "HookModernHostMethod":
+                    HookModernHostMethod = bool.Parse(splitLine[1]);
+                    break;
+                case "HookCheckCertificate":
+                    HookCheckCertificate = bool.Parse(splitLine[1]);
+                    break;
+                case "AllowMono":
+                    AllowMono = bool.Parse(splitLine[1]);
+                    break;
+                case "ClientSha256":
+                    ClientSha256 = splitLine[1];
+                    break;
+                case "RemoveScoreFetchingDelay":
+                    RemoveScoreFetchingDelay = bool.Parse(splitLine[1]);
+                    break;
+                case "RemovePeppyDmCheck":
+                    RemovePeppyDmCheck = bool.Parse(splitLine[1]);
+                    break;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Save current configuration to a file
+    /// </summary>
+    /// <param name="filename">Config filename</param>
+    public void SaveConfiguration(string filename)
+    {
+        using FileStream fs = new FileStream(filename, FileMode.Create);
+        using StreamWriter sw = new StreamWriter(fs);
+        
+        sw.WriteLine("# Configuration file for Titanic! Hook");
+        sw.WriteLine("# If you don't know what you're doing, DO NOT edit this file yourself");
+        sw.WriteLine("");
+        sw.WriteLine($"Version={Version}");
+        sw.WriteLine($"EnableConsole={EnableConsole}");
+        sw.WriteLine($"LogToFile={LogToFile}");
+        sw.WriteLine($"ServerName={ServerName}");
+        sw.WriteLine($"HookTcpConnections={HookTcpConnections}");
+        sw.WriteLine($"HookNetLibHeaders={HookNetLibHeaders}");
+        sw.WriteLine($"HookNetLibEncoding={HookNetLibEncoding}");
+        sw.WriteLine($"HookModernHostMethod={HookModernHostMethod}");
+        sw.WriteLine($"HookCheckCertificate={HookCheckCertificate}");
+        sw.WriteLine($"AllowMono={AllowMono}");
+        sw.WriteLine($"ClientSha256={ClientSha256}");
+        sw.WriteLine($"RemoveScoreFetchingDelay={RemoveScoreFetchingDelay}");
+        sw.WriteLine($"RemovePeppyDmCheck={RemovePeppyDmCheck}");
+    }
+
+    /// <summary>
+    /// Default callback function for when config is not found
+    /// </summary>
+    /// <param name="filename">Config filename</param>
+    /// <param name="e">Exception thrown when loading the config</param>
+    private void DefaultConfigNotFoundCallback(string filename, Exception e)
+    {
+        Console.WriteLine("Couldn't load TitanicHook config. A default one will be created.");
+        FirstRun = true;
+    }
+}

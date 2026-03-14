@@ -30,9 +30,9 @@ jobs:
         uses: NuGet/setup-nuget@v2
 
       - name: Restore NuGet packages
-        run: nuget restore TitanicHookManaged.sln
+        run: nuget restore TitanicHook.sln
         shell: pwsh
 
       - name: Build Solution
-        run: msbuild TitanicHookManaged.sln /t:Build /p:Configuration=Release /m
+        run: msbuild TitanicHook.sln /t:Build /p:Configuration=Release /m
         shell: pwsh
