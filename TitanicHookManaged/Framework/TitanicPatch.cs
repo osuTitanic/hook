@@ -17,6 +17,11 @@ public abstract class TitanicPatch
     /// </summary>
     public string HookName { get; set; }
 
+    /// <summary>
+    /// Indicates how errors will get handled when applying the patch
+    /// </summary>
+    public PatchImportance Importance { get; set; } = PatchImportance.Standard;
+
     public List<MethodInfo> TargetMethods { get; set; } = [];
     public List<ConstructorInfo> TargetConstructors { get; set; } = [];
     public List<MethodInfo> Prefixes { get; set; } = [];
@@ -52,7 +57,7 @@ public abstract class TitanicPatch
                 }
                 catch (Exception e)
                 {
-                    Logging.HookError(HookName, $"Fail at prefixing {method.Name} with {prefix.Name}: {e}");
+                    HandleError($"Fail at prefixing {method.Name} with {prefix.Name}: {e}");
                 }
             }
             
@@ -68,7 +73,7 @@ public abstract class TitanicPatch
                 }
                 catch (Exception e)
                 {
-                    Logging.HookError(HookName, $"Fail at postfixing {method.Name} with {postfix.Name}: {e}");
+                    HandleError($"Fail at postfixing {method.Name} with {postfix.Name}: {e}");
                 }
             }
             
@@ -84,7 +89,7 @@ public abstract class TitanicPatch
                 }
                 catch (Exception e)
                 {
-                    Logging.HookError(HookName, $"Fail at transpiling {method.Name} with {transpiler.Name}: {e}");
+                    HandleError($"Fail at transpiling {method.Name} with {transpiler.Name}: {e}");
                 }
             }
         }
@@ -108,7 +113,7 @@ public abstract class TitanicPatch
                 }
                 catch (Exception e)
                 {
-                    Logging.HookError(HookName, $"Fail at prefixing {constructor.Name} with {prefix.Name}: {e}");
+                    HandleError($"Fail at prefixing {constructor.Name} with {prefix.Name}: {e}");
                 }
             }
             
@@ -124,7 +129,7 @@ public abstract class TitanicPatch
                 }
                 catch (Exception e)
                 {
-                    Logging.HookError(HookName, $"Fail at postfixing {constructor.Name} with {postfix.Name}: {e}");
+                    HandleError($"Fail at postfixing {constructor.Name} with {postfix.Name}: {e}");
                 }
             }
             
@@ -140,9 +145,49 @@ public abstract class TitanicPatch
                 }
                 catch (Exception e)
                 {
-                    Logging.HookError(HookName, $"Fail at transpiling {constructor.Name} with {transpiler.Name}: {e}");
+                    HandleError($"Fail at transpiling {constructor.Name} with {transpiler.Name}: {e}");
                 }
             }
         }
     }
+
+    /// <summary>
+    /// Handles errors in Patch() based on the Importance
+    /// </summary>
+    /// <param name="message"></param>
+    private void HandleError(string message)
+    {
+        switch (Importance)
+        {
+            case PatchImportance.None:
+                Logging.HookError(HookName, message, false);
+                break;
+            case PatchImportance.Standard:
+                Logging.HookError(HookName, message, true);
+                break;
+            case PatchImportance.Important:
+                Logging.HookError(HookName, message, true);
+                Logging.LogAndShowError("Important patch failed to apply. Quitting!");
+                Environment.Exit(-1);
+                break;
+        }
+    }
+}
+
+public enum PatchImportance
+{
+    /// <summary>
+    /// Patch fail will get logged without a load message box
+    /// </summary>
+    None,
+    
+    /// <summary>
+    /// Patch fail will show a message box but won't stop the program
+    /// </summary>
+    Standard,
+    
+    /// <summary>
+    /// Patch fail will quit the application
+    /// </summary>
+    Important,
 }
