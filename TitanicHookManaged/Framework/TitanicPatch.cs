@@ -155,7 +155,7 @@ public abstract class TitanicPatch
     /// Handles errors in Patch() based on the Importance
     /// </summary>
     /// <param name="message"></param>
-    private void HandleError(string message)
+    protected void HandleError(string message)
     {
         switch (Importance())
         {
