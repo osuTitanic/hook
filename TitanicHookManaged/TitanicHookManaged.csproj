@@ -4,7 +4,7 @@
         <TargetFrameworks>net20;net40</TargetFrameworks>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <LangVersion>12</LangVersion>
+        <LangVersion>14</LangVersion>
         <ImplicitUsings>disable</ImplicitUsings>
         <PlatformTarget>x86</PlatformTarget>
         <Prefer32Bit>true</Prefer32Bit>
