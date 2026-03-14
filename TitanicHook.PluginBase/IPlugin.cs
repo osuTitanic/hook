@@ -1,4 +1,4 @@
-﻿namespace TitanicHook.Framework;
+﻿namespace TitanicHook.PluginBase;
 
 /// <summary>
 /// Base interface for plugins

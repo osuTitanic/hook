@@ -15,7 +15,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ILReader", "Libraries\ILRea
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HookLoader", "HookLoader\HookLoader.csproj", "{2D9595B8-D439-4380-BDD6-B114F09931D4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TitanicHook.Framework", "TitanicHook.Framework\TitanicHook.Framework.csproj", "{93391601-3166-46B9-B64C-FB91038324E0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TitanicHook.PluginBase", "TitanicHook.PluginBase\TitanicHook.PluginBase.csproj", "{93391601-3166-46B9-B64C-FB91038324E0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using TitanicHook.Framework;
+using TitanicHook.PluginBase;
 using TitanicHookManaged.Helpers;
 
 namespace TitanicHookManaged.PluginApi;
