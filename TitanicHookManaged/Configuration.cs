@@ -65,6 +65,8 @@ public class Configuration
     
     public bool RemoveScoreFetchingDelay { get; set; } = true;
     
+    public bool RemovePeppyDmCheck { get; set; } = true;
+    
     /// <summary>
     /// Whether it's the first config creation.
     /// This is not written to the config!
@@ -73,6 +75,19 @@ public class Configuration
 
     public string Filename;
 
+    /// <summary>
+    /// Parameterless constructor for default config values. Nothing is getting parsed here
+    /// </summary>
+    public Configuration()
+    {
+        Filename = Constants.DefaultConfigName;
+    }
+
+    /// <summary>
+    /// Loads a config from specified file
+    /// </summary>
+    /// <param name="filename">Path to the target file</param>
+    /// <param name="callback">Optional: callback that will be called if the config is not found</param>
     public Configuration(string filename, ConfigurationNotFoundCallback? callback = null)
     {
         Filename = filename;
@@ -141,6 +156,9 @@ public class Configuration
                 case "RemoveScoreFetchingDelay":
                     RemoveScoreFetchingDelay = bool.Parse(splitLine[1]);
                     break;
+                case "RemovePeppyDmCheck":
+                    RemovePeppyDmCheck = bool.Parse(splitLine[1]);
+                    break;
             }
         }
     }
@@ -169,6 +187,7 @@ public class Configuration
         sw.WriteLine($"AllowMono={AllowMono}");
         sw.WriteLine($"ClientSha256={ClientSha256}");
         sw.WriteLine($"RemoveScoreFetchingDelay={RemoveScoreFetchingDelay}");
+        sw.WriteLine($"RemovePeppyDmCheck={RemovePeppyDmCheck}");
     }
 
     /// <summary>

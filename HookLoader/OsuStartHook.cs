@@ -1,10 +1,10 @@
 ﻿// SPDX-License-Identifier: GPL-3.0-or-later
 // SPDX-FileCopyrightText: 2025 Oreeeee
 
-using System;
 using System.Reflection;
 using Harmony;
 using TitanicHookManaged;
+using TitanicHookManaged.Framework;
 using TitanicHookManaged.Helpers;
 
 namespace HookLoader;
@@ -12,27 +12,14 @@ namespace HookLoader;
 /// <summary>
 /// Hook to load our own hooks after osu!.exe finishes loading but before main is called
 /// </summary>
-public static class OsuStartHook
+public class OsuStartHook : TitanicPatch
 {
     private const string HookName = "sh.Titanic.Hook.OsuStartHook";
-    
-    public static void Initialize(MethodInfo method)
+
+    public OsuStartHook(MethodInfo method) : base(HookName)
     {
-        Logging.HookStart(HookName);
-        
-        var harmony = HarmonyInstance.Create(HookName);
-        var prefix = typeof(OsuStartHook).GetMethod("OsuStartPrefix", Constants.HookBindingFlags);
-        try
-        {
-            Logging.HookStep(HookName, "Patching");
-            harmony.Patch(method, new HarmonyMethod(prefix));
-        }
-        catch (Exception e)
-        {
-            Logging.HookError(HookName, e.ToString());
-        }
-        
-        Logging.HookDone(HookName);
+        TargetMethods = [method];
+        Prefixes = [AccessTools.Method(typeof(OsuStartHook), nameof(OsuStartPrefix))];
     }
     
     #region Hook
