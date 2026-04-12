@@ -65,7 +65,16 @@ class Program
         Assembly loaded;
         try
         {
-            OsuPath = FindOsuExecutable(Path.GetDirectoryName(_originalEntryAssembly.Location));
+            string? path = FindOsuExecutable(Path.GetDirectoryName(_originalEntryAssembly.Location));
+            if (path == null)
+            {
+                Logging.LogAndShowError("Couldn't locate the osu! executable!");
+                Environment.Exit(1);
+            }
+            else
+            {
+                OsuPath = path;
+            }
             loaded = Assembly.Load(File.ReadAllBytes(OsuPath));
         }
         catch (Exception e)
@@ -148,8 +157,11 @@ class Program
     /// </summary>
     /// <param name="directory">Directory to search in</param>
     /// <returns>Path to a first found osu! executable, null if none was found</returns>
-    private static string? FindOsuExecutable(string directory)
+    private static string? FindOsuExecutable(string? directory)
     {
+        if (directory == null)
+            return null;
+        
         string[] validFiles =
             ["osu!.exe", "osu.exe", "osu!test.exe", "osu!public.exe", "osu!shine1.exe", "osu!cuttingedge.exe"];
         return validFiles.Select(file => Path.Combine(directory, file)).FirstOrDefault(File.Exists);
