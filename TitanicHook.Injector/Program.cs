@@ -43,8 +43,8 @@ class Program
             return;
         }
         Console.WriteLine($"PID of {processName}: {osuProcess.Id}");
-        
-        string injecteePath = Path.Combine(Environment.CurrentDirectory, $"TitanicHook.Core/bin/{configuration}/{targetFramework}/TitanicHook.Core.dll");
+
+        string injecteePath = Path.GetFullPath($"../../../../TitanicHook.Core/bin/{configuration}/{targetFramework}/TitanicHook.Core.dll");
         Console.WriteLine($"Injectee path: {injecteePath}");
         
         InjectableProcess injectableProcess = new InjectableProcess((uint)osuProcess.Id);
