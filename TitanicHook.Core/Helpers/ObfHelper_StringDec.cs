@@ -10,34 +10,6 @@ public static partial class ObfHelper
     private static DecStringDelegate? _decStringDelegate;
     private delegate string? DecStringDelegate(int id);
     
-    #region Method Signatures
-    /// <summary>
-    /// Prefix signature for SmartAssembly 3.x string decrypt method, currently unused
-    /// </summary>
-    private static OpCode[] _stringObfPrefix =
-    [
-        OpCodes.Ldtoken,
-        OpCodes.Call,
-        OpCodes.Dup,
-        OpCodes.Stloc_S,
-        OpCodes.Call,
-        OpCodes.Ldsfld,
-        OpCodes.Brtrue,
-        OpCodes.Call,
-        OpCodes.Stloc_1,
-        OpCodes.Ldloc_1,
-        OpCodes.Ldloc_1,
-        OpCodes.Callvirt,
-        OpCodes.Callvirt,
-        OpCodes.Stloc_S,
-        OpCodes.Ldloca_S,
-        OpCodes.Ldstr,
-        OpCodes.Call,
-        OpCodes.Callvirt,
-        OpCodes.Stsfld,
-    ];
-    #endregion
-    
     #region Method Lookups
     /// <summary>
     /// Reference to SmartAssembly string decrypt method
