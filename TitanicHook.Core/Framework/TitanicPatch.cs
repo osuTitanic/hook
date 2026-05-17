@@ -38,6 +38,9 @@ public abstract class TitanicPatch
 
     public void Patch()
     {
+        if (TargetMethods.Count == 0)
+            HandleError("No target methods!");
+        
         foreach (MethodInfo method in TargetMethods)
         {
             if (method == null)
