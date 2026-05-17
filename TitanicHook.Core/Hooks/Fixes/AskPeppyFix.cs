@@ -35,7 +35,7 @@ public class AskPeppyFix : TitanicPatch
 
         if (method == null)
         {
-            HandleError("Failed to find target method");
+            //HandleError("Failed to find target method");
             if (EntryPoint.Config.FirstRun)
                 EntryPoint.Config.RemovePeppyDmCheck = false;
             return null;

@@ -35,7 +35,7 @@ public class RemoveScoreDelayHook : TitanicPatch
 
         if (targetMethod == null)
         {
-            Logging.HookError(HookName, "Couldn't find target method", !EntryPoint.Config.FirstRun);
+            //Logging.HookError(HookName, "Couldn't find target method", !EntryPoint.Config.FirstRun);
             if (EntryPoint.Config.FirstRun)
                 EntryPoint.Config.RemoveScoreFetchingDelay = false;
             return null;

@@ -44,12 +44,6 @@ public class CheckCertificateHook : TitanicPatch
                                  m.ReturnType.FullName == "System.Void" &&
                                  (IsVirtualized(m) || m.Name == "checkCertificate") // Full name fallback for deobfuscated clients
                                  );
-
-        if (targetMethod == null)
-        {
-            Logging.HookError(HookName, "Couldn't find checkCertificate");
-            return null;
-        }
         
         return targetMethod;
     }
