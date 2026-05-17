@@ -42,14 +42,7 @@ public class TcpClientHook : TitanicPatch
             .FirstOrDefault(m => m.Name == "BeginConnect" &&
                                  m.GetParameters().Length == 4 &&
                                  m.GetParameters()[0].ParameterType.FullName == "System.String");
-        if (beginConnect == null)
-        {
-            Logging.HookError(HookName, "Could not find TcpClient.BeginConnect(string, int, AsyncCallback, object)");
-        }
-        else
-        {
-            methods.Add(beginConnect);
-        }
+        methods.Add(beginConnect);
         
         // Look for Connect(string, int) overload
         MethodInfo? connect = typeof(TcpClient)
@@ -57,14 +50,7 @@ public class TcpClientHook : TitanicPatch
             .FirstOrDefault(m => m.Name == "Connect" &&
                                  m.GetParameters().Length == 2 &&
                                  m.GetParameters()[0].ParameterType.FullName == "System.String");
-        if (connect == null)
-        {
-            Logging.HookError(HookName, "Could not find TcpClient.BeginConnect(string, int, AsyncCallback, object)");
-        }
-        else
-        {
-            methods.Add(connect);
-        }
+        methods.Add(connect);
         
         return methods;
     }

@@ -44,7 +44,7 @@ public class NetLibEncodingHook : TitanicPatch
                                    "StringStream"));
         if (targetMethod == null)
         {
-            Logging.HookError(HookName, "Target method not found", !EntryPoint.Config.FirstRun);
+            //Logging.HookError(HookName, "Target method not found", !EntryPoint.Config.FirstRun);
             if (EntryPoint.Config.FirstRun)
                 EntryPoint.Config.HookNetLibEncoding = false;
             return null;
