@@ -20,7 +20,7 @@ public abstract class TitanicPatch
     /// <summary>
     /// Indicates how errors will get handled when applying the patch
     /// </summary>
-    public virtual PatchImportance Importance => PatchImportance.Standard;
+    public virtual PatchImportance Importance => PatchImportance.None;
 
     public List<MethodInfo> TargetMethods { get; set; } = [];
     public List<ConstructorInfo> TargetConstructors { get; set; } = [];
