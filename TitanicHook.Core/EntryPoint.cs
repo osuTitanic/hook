@@ -85,6 +85,9 @@ public static class EntryPoint
         PatchManager.Apply(new StartProcessHook());
         PatchManager.Apply(new BeatmapSubmissionLinksPatch());
         PatchManager.Apply(new DisableRegistryPatch());
+#if NET40
+        PatchManager.Apply(new FixLinkFormatterCrash());
+#endif
         
         if (Config.HookNetLibHeaders) PatchManager.Apply(new AddHeaderFieldHook());
         if (Config.HookNetLibEncoding) PatchManager.Apply(new NetLibEncodingHook());
