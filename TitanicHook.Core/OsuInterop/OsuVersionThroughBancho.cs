@@ -37,6 +37,18 @@ public partial class OsuVersion
         
         var reader = new ILReader(banchoConnect);
         ILInstruction[] instructions = reader.ToArray();
+        if (SigScanning.GetStrings(banchoConnect).Any(s => s.StartsWith("{0}|{1}|{2}")))
+        {
+            // This build used the string template so we can look by that template reliably
+            return FindByStringTemplate(instructions);
+        }
+
+        // As a last resort, use a less reliable method of finding it relatively to the (single) newarr opcode
+        return FindByNewarrOpcode(instructions);
+    }
+
+    private static string? FindByStringTemplate(ILInstruction[] instructions)
+    {
         bool nextStringRefIsOsuVersion = false;
         for (int i = 0; i < instructions.Length; i++)
         {
@@ -77,6 +89,31 @@ public partial class OsuVersion
             }
         }
 
+        return null;
+    }
+
+    private static string? FindByNewarrOpcode(ILInstruction[] instructions)
+    {
+        for (int i = 0; i < instructions.Length; i++)
+        {
+            var instr =  instructions[i];
+            if (instr.OpCode != OpCodes.Newarr)
+                continue;
+            
+            // We have a newarr opcode so the next ldsfld is the osu! version
+            for (int j = i; j < instructions.Length; j++)
+            {
+                var instr2 = instructions[j];
+                if (instr2.OpCode == OpCodes.Ldsfld && instr2 is InlineFieldInstruction fieldInstr)
+                {
+                    if (fieldInstr.Field.FieldType.FullName != "System.String")
+                        continue;
+                
+                    object value = fieldInstr.Field.GetValue(null);
+                    return value as string;
+                }
+            }
+        }
         return null;
     }
 }
