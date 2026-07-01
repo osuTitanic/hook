@@ -31,7 +31,7 @@ The configuration file is pretty self-explanatory, and you most likely don't nee
 ## Building a self-contained release from source
 
 - Clone the repository including submodules
-- Build HookLoader in the Release configuration
+- Build `TitanicHook.Loader` in the Release configuration
 - In the build output directory you will get a `Titanic!_merged.exe` that contains all dependencies built-in
 
 ## Developing

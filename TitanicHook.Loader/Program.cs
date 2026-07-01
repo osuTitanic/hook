@@ -75,7 +75,7 @@ class Program
             {
                 OsuPath = path;
             }
-            loaded = Assembly.Load(File.ReadAllBytes(OsuPath));
+            loaded = Assembly.LoadFrom(OsuPath);
         }
         catch (Exception e)
         {
