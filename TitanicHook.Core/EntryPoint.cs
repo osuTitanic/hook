@@ -77,7 +77,7 @@ public static class EntryPoint
         Logging.Info($"osu! version from reflection: {OsuVersion.GetVersion()}");
 
         PatchManager.Apply(new WinformSetTitleHook());
-        PatchManager.Apply(new NowPlayingCommandHook());
+        if (OsuVersion.GetVersionNumber() > 615) PatchManager.Apply(new NowPlayingCommandHook()); // Pre-b615 builds are not doing links in /np, and it caused crashes in some versions
         if (Config.RemoveScoreFetchingDelay) PatchManager.Apply(new RemoveScoreDelayHook());
         
         if (Config.HookTcpConnections) PatchManager.Apply(new TcpClientHook());
