@@ -75,6 +75,11 @@ class Program
             {
                 OsuPath = path;
             }
+            
+            // Remove Mark of the Web which makes it impossible to load assemblies with Assembly.LoadFrom.
+            // Have to use Win32 call directly, as .NET's File.Delete does not support alternative data streams.
+            WinApi.DeleteFileW(OsuPath + ":Zone.Identifier");
+            
             loaded = Assembly.LoadFrom(OsuPath);
         }
         catch (Exception e)

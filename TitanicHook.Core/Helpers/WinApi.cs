@@ -27,6 +27,9 @@ public static class WinApi
     [DllImport("kernel32.dll")]
     public static extern IntPtr GetProcAddress(IntPtr hModule, string lpProcName);
     
+    [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    public static extern bool DeleteFileW(string lpFileName);
+    
     public const int STD_OUTPUT_HANDLE = -11;
     public const int STD_ERROR_HANDLE = -12;
 
