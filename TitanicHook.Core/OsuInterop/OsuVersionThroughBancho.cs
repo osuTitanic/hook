@@ -30,7 +30,7 @@ public partial class OsuVersion
             .GetMethods(BindingFlags.Static | BindingFlags.NonPublic)
             .FirstOrDefault(m => m.GetParameters().Length == 0 &&
                                  m.ReturnType.FullName == "System.Void" &&
-                                 (SigScanning.GetStrings(m).Any(s => s.StartsWith("{0}|{1}|{2}|{3}")) || SigScanning.GetStrings(m).Contains("Connecting to Bancho...")));
+                                 (SigScanning.GetStrings(m).Any(s => s.StartsWith("{0}|{1}|{2}")) || SigScanning.GetStrings(m).Contains("Connecting to Bancho...")));
         
         if (banchoConnect == null)
             return null;
@@ -43,7 +43,7 @@ public partial class OsuVersion
             ILInstruction instr = instructions[i];
             if (instr.OpCode == OpCodes.Ldstr && instr is InlineStringInstruction instrStr)
             {
-                if (instrStr.String.StartsWith("{0}|{1}|{2}|{3}"))
+                if (instrStr.String.StartsWith("{0}|{1}|{2}"))
                 {
                     nextStringRefIsOsuVersion = true;
                     continue;
@@ -59,7 +59,7 @@ public partial class OsuVersion
                 int arg = loadArg.Int32;
                 string? str = ObfHelper.DecString(arg);
                 
-                if (str != null && str.StartsWith("{0}|{1}|{2}|{3}"))
+                if (str != null && str.StartsWith("{0}|{1}|{2}"))
                 {
                     nextStringRefIsOsuVersion = true;
                     continue;
