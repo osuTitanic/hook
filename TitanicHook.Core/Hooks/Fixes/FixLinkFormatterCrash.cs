@@ -26,12 +26,12 @@ public class FixLinkFormatterCrash : TitanicPatch
         Transpilers = [AccessTools.Method(typeof(FixLinkFormatterCrash), nameof(Transpiler))];
     }
 
-    private MethodInfo? GetTargetMethod()
+    private static MethodInfo? GetTargetMethod()
     {
         MethodInfo? targetMethod = AssemblyUtils.OsuTypes
             .Where(t => t.IsNotPublic && !t.IsNested && t.BaseType != null && t.BaseType != typeof(object))
             .SelectMany(t => t.GetMethods(BindingFlags.NonPublic | BindingFlags.Static))
-            .FirstOrDefault(m => m.ReturnType == typeof(void) && m.GetParameters().Length == 0 && SigScanning.GetStrings(m).Contains("osump://"));
+            .FirstOrDefault(m => m.ReturnType == typeof(void) && m.GetParameters().Length == 0 && SigScanning.GetStrings(m).Contains("http://"));
 
         return targetMethod;
     }
@@ -65,16 +65,9 @@ public class FixLinkFormatterCrash : TitanicPatch
 
     private static int PatchedIndexOf(string thisstr, string value, int startIndex)
     {
-        // Empty strings are invalid
-        if (thisstr == "" || startIndex == 0)
-            return -1;
-        
-        // Clamp startIndex to a safe value
-        /*if (startIndex < 0)
-            startIndex = 0;*/
-        
-        // ReSharper disable StringIndexOfIsCultureSpecific.2
-        return thisstr.IndexOf(value, startIndex);
-        // ReSharper restore StringIndexOfIsCultureSpecific.2
+        Logging.HookTrigger(HookName);
+
+        // For now we're just stubbing that method, as reimplementing the .NET Framework 2.0 behavior would be too troublesome
+        return -1;
     }
 }
