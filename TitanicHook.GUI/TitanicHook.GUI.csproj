@@ -8,6 +8,7 @@
 		<LangVersion>13</LangVersion>
 	</PropertyGroup>
 	<ItemGroup>
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
 		<Reference Include="System" />
 		<Reference Include="System.Data" />
 		<Reference Include="System.Deployment" />
