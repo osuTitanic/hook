@@ -16,8 +16,8 @@ namespace TitanicHook.GUI
     {
         private const string ChangelogUrl = "http://osu.titanic.sh/p/changelog?updater=1";
         private const string ReleasesUrl = "https://api.titanic.sh/releases/";
-        private WebClient screenshotRequest;
-        private WebClient releasesRequest;
+        private WebClient? screenshotRequest;
+        private WebClient? releasesRequest;
 
         public Launcher()
         {
@@ -215,7 +215,7 @@ namespace TitanicHook.GUI
 
         private void OnReleaseSelected(object sender, TreeViewEventArgs e)
         {
-            ClientRelease release = e.Node.Tag as ClientRelease;
+            ClientRelease? release = e.Node.Tag as ClientRelease;
             if (release == null)
                 return;
 
@@ -228,17 +228,20 @@ namespace TitanicHook.GUI
             descriptionLabel.Text = string.IsNullOrEmpty(release.Description)
                 ? "No description provided for this build."
                 : release.Description;
-
-            versionLabel.Text = release.Name;
             
             // TODO: Known bugs / issues warning
-            LoadScreenshot(release.ScreenshotUrl);
+
+            versionLabel.Text = release.Name;
+
+            if (release.ScreenshotUrl != null)
+                LoadScreenshot(release.ScreenshotUrl);
         }
 
         private void LoadScreenshot(string url)
         {
-            WebClient previousRequest = screenshotRequest;
+            WebClient? previousRequest = screenshotRequest;
             screenshotRequest = null;
+            
             if (previousRequest != null)
             {
                 previousRequest.CancelAsync();
@@ -247,6 +250,7 @@ namespace TitanicHook.GUI
 
             Image previousImage = previewImage.Image;
             previewImage.Image = null;
+
             if (previousImage != null)
                 previousImage.Dispose();
 
@@ -383,7 +387,7 @@ namespace TitanicHook.GUI
             [JsonProperty("created_at")]
             public string CreatedAt;
 
-            public string ScreenshotUrl
+            public string? ScreenshotUrl
             {
                 get
                 {
@@ -402,7 +406,7 @@ namespace TitanicHook.GUI
         private static ClientRelease[] ParseReleases(string json)
         {
             JsonSerializerSettings settings = new JsonSerializerSettings { DateParseHandling = DateParseHandling.None };
-            ClientRelease[] result = JsonConvert.DeserializeObject<ClientRelease[]>(json, settings);
+            ClientRelease[]? result = JsonConvert.DeserializeObject<ClientRelease[]>(json, settings);
 
             if (result == null)
                 throw new FormatException("The response contains no releases");
