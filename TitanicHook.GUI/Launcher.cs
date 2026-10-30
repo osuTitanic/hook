@@ -127,7 +127,14 @@ namespace TitanicHook.GUI
         {
             releases.Nodes.Clear();
             statusText.Visible = true;
-            statusText.Text = "Couldn't load releases: " + message;
+            statusText.Text = "Failed to load releases: " + message;
+
+            versionLabel.Text = "";
+            descriptionLabel.Text = "";
+            releasedLabel.Text = "";
+            previewText.Text = "Preview unavailable";
+            selectButton.Enabled = false;
+
             MessageBox.Show("Unable to load releases");
         }
 
