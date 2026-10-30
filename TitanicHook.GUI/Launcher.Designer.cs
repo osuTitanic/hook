@@ -327,7 +327,7 @@ namespace TitanicHook.GUI
             this.versionLabel.Name = "versionLabel";
             this.versionLabel.Size = new System.Drawing.Size(210, 38);
             this.versionLabel.TabIndex = 1;
-            this.versionLabel.Text = "b<version>";
+            this.versionLabel.Text = "Loading";
             this.versionLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // releasedLabel
@@ -339,7 +339,7 @@ namespace TitanicHook.GUI
             this.releasedLabel.Name = "releasedLabel";
             this.releasedLabel.Size = new System.Drawing.Size(200, 39);
             this.releasedLabel.TabIndex = 2;
-            this.releasedLabel.Text = "released Jan 01, 2007";
+            this.releasedLabel.Text = "...";
             this.releasedLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // descriptionLabel
@@ -351,8 +351,7 @@ namespace TitanicHook.GUI
             this.descriptionLabel.Name = "descriptionLabel";
             this.descriptionLabel.Size = new System.Drawing.Size(414, 73);
             this.descriptionLabel.TabIndex = 3;
-            this.descriptionLabel.Text = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod t" +
-    "empor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.";
+            this.descriptionLabel.Text = "Loading releases ...";
             // 
             // selectButton
             // 

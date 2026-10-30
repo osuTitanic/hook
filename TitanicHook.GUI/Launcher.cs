@@ -410,6 +410,5 @@ namespace TitanicHook.GUI
             }
             return result;
         }
-
     }
 }
