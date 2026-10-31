@@ -61,8 +61,12 @@ namespace TitanicHook.GUI
             try
             {
                 statusText.Text = "Installing update...";
-                Updater.Install(update);
-                Close();
+
+                // We don't really need to restart directly
+                // Hitting "start osu!" will do the trick as well
+                Updater.Install(update, false);
+
+                statusText.Text = "Update installed successfully."; // TODO: perhaps display the version
             }
             catch (Exception ex)
             {

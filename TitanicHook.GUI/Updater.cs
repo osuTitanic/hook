@@ -67,7 +67,7 @@ namespace TitanicHook.GUI
             completed?.Invoke(e.Error == null ? e.Result : null, e.Error);
         }
 
-        public static void Install(byte[] update)
+        public static void Install(byte[] update, bool restart = true)
         {
             string executable = Application.ExecutablePath;
             string oldFile = executable + ".old";
@@ -85,7 +85,7 @@ namespace TitanicHook.GUI
                 movedOriginal = true;
                 File.Move(newFile, executable); // Titanic.exe.new -> Titanic.exe
                 
-                Process.Start(executable); // Launch new version
+                if (restart) Process.Start(executable);
             }
             catch
             {
