@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -65,7 +64,7 @@ class Program
         Assembly loaded;
         try
         {
-            string? path = FindOsuExecutable(Path.GetDirectoryName(_originalEntryAssembly.Location));
+            string? path = OsuFileUtils.FindOsuExecutable(Path.GetDirectoryName(_originalEntryAssembly.Location));
             if (path == null)
             {
                 Logging.LogAndShowError("Couldn't locate the osu! executable!");
@@ -155,21 +154,6 @@ class Program
     private static string GetShortFrameworkVer(string framework)
     {
         return framework.Substring(1, 4);
-    }
-
-    /// <summary>
-    /// Finds the osu! executable from a list of valid filenames
-    /// </summary>
-    /// <param name="directory">Directory to search in</param>
-    /// <returns>Path to a first found osu! executable, null if none was found</returns>
-    private static string? FindOsuExecutable(string? directory)
-    {
-        if (directory == null)
-            return null;
-        
-        string[] validFiles =
-            ["osu!.exe", "osu.exe", "osu!test.exe", "osu!public.exe", "osu!shine1.exe", "osu!cuttingedge.exe"];
-        return validFiles.Select(file => Path.Combine(directory, file)).FirstOrDefault(File.Exists);
     }
 
     internal static string OsuPath = "";
