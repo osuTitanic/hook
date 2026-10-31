@@ -32,6 +32,9 @@ namespace TitanicHook.GUI
             buttonStart.Click += OnStartClick;
             fallbackToggle.CheckedChanged += OnFallbackChanged;
             changelogBrowser.Navigating += OnBrowserNavigating;
+            tabControl.Selecting += OnTabSelecting;
+
+            UpdateTabState(enabled: false);
         }
 
         private void OnStartClick(object sender, EventArgs e)

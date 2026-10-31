@@ -17,6 +17,7 @@ namespace TitanicHook.GUI
             if (installedOsuPath == null)
                 return;
 
+            UpdateTabState(enabled: true); // show changelog & extra tabs
             tabControl.SelectedTab = tabChangelog; // switch to changelog tab
             buttonStart.Enabled = true;
             buttonStart.Visible = true;
@@ -61,5 +62,24 @@ namespace TitanicHook.GUI
             return false;
         }
 
+        private void UpdateTabState(bool enabled)
+        {
+            tabChangelog.Enabled = enabled;
+            tabExtra.Enabled = enabled;
+
+            if (!enabled)
+                tabControl.SelectedTab = tabSelect;
+        }
+
+        private void OnTabSelecting(object sender, TabControlCancelEventArgs e)
+        {
+            if (installedOsuPath != null)
+                return;
+
+            if (e.TabPage != tabSelect)
+                // user has not installed a version of osu! yet
+                // so we cannot show them the changelog or extra tabs
+                e.Cancel = true;
+        }
     }
 }
