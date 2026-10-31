@@ -7,6 +7,7 @@
 		<ImplicitUsings>disable</ImplicitUsings>
 		<LangVersion>13</LangVersion>
 		<PlatformTarget>x86</PlatformTarget>
+		<ApplicationIcon>titanic.ico</ApplicationIcon>
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
