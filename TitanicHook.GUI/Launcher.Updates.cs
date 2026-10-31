@@ -78,8 +78,10 @@ namespace TitanicHook.GUI
 
         private void DisplayUpdateStatus(string message)
         {
-            updateProgress.Visible = false;
+            updateProgress.Visible = string.IsNullOrEmpty(installedOsuChecksum);
             updateProgress.Value = 0;
+            updateProgress.Style = ProgressBarStyle.Marquee;
+
             buttonStart.Visible = installedOsuPath != null;
             statusText.Text = message;
         }
