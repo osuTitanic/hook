@@ -9,6 +9,7 @@ using System.Net;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
+using TitanicHook.Core.Helpers;
 
 namespace TitanicHook.GUI
 {
@@ -16,8 +17,13 @@ namespace TitanicHook.GUI
     {
         private const string ChangelogUrl = "http://osu.titanic.sh/p/changelog?updater=1";
         private const string ReleasesUrl = "https://api.titanic.sh/releases/";
+
         private WebClient? screenshotRequest;
         private WebClient? releasesRequest;
+
+        private string? installedOsuPath;
+        private string? installedOsuChecksum;
+        private int? installedOsuVersion;
 
         public Launcher()
         {
@@ -36,20 +42,13 @@ namespace TitanicHook.GUI
         private void OnLoad(object sender, EventArgs e)
         {
             AutoScaleMode = AutoScaleMode.None;
-            LoadReleases();
 
             updateProgress.Style = ProgressBarStyle.Marquee;
             extraCheckboxes.Sorted = true;
 
-            try
-            {
-                changelogBrowser.Navigate(ChangelogUrl);
-            }
-            catch (Exception ex)
-            {
-                statusText.Visible = true;
-                statusText.Text = "Failed to load changelog: " + ex.Message;
-            }
+            LoadOsuInstallation();
+            LoadReleases();
+            LoadChangelog();
 
             // i have honestly no idea what this does but osume included it
             // i'm assuming this is related to internet explorer, and it's navigation sounds
@@ -67,6 +66,66 @@ namespace TitanicHook.GUI
 
             e.Cancel = true;
             Process.Start(e.Url.ToString()); // load external link inside browser
+        }
+
+        private void LoadChangelog()
+        {
+            try
+            {
+                string targetUrl = ChangelogUrl + (installedOsuVersion != null ? $"&current={installedOsuVersion}" : "");
+                Logging.Info($"Browser: Navigating to '{targetUrl}'");
+                changelogBrowser.Navigate(targetUrl);
+            }
+            catch (Exception ex)
+            {
+                Logging.Error("Failed to load changelog: " + ex.Message);
+            }
+        }
+
+        private void LoadOsuInstallation()
+        {
+            installedOsuPath = OsuFileUtils.FindOsuExecutable(AppDomain.CurrentDomain.BaseDirectory);
+
+            if (installedOsuPath == null)
+                return;
+
+            tabControl.SelectedTab = tabChangelog; // switch to changelog tab
+            buttonStart.Visible = true;
+            updateProgress.Visible = false;
+            statusText.Text = "All done!";
+
+            Logging.Info($"Found osu! installation: '{installedOsuPath}'");
+
+            installedOsuChecksum = ChecksumUtils.CalculateMd5(installedOsuPath);
+            SelectReleaseFromChecksum(installedOsuChecksum);
+        }
+
+        private void SelectReleaseFromChecksum(string checksum)
+        {
+            if (releases.Nodes.Count == 0)
+                // releases have not been loaded yet
+                return;
+
+            foreach (TreeNode category in releases.Nodes)
+            {
+                foreach (TreeNode node in category.Nodes)
+                {
+                    ClientRelease? release = node.Tag as ClientRelease;
+
+                    if (release == null)
+                        continue;
+
+                    if (!release.Matches(checksum))
+                        continue;
+
+                    releases.SelectedNode = node;
+                    installedOsuVersion = release.Version;
+                    Logging.Info($"Selected release: '{release.Name}' ({checksum})");
+                    return;
+                }
+            }
+
+            Logging.Error($"Could not find any releases with checksum: '{checksum}'");
         }
 
         private void LoadReleases()
@@ -126,8 +185,6 @@ namespace TitanicHook.GUI
         private void ShowReleaseError(string message)
         {
             releases.Nodes.Clear();
-            statusText.Visible = true;
-            statusText.Text = "Failed to load releases: " + message;
 
             versionLabel.Text = "";
             descriptionLabel.Text = "";
@@ -135,6 +192,7 @@ namespace TitanicHook.GUI
             previewText.Text = "Preview unavailable";
             selectButton.Enabled = false;
 
+            Logging.Error("Failed to load releases: " + message);
             MessageBox.Show("Unable to load releases");
         }
 
@@ -177,8 +235,16 @@ namespace TitanicHook.GUI
                         AddRelease(category, releasesData[i]);
             }
 
+            Logging.Info($"Loaded {categories.Count} categories & {releasesData.Length} total releases");
+
             // Expand all nodes & select the first release from the recommended section
             releases.ExpandAll();
+
+            if (installedOsuChecksum != null)
+            {
+                SelectReleaseFromChecksum(installedOsuChecksum);
+                return;
+            }
 
             if (recommended.Nodes.Count > 0)
             {
@@ -264,7 +330,9 @@ namespace TitanicHook.GUI
                 return;
             }
 
+            Logging.Info($"Downloading screeenshot: '{url}'");
             previewText.Text = "Loading preview ...";
+
             try
             {
                 WebClient request = new WebClient();
@@ -272,7 +340,7 @@ namespace TitanicHook.GUI
                 request.DownloadDataCompleted += OnScreenshotDownloaded;
                 request.DownloadDataAsync(new Uri(url));
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 if (screenshotRequest != null)
                 {
@@ -280,6 +348,7 @@ namespace TitanicHook.GUI
                     screenshotRequest = null;
                 }
                 previewText.Text = "Preview unavailable";
+                Logging.Error($"Failed to load screenshot: {ex.Message}");
             }
         }
 
@@ -297,6 +366,7 @@ namespace TitanicHook.GUI
             request.Dispose();
 
             if (IsDisposed || Disposing)
+                // app is shutting down
                 return;
 
             if (e.Cancelled || e.Error != null)
@@ -315,9 +385,10 @@ namespace TitanicHook.GUI
                 previewImage.Visible = true;
                 previewImage.BringToFront();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 previewText.Text = "Preview unavailable";
+                Logging.Error($"Failed to display screenshot: {ex.Message}");
             }
         }
 
@@ -358,48 +429,69 @@ namespace TitanicHook.GUI
         private sealed class ClientRelease
         {
             [JsonProperty("name")]
-            public string Name;
+            public string Name { get; set; } = "";
+
+            [JsonProperty("version")]
+            public int Version { get; set; }
             
             [JsonProperty("category")]
-            public string Category;
+            public string Category { get; set; } = "";
             
             [JsonProperty("description")]
-            public string Description;
+            public string? Description { get; set; }
             
             [JsonProperty("known_bugs")]
-            public string KnownBugs;
+            public string? KnownBugs { get; set; }
             
             [JsonProperty("preview")]
-            public bool IsPreview;
+            public bool IsPreview { get; set; }
             
             [JsonProperty("recommended")]
-            public bool IsRecommended;
+            public bool IsRecommended { get; set; }
             
             [JsonProperty("download_url")]
-            public string DownloadUrl;
+            public string? DownloadUrl { get; set; }
             
             [JsonProperty("checksums")]
-            public string[] Checksums;
-            
+            public string[]? Checksums { get; set; }
+
             [JsonProperty("screenshot")]
-            public string ScreenshotPath;
+            public string? ScreenshotPath { get; set; }
             
             [JsonProperty("created_at")]
-            public string CreatedAt;
+            public string? CreatedAt { get; set; }
 
             public string? ScreenshotUrl
             {
                 get
                 {
-                    if (string.IsNullOrEmpty(ScreenshotPath))
+                    string? path = ScreenshotPath;
+                    if (path == null || path.Length == 0)
                         return null;
 
-                    if (ScreenshotPath.StartsWith("http://", StringComparison.OrdinalIgnoreCase) ||
-                        ScreenshotPath.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
-                        return ScreenshotPath;
+                    if (path.StartsWith("http://", StringComparison.OrdinalIgnoreCase) ||
+                        path.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+                        return path;
 
-                    return "https://osu.titanic.sh" + ScreenshotPath;
+                    return "https://osu.titanic.sh" + path;
                 }
+            }
+
+            public bool Matches(int version)
+            {
+                return Version == version;
+            }
+
+            public bool Matches(string checksum)
+            {
+                if (Checksums == null)
+                    return false;
+
+                foreach (string candidate in Checksums)
+                    if (string.Equals(candidate, checksum, StringComparison.OrdinalIgnoreCase))
+                        return true;
+
+                return false;
             }
         }
 
