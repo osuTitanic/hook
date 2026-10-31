@@ -133,6 +133,15 @@ public static class Logging // Holy public static void boilerplate class
     }
 
     /// <summary>
+    /// Normal error output, unrelated to hook initialization
+    /// </summary>
+    /// <param name="message">Message</param>
+    public static void Error(string message)
+    {
+        WriteToLog($"[ERROR] ({message})");
+    }
+
+    /// <summary>
     /// Shows an error message box
     /// </summary>
     /// <param name="message">Message</param>
