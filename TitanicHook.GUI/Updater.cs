@@ -66,20 +66,18 @@ namespace TitanicHook.GUI
         public static void Install(byte[] update, bool restart = true)
         {
             string executable = Application.ExecutablePath;
-            string oldFile = executable + ".old";
-            string newFile = executable + ".new";
+            string suffix = Guid.NewGuid().ToString("N");
+            string oldFile = executable + ".old." + suffix;
+            string newFile = executable + ".new." + suffix;
             bool movedOriginal = false;
 
             try
             {
                 File.WriteAllBytes(newFile, update);
 
-                if (File.Exists(oldFile))
-                    File.Delete(oldFile);
-                
-                File.Move(executable, oldFile); // Titanic.exe -> Titanic.exe.old
+                File.Move(executable, oldFile); // Titanic.exe -> Titanic.exe.old.<guid>
                 movedOriginal = true;
-                File.Move(newFile, executable); // Titanic.exe.new -> Titanic.exe
+                File.Move(newFile, executable); // Titanic.exe.new.<guid> -> Titanic.exe
                 
                 if (restart) Process.Start(executable);
             }
@@ -90,7 +88,7 @@ namespace TitanicHook.GUI
                     if (File.Exists(executable))
                         File.Delete(executable);
                     
-                    File.Move(oldFile, executable); // Titanic.exe.old -> Titanic.exe
+                    File.Move(oldFile, executable); // Titanic.exe.old.<guid> -> Titanic.exe
                 }
                 throw;
             }
@@ -99,6 +97,27 @@ namespace TitanicHook.GUI
                 try { if (File.Exists(newFile)) File.Delete(newFile); }
                 catch { }
             }
+        }
+
+        public static void CleanupOldVersions()
+        {
+            string executable = Application.ExecutablePath;
+            string directory = Path.GetDirectoryName(executable)!;
+            string prefix = Path.GetFileName(executable) + ".old.";
+
+            try
+            {
+                // Remove regular .old files (may be left from a previous version)
+                try { File.Delete(executable + ".old"); }
+                catch { }
+
+                foreach (string file in Directory.GetFiles(directory, prefix + "*"))
+                {
+                    try { File.Delete(file); }
+                    catch { }
+                }
+            }
+            catch { }
         }
 
         public void Dispose()

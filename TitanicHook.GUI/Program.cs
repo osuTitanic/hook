@@ -13,6 +13,8 @@ namespace TitanicHook.GUI
         [STAThread]
         static void Main(string[] args)
         {
+            Updater.CleanupOldVersions();
+
             if (args.Length > 0 && string.Equals(args[0], "-go", StringComparison.OrdinalIgnoreCase))
             {
                 try
