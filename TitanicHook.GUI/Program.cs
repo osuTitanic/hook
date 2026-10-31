@@ -15,7 +15,16 @@ namespace TitanicHook.GUI
             // see https://aka.ms/applicationconfiguration.
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Launcher());
+
+            string? pathToLaunch;
+            using (Launcher launcher = new Launcher())
+            {
+                Application.Run(launcher);
+                pathToLaunch = launcher.PathToLaunch;
+            }
+
+            if (pathToLaunch != null)
+                Loader.Program.Start(pathToLaunch);
         }
     }
 }

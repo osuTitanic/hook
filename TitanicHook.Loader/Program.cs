@@ -32,6 +32,7 @@ class Program
     /// Small program that will load osu!.exe into memory, execute hooks, and start osu!'s main function
     /// </summary>
     /// <param name="args"></param>
+#if !GUI
     [STAThread]
     static void Main(string[] args)
     {
@@ -40,7 +41,13 @@ class Program
         AutoUpdated = Updater.DeleteTempFile();
         Updater.CheckForUpdates();
 #endif
-        
+
+        Start();
+    }
+#endif
+
+    internal static void Start(string? osuPath = null)
+    {
         Config = new Configuration(Constants.DefaultConfigName);
 #if !DEBUG
         // Initialize console if not in debug
@@ -64,7 +71,7 @@ class Program
         Assembly loaded;
         try
         {
-            string? path = OsuFileUtils.FindOsuExecutable(Path.GetDirectoryName(_originalEntryAssembly.Location));
+            string? path = osuPath ?? OsuFileUtils.FindOsuExecutable(Path.GetDirectoryName(_originalEntryAssembly.Location));
             if (path == null)
             {
                 Logging.LogAndShowError("Couldn't locate the osu! executable!");

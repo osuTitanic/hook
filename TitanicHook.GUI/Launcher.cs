@@ -24,6 +24,8 @@ namespace TitanicHook.GUI
         private string? installedOsuChecksum;
         private int? installedOsuVersion;
 
+        internal string? PathToLaunch { get; private set; }
+
         public Launcher()
         {
             InitializeComponent();
@@ -33,9 +35,31 @@ namespace TitanicHook.GUI
             statusText.Text = "Select a version to continue!";
             updateProgress.Visible = true;
             buttonStart.Visible = false;
+            buttonStart.Enabled = false;
 
             Load += OnLoad;
+            buttonStart.Click += OnStartClick;
             changelogBrowser.Navigating += OnBrowserNavigating;
+        }
+
+        private void OnStartClick(object sender, EventArgs e)
+        {
+            if (installedOsuPath == null)
+            {
+                Logging.Error("osu! installation not located");
+                buttonStart.Enabled = false;
+                return;
+            }
+
+            if (!File.Exists(installedOsuPath))
+            {
+                Logging.Error($"osu! executable not found at '{installedOsuPath}'");
+                buttonStart.Enabled = false;
+                return;
+            }
+
+            PathToLaunch = installedOsuPath;
+            Close();
         }
 
         private void OnLoad(object sender, EventArgs e)
@@ -89,6 +113,7 @@ namespace TitanicHook.GUI
                 return;
 
             tabControl.SelectedTab = tabChangelog; // switch to changelog tab
+            buttonStart.Enabled = true;
             buttonStart.Visible = true;
             updateProgress.Visible = false;
             statusText.Text = "All done!";
