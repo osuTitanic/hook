@@ -10,15 +10,20 @@ namespace TitanicHook.GUI
 
         private void CheckForUpdates()
         {
-#if !DEBUG
+            updater?.Dispose();
             statusText.Text = "Checking for updates...";
             updateProgress.Style = ProgressBarStyle.Marquee;
             updateProgress.Visible = true;
             buttonStart.Visible = false;
+            fallbackToggle.Enabled = false;
 
             updater = new Updater();
-            updater.Check(OnUpdateProgress, OnUpdateCompleted);
-#endif
+            updater.Check(fallbackToggle.Checked, OnUpdateProgress, OnUpdateCompleted);
+        }
+
+        private void OnFallbackChanged(object sender, EventArgs e)
+        {
+            CheckForUpdates();
         }
 
         private void OnUpdateProgress(int? percentage)
@@ -66,7 +71,7 @@ namespace TitanicHook.GUI
                 // Hitting "start osu!" will do the trick as well
                 Updater.Install(update, false);
 
-                statusText.Text = "Update installed successfully."; // TODO: perhaps display the version
+                DisplayUpdateStatus("Update installed successfully."); // TODO: perhaps display the version
             }
             catch (Exception ex)
             {
@@ -83,6 +88,7 @@ namespace TitanicHook.GUI
             updateProgress.Style = ProgressBarStyle.Marquee;
 
             buttonStart.Visible = installedOsuPath != null;
+            fallbackToggle.Enabled = true;
             statusText.Text = message;
         }
     }

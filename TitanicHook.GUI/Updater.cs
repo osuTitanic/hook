@@ -14,7 +14,7 @@ namespace TitanicHook.GUI
         private Action<int?>? onProgress;
         private Action<byte[]?, Exception?>? onCompleted;
 
-        public void Check(Action<int?> progress, Action<byte[]?, Exception?> completed)
+        public void Check(bool useFallback, Action<int?> progress, Action<byte[]?, Exception?> completed)
         {
             onProgress = progress;
             onCompleted = completed;
@@ -22,11 +22,7 @@ namespace TitanicHook.GUI
             try
             {
                 string checksum = ChecksumUtils.CalculateSha256(Application.ExecutablePath);
-#if NET20
-                string variant = "net20";
-#else
-                string variant = "net40";
-#endif
+                string variant = useFallback ? "net20" : "net40";
                 string url = Constants.UpdateServer + "/update?type=" + variant + "&checksum=" + checksum;
                 
                 request = new WebClient();

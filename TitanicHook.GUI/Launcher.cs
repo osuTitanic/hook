@@ -15,6 +15,12 @@ namespace TitanicHook.GUI
         {
             InitializeComponent();
 
+#if NET20
+            fallbackToggle.Checked = true;
+#else
+            fallbackToggle.Checked = false;
+#endif
+
             changelogBrowser.Dock = DockStyle.Fill;
             statusText.Visible = true;
             statusText.Text = "Select a version to continue!";
@@ -24,6 +30,7 @@ namespace TitanicHook.GUI
 
             Load += OnLoad;
             buttonStart.Click += OnStartClick;
+            fallbackToggle.CheckedChanged += OnFallbackChanged;
             changelogBrowser.Navigating += OnBrowserNavigating;
         }
 
@@ -57,7 +64,9 @@ namespace TitanicHook.GUI
             LoadOsuInstallation();
             LoadReleases();
             LoadChangelog();
+#if !DEBUG
             CheckForUpdates();
+#endif
 
             // i have honestly no idea what this does but osume included it
             // i'm assuming this is related to internet explorer, and it's navigation sounds
