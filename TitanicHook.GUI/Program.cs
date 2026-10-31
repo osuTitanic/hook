@@ -15,9 +15,16 @@ namespace TitanicHook.GUI
         {
             if (args.Length > 0 && string.Equals(args[0], "-go", StringComparison.OrdinalIgnoreCase))
             {
-                string? defaultPath = OsuFileUtils.FindOsuExecutable(AppDomain.CurrentDomain.BaseDirectory);
-                string? osuPath = args.Length > 1 ? args[1] : defaultPath;
-                Loader.OsuLoader.Start(osuPath!);
+                try
+                {
+                    string? defaultPath = OsuFileUtils.FindOsuExecutable(AppDomain.CurrentDomain.BaseDirectory);
+                    string? osuPath = args.Length > 1 ? args[1] : defaultPath;
+                    Loader.OsuLoader.Start(osuPath!);
+                }
+                catch (Exception ex)
+                {
+                    Logging.LogAndShowError("Failed to start osu!: " + ex);
+                }
                 return;
             }
 
