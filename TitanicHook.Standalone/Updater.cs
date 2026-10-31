@@ -6,7 +6,7 @@ using System.Windows.Forms;
 using TitanicHook.Core;
 using TitanicHook.Core.Helpers;
 
-namespace TitanicHook.Loader;
+namespace TitanicHook.Standalone;
 
 public static class Updater
 {

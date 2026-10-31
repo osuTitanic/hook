@@ -16,6 +16,8 @@ namespace TitanicHook.GUI
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
+            // TODO: Check -go argument & skip launcher gui if present
+
             string? pathToLaunch;
             using (Launcher launcher = new Launcher())
             {
@@ -24,7 +26,7 @@ namespace TitanicHook.GUI
             }
 
             if (pathToLaunch != null)
-                Loader.Program.Start(pathToLaunch);
+                Loader.OsuLoader.Start(pathToLaunch);
         }
     }
 }

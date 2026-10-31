@@ -3,13 +3,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Windows.Forms;
-using Microsoft.Win32;
 using TitanicHook.Core;
 using TitanicHook.Core.Framework;
 using TitanicHook.Core.Helpers;
@@ -18,36 +15,34 @@ using TitanicHook.Core.OsuInterop;
 
 namespace TitanicHook.Loader;
 
-class Program
+public static class OsuLoader
 {
-    /// <summary>
-    /// Original entry assembly (before hooking)
-    /// </summary>
-    private static Assembly? _originalEntryAssembly;
-    
-    public static Configuration Config;
+    internal static Configuration Config = null!;
     public static bool AutoUpdated = false;
-    
+
     /// <summary>
-    /// Small program that will load osu!.exe into memory, execute hooks, and start osu!'s main function
+    /// Loads osu!.exe into memory, applies hooks, and starts osu!'s main function
     /// </summary>
-    /// <param name="args"></param>
-#if !GUI
-    [STAThread]
-    static void Main(string[] args)
+    /// <param name="osuPath">Path to the osu! executable</param>
+    public static void Start(string osuPath)
     {
-#if !DEBUG
-        // Update check
-        AutoUpdated = Updater.DeleteTempFile();
-        Updater.CheckForUpdates();
-#endif
+        if (string.IsNullOrEmpty(osuPath) || !File.Exists(osuPath))
+        {
+            Logging.LogAndShowError("Couldn't locate the osu! executable!");
+            return;
+        }
 
-        Start();
-    }
-#endif
+        try
+        {
+            osuPath = Path.GetFullPath(osuPath);
+            Directory.SetCurrentDirectory(Path.GetDirectoryName(osuPath)!);
+        }
+        catch (Exception e)
+        {
+            Logging.LogAndShowError($"Failed to open the osu! directory: {e}");
+            return;
+        }
 
-    internal static void Start(string? osuPath = null)
-    {
         Config = new Configuration(Constants.DefaultConfigName);
 #if !DEBUG
         // Initialize console if not in debug
@@ -60,27 +55,11 @@ class Program
         Logging.UseConsoleLogging = Config.EnableConsole;
         Logging.UseFileLogging = Config.LogToFile;
         
-        _originalEntryAssembly = Assembly.GetEntryAssembly();
-        if (_originalEntryAssembly == null)
-        {
-            Logging.LogAndShowError("Assembly.GetEntryAssembly() returned null");
-            return;
-        }
-        
         // Load osu!
         Assembly loaded;
         try
         {
-            string? path = osuPath ?? OsuFileUtils.FindOsuExecutable(Path.GetDirectoryName(_originalEntryAssembly.Location));
-            if (path == null)
-            {
-                Logging.LogAndShowError("Couldn't locate the osu! executable!");
-                Environment.Exit(1);
-            }
-            else
-            {
-                OsuPath = path;
-            }
+            OsuPath = osuPath;
             
             // Remove Mark of the Web which makes it impossible to load assemblies with Assembly.LoadFrom.
             // Have to use Win32 call directly, as .NET's File.Delete does not support alternative data streams.
@@ -149,8 +128,8 @@ class Program
     private static void ShowFrameworkMismatch(string osuVer, string hookVer)
     {
         Logging.LogAndShowError($".NET Framework runtime version mismatch!\n" +
-                                $"This version of osu! requires .NET Framework {GetShortFrameworkVer(osuVer)}, this executable of Titanic!Loader is .NET Framework {hookVer}\n" +
-                                $"Get the correct version of Titanic!Loader for this version of osu!.");
+                                $"This version of osu! requires .NET Framework {GetShortFrameworkVer(osuVer)}, this Titanic! launcher uses .NET Framework {GetShortFrameworkVer(hookVer)}\n" +
+                                $"Get the correct launcher version for this version of osu!.");
     }
 
     /// <summary>
