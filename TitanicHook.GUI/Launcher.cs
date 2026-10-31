@@ -72,6 +72,7 @@ namespace TitanicHook.GUI
             LoadOsuInstallation();
             LoadReleases();
             LoadChangelog();
+            CheckForUpdates();
 
             // i have honestly no idea what this does but osume included it
             // i'm assuming this is related to internet explorer, and it's navigation sounds
@@ -137,7 +138,7 @@ namespace TitanicHook.GUI
             {
                 foreach (TreeNode node in category.Nodes)
                 {
-                    ClientRelease? release = node.Tag as ClientRelease;
+                    Release? release = node.Tag as Release;
 
                     if (release == null)
                         continue;
@@ -202,7 +203,7 @@ namespace TitanicHook.GUI
 
             try
             {
-                PopulateReleases(ClientRelease.ParseReleases(e.Result));
+                PopulateReleases(Release.ParseReleases(e.Result));
             }
             catch (Exception ex)
             {
@@ -224,7 +225,7 @@ namespace TitanicHook.GUI
             MessageBox.Show("Unable to load releases");
         }
 
-        private void PopulateReleases(ClientRelease[] releasesData)
+        private void PopulateReleases(Release[] releasesData)
         {
             releases.Nodes.Clear();
 
@@ -294,7 +295,7 @@ namespace TitanicHook.GUI
             return category;
         }
 
-        private static void AddRelease(TreeNode category, ClientRelease release)
+        private static void AddRelease(TreeNode category, Release release)
         {
             if (release.IsPreview)
                 return;
@@ -306,7 +307,7 @@ namespace TitanicHook.GUI
 
         private void OnReleaseSelected(object sender, TreeViewEventArgs e)
         {
-            ClientRelease? release = e.Node.Tag as ClientRelease;
+            Release? release = e.Node.Tag as Release;
             if (release == null)
                 return;
 
@@ -419,6 +420,12 @@ namespace TitanicHook.GUI
 
         protected override void OnFormClosed(FormClosedEventArgs e)
         {
+            if (updater != null)
+            {
+                updater.Dispose();
+                updater = null;
+            }
+            
             if (releasesRequest != null)
             {
                 releasesRequest.CancelAsync();

@@ -3,7 +3,7 @@ using System;
 
 namespace TitanicHook.GUI
 {
-    internal sealed class ClientRelease
+    internal sealed class Release
     {
         [JsonProperty("name")]
         public string Name { get; set; } = "";
@@ -71,15 +71,15 @@ namespace TitanicHook.GUI
             return false;
         }
 
-        public static ClientRelease[] ParseReleases(string json)
+        public static Release[] ParseReleases(string json)
         {
             JsonSerializerSettings settings = new JsonSerializerSettings { DateParseHandling = DateParseHandling.None };
-            ClientRelease[]? result = JsonConvert.DeserializeObject<ClientRelease[]>(json, settings);
+            Release[]? result = JsonConvert.DeserializeObject<Release[]>(json, settings);
 
             if (result == null)
                 throw new FormatException("The response contains no releases");
 
-            foreach (ClientRelease release in result)
+            foreach (Release release in result)
             {
                 if (release == null || string.IsNullOrEmpty(release.Name))
                     throw new FormatException("The response contains an invalid release");
