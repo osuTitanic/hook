@@ -1,5 +1,7 @@
 using System;
+using System.Diagnostics;
 using System.Windows.Forms;
+using TitanicHook.Core.Helpers;
 
 namespace TitanicHook.GUI
 {
@@ -9,24 +11,39 @@ namespace TitanicHook.GUI
         ///  The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main()
+        static void Main(string[] args)
         {
+            if (args.Length > 0 && string.Equals(args[0], "-go", StringComparison.OrdinalIgnoreCase))
+            {
+                string? defaultPath = OsuFileUtils.FindOsuExecutable(AppDomain.CurrentDomain.BaseDirectory);
+                string? osuPath = args.Length > 1 ? args[1] : defaultPath;
+                Loader.OsuLoader.Start(osuPath!);
+                return;
+            }
+
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            // TODO: Check -go argument & skip launcher gui if present
-
-            string? pathToLaunch;
+            bool launchOsu;
             using (Launcher launcher = new Launcher())
             {
                 Application.Run(launcher);
-                pathToLaunch = launcher.PathToLaunch;
+                launchOsu = launcher.LaunchOsu;
             }
 
-            if (pathToLaunch != null)
-                Loader.OsuLoader.Start(pathToLaunch);
+            if (launchOsu)
+            {
+                try
+                {
+                    Process.Start(Application.ExecutablePath, "-go");
+                }
+                catch (Exception ex)
+                {
+                    Logging.LogAndShowError("Failed to start osu!: " + ex);
+                }
+            }
         }
     }
 }

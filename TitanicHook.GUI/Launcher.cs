@@ -24,7 +24,7 @@ namespace TitanicHook.GUI
         private string? installedOsuChecksum;
         private int? installedOsuVersion;
 
-        internal string? PathToLaunch { get; private set; }
+        internal bool LaunchOsu { get; private set; }
 
         public Launcher()
         {
@@ -58,7 +58,7 @@ namespace TitanicHook.GUI
                 return;
             }
 
-            PathToLaunch = installedOsuPath;
+            LaunchOsu = true;
             Close();
         }
 
