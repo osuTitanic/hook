@@ -99,11 +99,14 @@ namespace TitanicHook.GUI
             SelectReleaseFromChecksum(installedOsuChecksum);
         }
 
-        private void SelectReleaseFromChecksum(string checksum)
+        private bool SelectReleaseFromChecksum(string? checksum)
         {
+            if (string.IsNullOrEmpty(checksum))
+                return false;
+
             if (releases.Nodes.Count == 0)
                 // releases have not been loaded yet
-                return;
+                return false;
 
             foreach (TreeNode category in releases.Nodes)
             {
@@ -120,11 +123,12 @@ namespace TitanicHook.GUI
                     releases.SelectedNode = node;
                     installedOsuVersion = release.Version;
                     Logging.Info($"Selected release: '{release.Name}' ({checksum})");
-                    return;
+                    return true;
                 }
             }
 
             Logging.Error($"Could not find any releases with checksum: '{checksum}'");
+            return false;
         }
 
         private void LoadReleases()
@@ -239,11 +243,8 @@ namespace TitanicHook.GUI
             // Expand all nodes & select the first release from the recommended section
             releases.ExpandAll();
 
-            if (installedOsuChecksum != null)
-            {
-                SelectReleaseFromChecksum(installedOsuChecksum);
+            if (SelectReleaseFromChecksum(installedOsuChecksum))
                 return;
-            }
 
             if (recommended.Nodes.Count > 0)
             {
