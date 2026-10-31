@@ -18,6 +18,7 @@
       <AssembliesToMerge Include="$(TargetDir)ILReader.dll" />
       <AssembliesToMerge Include="$(TargetDir)TitanicHook.PluginBase.dll" />
       <AssembliesToMerge Include="$(TargetDir)Newtonsoft.Json.dll" />
+      <AssembliesToMerge Include="$(TargetDir)ICSharpCode.SharpZipLib.dll" />
       <AssembliesToMerge Include="$(TargetDir)LinqBridge.dll" Condition="'$(TargetFramework)' == 'net20'" />
     </ItemGroup>
 
