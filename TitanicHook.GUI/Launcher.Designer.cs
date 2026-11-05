@@ -83,10 +83,10 @@ namespace TitanicHook.GUI
             this.changelogBrowser.IsWebBrowserContextMenuEnabled = false;
             this.changelogBrowser.Location = new System.Drawing.Point(0, 0);
             this.changelogBrowser.Margin = new System.Windows.Forms.Padding(0);
-            this.changelogBrowser.MinimumSize = new System.Drawing.Size(20, 20);
+            this.changelogBrowser.MinimumSize = new System.Drawing.Size(27, 25);
             this.changelogBrowser.Name = "changelogBrowser";
             this.changelogBrowser.ScriptErrorsSuppressed = true;
-            this.changelogBrowser.Size = new System.Drawing.Size(588, 398);
+            this.changelogBrowser.Size = new System.Drawing.Size(784, 490);
             this.changelogBrowser.TabIndex = 4;
             this.changelogBrowser.WebBrowserShortcutsEnabled = false;
             // 
@@ -94,22 +94,23 @@ namespace TitanicHook.GUI
             // 
             this.updateProgress.Dock = System.Windows.Forms.DockStyle.Fill;
             this.updateProgress.Location = new System.Drawing.Point(0, 0);
+            this.updateProgress.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.updateProgress.MarqueeAnimationSpeed = 1;
             this.updateProgress.Name = "updateProgress";
-            this.updateProgress.Size = new System.Drawing.Size(599, 34);
+            this.updateProgress.Size = new System.Drawing.Size(799, 43);
             this.updateProgress.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.updateProgress.TabIndex = 1;
             // 
             // buttonStart
             // 
             this.buttonStart.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.buttonStart.DialogResult = System.Windows.Forms.DialogResult.None;
             this.buttonStart.Dock = System.Windows.Forms.DockStyle.Fill;
             this.buttonStart.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.buttonStart.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.buttonStart.Location = new System.Drawing.Point(0, 0);
+            this.buttonStart.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.buttonStart.Name = "buttonStart";
-            this.buttonStart.Size = new System.Drawing.Size(599, 34);
+            this.buttonStart.Size = new System.Drawing.Size(799, 43);
             this.buttonStart.TabIndex = 2;
             this.buttonStart.Text = "start osu!";
             this.buttonStart.UseVisualStyleBackColor = false;
@@ -120,18 +121,20 @@ namespace TitanicHook.GUI
             this.panel1.Controls.Add(this.panel3);
             this.panel1.Controls.Add(this.statusText);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel1.Location = new System.Drawing.Point(0, 471);
+            this.panel1.Location = new System.Drawing.Point(0, 580);
+            this.panel1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(599, 47);
+            this.panel1.Size = new System.Drawing.Size(799, 58);
             this.panel1.TabIndex = 4;
             // 
             // panel3
             // 
             this.panel3.Controls.Add(this.panel4);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel3.Location = new System.Drawing.Point(0, 13);
+            this.panel3.Location = new System.Drawing.Point(0, 15);
+            this.panel3.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(599, 34);
+            this.panel3.Size = new System.Drawing.Size(799, 43);
             this.panel3.TabIndex = 4;
             // 
             // panel4
@@ -140,8 +143,9 @@ namespace TitanicHook.GUI
             this.panel4.Controls.Add(this.updateProgress);
             this.panel4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel4.Location = new System.Drawing.Point(0, 0);
+            this.panel4.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(599, 34);
+            this.panel4.Size = new System.Drawing.Size(799, 43);
             this.panel4.TabIndex = 4;
             // 
             // statusText
@@ -152,9 +156,10 @@ namespace TitanicHook.GUI
             this.statusText.Dock = System.Windows.Forms.DockStyle.Top;
             this.statusText.Enabled = false;
             this.statusText.Location = new System.Drawing.Point(0, 0);
+            this.statusText.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.statusText.Name = "statusText";
             this.statusText.ReadOnly = true;
-            this.statusText.Size = new System.Drawing.Size(599, 13);
+            this.statusText.Size = new System.Drawing.Size(799, 15);
             this.statusText.TabIndex = 0;
             this.statusText.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.statusText.WordWrap = false;
@@ -165,8 +170,9 @@ namespace TitanicHook.GUI
             this.panel2.Controls.Add(this.tabControl);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel2.Location = new System.Drawing.Point(0, 0);
+            this.panel2.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(599, 471);
+            this.panel2.Size = new System.Drawing.Size(799, 580);
             this.panel2.TabIndex = 5;
             // 
             // panel5
@@ -174,16 +180,18 @@ namespace TitanicHook.GUI
             this.panel5.Controls.Add(this.autoStart);
             this.panel5.Controls.Add(this.fallbackToggle);
             this.panel5.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel5.Location = new System.Drawing.Point(0, 422);
+            this.panel5.Location = new System.Drawing.Point(0, 520);
+            this.panel5.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(599, 49);
+            this.panel5.Size = new System.Drawing.Size(799, 60);
             this.panel5.TabIndex = 10;
             // 
             // autoStart
             // 
-            this.autoStart.Location = new System.Drawing.Point(12, 16);
+            this.autoStart.Location = new System.Drawing.Point(16, 20);
+            this.autoStart.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.autoStart.Name = "autoStart";
-            this.autoStart.Size = new System.Drawing.Size(243, 19);
+            this.autoStart.Size = new System.Drawing.Size(324, 23);
             this.autoStart.TabIndex = 7;
             this.autoStart.Text = "Automatically start osu! after updating";
             this.autoStart.UseVisualStyleBackColor = true;
@@ -192,9 +200,10 @@ namespace TitanicHook.GUI
             // 
             this.fallbackToggle.Checked = true;
             this.fallbackToggle.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.fallbackToggle.Location = new System.Drawing.Point(328, 16);
+            this.fallbackToggle.Location = new System.Drawing.Point(437, 20);
+            this.fallbackToggle.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.fallbackToggle.Name = "fallbackToggle";
-            this.fallbackToggle.Size = new System.Drawing.Size(154, 19);
+            this.fallbackToggle.Size = new System.Drawing.Size(205, 23);
             this.fallbackToggle.TabIndex = 9;
             this.fallbackToggle.Text = "Use fallback";
             this.fallbackToggle.UseVisualStyleBackColor = true;
@@ -206,17 +215,19 @@ namespace TitanicHook.GUI
             this.tabControl.Controls.Add(this.tabExtra);
             this.tabControl.Dock = System.Windows.Forms.DockStyle.Top;
             this.tabControl.Location = new System.Drawing.Point(0, 0);
+            this.tabControl.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.tabControl.Name = "tabControl";
             this.tabControl.SelectedIndex = 0;
-            this.tabControl.Size = new System.Drawing.Size(599, 424);
+            this.tabControl.Size = new System.Drawing.Size(799, 522);
             this.tabControl.TabIndex = 8;
             // 
             // tabSelect
             // 
             this.tabSelect.Controls.Add(this.releaseSplit);
-            this.tabSelect.Location = new System.Drawing.Point(4, 22);
+            this.tabSelect.Location = new System.Drawing.Point(4, 25);
+            this.tabSelect.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.tabSelect.Name = "tabSelect";
-            this.tabSelect.Size = new System.Drawing.Size(591, 398);
+            this.tabSelect.Size = new System.Drawing.Size(791, 493);
             this.tabSelect.TabIndex = 0;
             this.tabSelect.Text = "Select";
             this.tabSelect.UseVisualStyleBackColor = true;
@@ -227,6 +238,7 @@ namespace TitanicHook.GUI
             this.releaseSplit.Dock = System.Windows.Forms.DockStyle.Fill;
             this.releaseSplit.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
             this.releaseSplit.Location = new System.Drawing.Point(0, 0);
+            this.releaseSplit.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.releaseSplit.Name = "releaseSplit";
             // 
             // releaseSplit.Panel1
@@ -237,8 +249,9 @@ namespace TitanicHook.GUI
             // releaseSplit.Panel2
             // 
             this.releaseSplit.Panel2.Controls.Add(this.details);
-            this.releaseSplit.Size = new System.Drawing.Size(591, 398);
+            this.releaseSplit.Size = new System.Drawing.Size(785, 493);
             this.releaseSplit.SplitterDistance = 145;
+            this.releaseSplit.SplitterWidth = 5;
             this.releaseSplit.TabIndex = 0;
             // 
             // releases
@@ -250,11 +263,12 @@ namespace TitanicHook.GUI
             this.releases.HideSelection = false;
             this.releases.ItemHeight = 25;
             this.releases.Location = new System.Drawing.Point(0, 0);
+            this.releases.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.releases.Name = "releases";
             this.releases.ShowLines = false;
             this.releases.ShowPlusMinus = false;
             this.releases.ShowRootLines = false;
-            this.releases.Size = new System.Drawing.Size(143, 396);
+            this.releases.Size = new System.Drawing.Size(143, 491);
             this.releases.TabIndex = 0;
             this.releases.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.OnReleaseSelected);
             // 
@@ -265,9 +279,10 @@ namespace TitanicHook.GUI
             this.details.Controls.Add(this.content);
             this.details.Dock = System.Windows.Forms.DockStyle.Fill;
             this.details.Location = new System.Drawing.Point(0, 0);
+            this.details.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.details.Name = "details";
-            this.details.Padding = new System.Windows.Forms.Padding(10);
-            this.details.Size = new System.Drawing.Size(440, 396);
+            this.details.Padding = new System.Windows.Forms.Padding(13, 12, 13, 12);
+            this.details.Size = new System.Drawing.Size(639, 491);
             this.details.TabIndex = 0;
             // 
             // content
@@ -278,9 +293,10 @@ namespace TitanicHook.GUI
             this.content.Controls.Add(this.descriptionLabel);
             this.content.Controls.Add(this.selectButton);
             this.content.Dock = System.Windows.Forms.DockStyle.Top;
-            this.content.Location = new System.Drawing.Point(10, 10);
+            this.content.Location = new System.Drawing.Point(13, 12);
+            this.content.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.content.Name = "content";
-            this.content.Size = new System.Drawing.Size(420, 378);
+            this.content.Size = new System.Drawing.Size(613, 465);
             this.content.TabIndex = 0;
             // 
             // preview
@@ -290,8 +306,9 @@ namespace TitanicHook.GUI
             this.preview.Controls.Add(this.previewText);
             this.preview.Controls.Add(this.previewImage);
             this.preview.Location = new System.Drawing.Point(0, 0);
+            this.preview.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.preview.Name = "preview";
-            this.preview.Size = new System.Drawing.Size(420, 230);
+            this.preview.Size = new System.Drawing.Size(613, 283);
             this.preview.TabIndex = 0;
             // 
             // previewText
@@ -301,8 +318,9 @@ namespace TitanicHook.GUI
             this.previewText.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.previewText.ForeColor = System.Drawing.Color.Black;
             this.previewText.Location = new System.Drawing.Point(0, 0);
+            this.previewText.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.previewText.Name = "previewText";
-            this.previewText.Size = new System.Drawing.Size(420, 230);
+            this.previewText.Size = new System.Drawing.Size(613, 283);
             this.previewText.TabIndex = 1;
             this.previewText.Text = "Loading preview ...";
             this.previewText.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -311,8 +329,9 @@ namespace TitanicHook.GUI
             // 
             this.previewImage.Dock = System.Windows.Forms.DockStyle.Fill;
             this.previewImage.Location = new System.Drawing.Point(0, 0);
+            this.previewImage.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.previewImage.Name = "previewImage";
-            this.previewImage.Size = new System.Drawing.Size(420, 230);
+            this.previewImage.Size = new System.Drawing.Size(613, 283);
             this.previewImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.previewImage.TabIndex = 0;
             this.previewImage.TabStop = false;
@@ -323,9 +342,10 @@ namespace TitanicHook.GUI
             this.versionLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.versionLabel.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.versionLabel.Location = new System.Drawing.Point(3, 231);
+            this.versionLabel.Location = new System.Drawing.Point(4, 284);
+            this.versionLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.versionLabel.Name = "versionLabel";
-            this.versionLabel.Size = new System.Drawing.Size(210, 38);
+            this.versionLabel.Size = new System.Drawing.Size(333, 47);
             this.versionLabel.TabIndex = 1;
             this.versionLabel.Text = "Loading";
             this.versionLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -335,9 +355,10 @@ namespace TitanicHook.GUI
             this.releasedLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.releasedLabel.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.releasedLabel.Location = new System.Drawing.Point(219, 231);
+            this.releasedLabel.Location = new System.Drawing.Point(292, 284);
+            this.releasedLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.releasedLabel.Name = "releasedLabel";
-            this.releasedLabel.Size = new System.Drawing.Size(200, 39);
+            this.releasedLabel.Size = new System.Drawing.Size(320, 48);
             this.releasedLabel.TabIndex = 2;
             this.releasedLabel.Text = "...";
             this.releasedLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -347,9 +368,10 @@ namespace TitanicHook.GUI
             this.descriptionLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.descriptionLabel.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.descriptionLabel.Location = new System.Drawing.Point(3, 270);
+            this.descriptionLabel.Location = new System.Drawing.Point(4, 332);
+            this.descriptionLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.descriptionLabel.Name = "descriptionLabel";
-            this.descriptionLabel.Size = new System.Drawing.Size(414, 73);
+            this.descriptionLabel.Size = new System.Drawing.Size(605, 90);
             this.descriptionLabel.TabIndex = 3;
             this.descriptionLabel.Text = "Loading releases ...";
             // 
@@ -358,33 +380,36 @@ namespace TitanicHook.GUI
             this.selectButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.selectButton.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.selectButton.Location = new System.Drawing.Point(3, 346);
+            this.selectButton.Location = new System.Drawing.Point(4, 426);
+            this.selectButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.selectButton.Name = "selectButton";
-            this.selectButton.Size = new System.Drawing.Size(414, 32);
+            this.selectButton.Size = new System.Drawing.Size(605, 39);
             this.selectButton.TabIndex = 4;
             this.selectButton.Text = "select";
             this.selectButton.UseVisualStyleBackColor = true;
             // 
-            // tabPage1
+            // tabChangelog
             // 
             this.tabChangelog.Controls.Add(this.changelogBrowser);
-            this.tabChangelog.Location = new System.Drawing.Point(4, 22);
-            this.tabChangelog.Name = "tabPage1";
-            this.tabChangelog.Padding = new System.Windows.Forms.Padding(3);
-            this.tabChangelog.Size = new System.Drawing.Size(591, 398);
+            this.tabChangelog.Location = new System.Drawing.Point(4, 25);
+            this.tabChangelog.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabChangelog.Name = "tabChangelog";
+            this.tabChangelog.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabChangelog.Size = new System.Drawing.Size(791, 493);
             this.tabChangelog.TabIndex = 1;
             this.tabChangelog.Text = "Changelog";
             this.tabChangelog.UseVisualStyleBackColor = true;
             // 
-            // tabPage2
+            // tabExtra
             // 
             this.tabExtra.BackColor = System.Drawing.SystemColors.Control;
             this.tabExtra.Controls.Add(this.textBox2);
             this.tabExtra.Controls.Add(this.extraCheckboxes);
-            this.tabExtra.Location = new System.Drawing.Point(4, 22);
-            this.tabExtra.Name = "tabPage2";
-            this.tabExtra.Padding = new System.Windows.Forms.Padding(3);
-            this.tabExtra.Size = new System.Drawing.Size(591, 398);
+            this.tabExtra.Location = new System.Drawing.Point(4, 25);
+            this.tabExtra.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabExtra.Name = "tabExtra";
+            this.tabExtra.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabExtra.Size = new System.Drawing.Size(791, 493);
             this.tabExtra.TabIndex = 2;
             this.tabExtra.Text = "Extras";
             // 
@@ -394,10 +419,11 @@ namespace TitanicHook.GUI
             this.textBox2.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.textBox2.Dock = System.Windows.Forms.DockStyle.Top;
             this.textBox2.Enabled = false;
-            this.textBox2.Location = new System.Drawing.Point(3, 3);
+            this.textBox2.Location = new System.Drawing.Point(4, 4);
+            this.textBox2.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.textBox2.Multiline = true;
             this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(585, 21);
+            this.textBox2.Size = new System.Drawing.Size(783, 26);
             this.textBox2.TabIndex = 6;
             this.textBox2.Text = "Please select any optional packages you would like to install.";
             // 
@@ -407,21 +433,22 @@ namespace TitanicHook.GUI
             this.extraCheckboxes.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.extraCheckboxes.FormattingEnabled = true;
             this.extraCheckboxes.IntegralHeight = false;
-            this.extraCheckboxes.Location = new System.Drawing.Point(3, 27);
+            this.extraCheckboxes.Location = new System.Drawing.Point(4, 37);
             this.extraCheckboxes.Margin = new System.Windows.Forms.Padding(0);
             this.extraCheckboxes.Name = "extraCheckboxes";
-            this.extraCheckboxes.Size = new System.Drawing.Size(585, 368);
+            this.extraCheckboxes.Size = new System.Drawing.Size(783, 452);
             this.extraCheckboxes.TabIndex = 5;
             // 
             // Launcher
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoValidate = System.Windows.Forms.AutoValidate.EnableAllowFocusChange;
-            this.ClientSize = new System.Drawing.Size(599, 518);
+            this.ClientSize = new System.Drawing.Size(799, 638);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "Launcher";

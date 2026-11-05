@@ -27,10 +27,13 @@ namespace TitanicHook.GUI
             updateProgress.Visible = true;
             buttonStart.Visible = false;
             buttonStart.Enabled = false;
+            selectButton.Enabled = false;
 
             Load += OnLoad;
             buttonStart.Click += OnStartClick;
+            selectButton.Click += OnSelectClick;
             fallbackToggle.CheckedChanged += OnFallbackChanged;
+            fallbackToggle.EnabledChanged += (sender, e) => RefreshSelectButton();
             changelogBrowser.Navigating += OnBrowserNavigating;
             tabControl.Selecting += OnTabSelecting;
 
@@ -64,6 +67,19 @@ namespace TitanicHook.GUI
             updateProgress.Style = ProgressBarStyle.Marquee;
             extraCheckboxes.Sorted = true;
 
+            try
+            {
+                ClientInstaller.TryRecover(AppDomain.CurrentDomain.BaseDirectory);
+            }
+            catch (Exception ex)
+            {
+                Logging.Error("Failed to recover client: " + ex);
+                MessageBox.Show(this, "An previous client could not be recovered: " + ex.Message, "Titanic!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                selectButton.Enabled = false;
+                buttonStart.Enabled = false;
+                return;
+            }
+
             LoadOsuInstallation();
             LoadReleases();
             LoadChangelog();
@@ -78,6 +94,13 @@ namespace TitanicHook.GUI
                 2,  // SET_FEATURE_ON_PROCESS
                 true
             );
+        }
+
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+            base.OnFormClosing(e);
+            if (installInProgress)
+                e.Cancel = true;
         }
 
         protected override void OnFormClosed(FormClosedEventArgs e)

@@ -164,6 +164,8 @@ namespace TitanicHook.GUI
 
         private void OnReleaseSelected(object sender, TreeViewEventArgs e)
         {
+            RefreshSelectButton();
+
             Release? release = e.Node.Tag as Release;
             if (release == null)
                 return;
@@ -186,5 +188,16 @@ namespace TitanicHook.GUI
                 LoadScreenshot(release.ScreenshotUrl);
         }
 
+        private void RefreshSelectButton()
+        {
+            Release? release = releases.SelectedNode?.Tag as Release;
+
+            bool installed = release != null &&
+                installedOsuPath != null &&
+                installedOsuVersion == release.Version;
+
+            selectButton.Enabled = !installed && !string.IsNullOrEmpty(release?.DownloadUrl);
+            selectButton.Text = installed ? "selected" : "select";
+        }
     }
 }
