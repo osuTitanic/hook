@@ -61,7 +61,7 @@ public class Configuration
 #endif
 
     /// <summary>
-    /// Whether to hook pWebRequest certificate check (.NET Framework 4.x only)
+    /// Gets or sets a value indicating whether certificate validation is hooked.
     /// </summary>
     public bool HookCheckCertificate { get; set; }
 #if NET40
@@ -93,7 +93,12 @@ public class Configuration
     /// We want users to message him, so this option removes it.
     /// </summary>
     public bool RemovePeppyDmCheck { get; set; } = true;
-    
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the launcher is disabled.
+    /// </summary>
+    public bool DisableLauncher { get; set; } = false;
+
     /// <summary>
     /// Whether it's the first config creation.
     /// This is not written to the config!
@@ -186,6 +191,9 @@ public class Configuration
                 case "RemovePeppyDmCheck":
                     RemovePeppyDmCheck = bool.Parse(splitLine[1]);
                     break;
+                case "DisableLauncher":
+                    DisableLauncher = bool.Parse(splitLine[1]);
+                    break;
             }
         }
     }
@@ -215,6 +223,7 @@ public class Configuration
         sw.WriteLine($"ClientSha256={ClientSha256}");
         sw.WriteLine($"RemoveScoreFetchingDelay={RemoveScoreFetchingDelay}");
         sw.WriteLine($"RemovePeppyDmCheck={RemovePeppyDmCheck}");
+        sw.WriteLine($"DisableLauncher={DisableLauncher}");
     }
 
     /// <summary>
