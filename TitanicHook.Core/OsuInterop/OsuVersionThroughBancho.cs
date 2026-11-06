@@ -27,7 +27,7 @@ public partial class OsuVersion
                                  (t.BaseType == typeof(object) || t.BaseType == null) &&
                                  t.GetFields(BindingFlags.Static | BindingFlags.NonPublic)
                                      .Any(f => f.FieldType == typeof(TcpClient)))
-            .GetMethods(BindingFlags.Static | BindingFlags.NonPublic)
+            ?.GetMethods(BindingFlags.Static | BindingFlags.NonPublic)
             .FirstOrDefault(m => m.GetParameters().Length == 0 &&
                                  m.ReturnType.FullName == "System.Void" &&
                                  (SigScanning.GetStrings(m).Any(s => s.StartsWith("{0}|{1}|{2}")) || SigScanning.GetStrings(m).Contains("Connecting to Bancho...")));
