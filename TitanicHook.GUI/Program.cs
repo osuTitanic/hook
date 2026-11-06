@@ -49,6 +49,7 @@ namespace TitanicHook.GUI
             using (Launcher launcher = new Launcher())
             {
                 Application.Run(launcher);
+                OsuLoader.Config.ReleaseVersion = launcher.installedOsuVersion ?? OsuLoader.Config.ReleaseVersion;
                 OsuLoader.Config.SaveConfiguration(OsuLoader.Config.Filename);
                 launchOsu = launcher.LaunchOsu;
             }

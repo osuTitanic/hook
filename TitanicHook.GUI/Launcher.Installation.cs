@@ -9,9 +9,9 @@ namespace TitanicHook.GUI
     public partial class Launcher
     {
         private bool installInProgress;
-        private string? installedOsuPath;
-        private string? installedOsuChecksum;
-        private int? installedOsuVersion;
+        internal string? installedOsuPath;
+        internal string? installedOsuChecksum;
+        internal int? installedOsuVersion;
 
         private void OnSelectClick(object sender, EventArgs e)
         {

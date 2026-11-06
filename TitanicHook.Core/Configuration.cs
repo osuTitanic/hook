@@ -100,6 +100,11 @@ public class Configuration
     public bool DisableLauncher { get; set; } = false;
 
     /// <summary>
+    /// The version of osu! that was downloaded through the launcher.
+    /// </summary>
+    public int ReleaseVersion { get; set; } = 0;
+
+    /// <summary>
     /// Whether it's the first config creation.
     /// This is not written to the config!
     /// </summary>
@@ -194,6 +199,9 @@ public class Configuration
                 case "DisableLauncher":
                     DisableLauncher = bool.Parse(splitLine[1]);
                     break;
+                case "ReleaseVersion":
+                    ReleaseVersion = int.Parse(splitLine[1]);
+                    break;
             }
         }
     }
@@ -224,6 +232,7 @@ public class Configuration
         sw.WriteLine($"RemoveScoreFetchingDelay={RemoveScoreFetchingDelay}");
         sw.WriteLine($"RemovePeppyDmCheck={RemovePeppyDmCheck}");
         sw.WriteLine($"DisableLauncher={DisableLauncher}");
+        sw.WriteLine($"ReleaseVersion={ReleaseVersion}");
     }
 
     /// <summary>
