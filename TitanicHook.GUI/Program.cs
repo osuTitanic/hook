@@ -1,7 +1,9 @@
 using System;
 using System.Diagnostics;
 using System.Windows.Forms;
+using TitanicHook.Core;
 using TitanicHook.Core.Helpers;
+using TitanicHook.Loader;
 
 namespace TitanicHook.GUI
 {
@@ -14,14 +16,22 @@ namespace TitanicHook.GUI
         static void Main(string[] args)
         {
             Updater.CleanupOldVersions();
+            OsuLoader.Config = new Configuration(Constants.DefaultConfigName);
 
-            if (args.Length > 0 && string.Equals(args[0], "-go", StringComparison.OrdinalIgnoreCase))
+            // pass in -go or disable launcher in config to start osu!
+            bool launchArgument = args.Length > 0 && args[0] == "-go";
+            bool skipLauncher = launchArgument || OsuLoader.Config.DisableLauncher;
+
+            // TODO: If the launcher is disabled, we should check for updates
+            //       in the background and apply them on the next launch.
+
+            if (skipLauncher)
             {
                 try
                 {
                     string? defaultPath = OsuFileUtils.FindOsuExecutable(AppDomain.CurrentDomain.BaseDirectory);
                     string? osuPath = args.Length > 1 ? args[1] : defaultPath;
-                    Loader.OsuLoader.Start(osuPath!);
+                    OsuLoader.Start(osuPath!);
                 }
                 catch (Exception ex)
                 {

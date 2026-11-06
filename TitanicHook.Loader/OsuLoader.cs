@@ -17,7 +17,7 @@ namespace TitanicHook.Loader;
 
 public static class OsuLoader
 {
-    internal static Configuration Config = null!;
+    public static Configuration Config = null!;
     public static bool AutoUpdated = false;
 
     /// <summary>
@@ -43,7 +43,11 @@ public static class OsuLoader
             return;
         }
 
-        Config = new Configuration(Constants.DefaultConfigName);
+        if (Config == null)
+        {
+            Config = new Configuration(Constants.DefaultConfigName);
+        }
+
 #if !DEBUG
         // Initialize console if not in debug
         if (Config.EnableConsole)
