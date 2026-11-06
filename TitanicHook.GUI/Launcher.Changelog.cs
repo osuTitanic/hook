@@ -11,8 +11,14 @@ namespace TitanicHook.GUI
 
         private void OnBrowserNavigating(object sender, WebBrowserNavigatingEventArgs e)
         {
-            if (e.Url.ToString().StartsWith("http://osu.titanic.sh/p/changelog"))
+            string url = e.Url.ToString();
+
+            if (url.StartsWith("http://osu.titanic.sh/p/changelog"))
                 // continue inside our integrated browser
+                return;
+
+            if (!url.StartsWith("http://") && !url.StartsWith("https://"))
+                // we probably can't open that
                 return;
 
             e.Cancel = true;
