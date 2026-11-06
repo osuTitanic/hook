@@ -14,37 +14,55 @@ public delegate void ConfigurationNotFoundCallback(string filename, Exception e)
 public class Configuration
 {
     public const int CurrentConfigVersion = 2;
-    
-    // Version of the config file
+
+    /// <summary>
+    /// Version of the config file
+    /// </summary>
     public int Version { get; set; } = CurrentConfigVersion;
-    
-    // Alloc console for logs
+
+    /// <summary>
+    /// Alloc console for logs
+    /// </summary>
     public bool EnableConsole { get; set; } = false;
-    
-    // Log to a file
+
+    /// <summary>
+    /// Log to a file
+    /// </summary>
     public bool LogToFile { get; set; } = false;
-    
-    // Domain of the server (e.g. titanic.sh)
+
+    /// <summary>
+    /// Domain of the server (e.g. titanic.sh)
+    /// </summary>
     public string ServerName { get; set; } = "titanic.sh";
-    
-    // Whether to hook WSAConnect (TCP Bancho)
+
+    /// <summary>
+    /// Whether to hook WSAConnect (TCP Bancho)
+    /// </summary>
     public bool HookTcpConnections { get; set; } = true;
-    
-    // Whether to hook NetLib AddHeaderField
+
+    /// <summary>
+    /// Whether to hook NetLib AddHeaderField
+    /// </summary>
     public bool HookNetLibHeaders { get; set; } = true;
-    
-    // Whether to hook NetLib StringStream ctor
+
+    /// <summary>
+    /// Whether to hook NetLib StringStream ctor
+    /// </summary>
     public bool HookNetLibEncoding { get; set; } = true;
-    
-    // Whether to hook Host header in pWebRequest (.NET Framework 4.x only)
+
+    /// <summary>
+    /// Whether to hook Host header in pWebRequest (.NET Framework 4.x only)
+    /// </summary>
     public bool HookModernHostMethod { get; set; }
 #if NET40
          = true;
 #else
         = false;
 #endif
-    
-    // Whether to hook pWebRequest certificate check (.NET Framework 4.x only)
+
+    /// <summary>
+    /// Whether to hook pWebRequest certificate check (.NET Framework 4.x only)
+    /// </summary>
     public bool HookCheckCertificate { get; set; }
 #if NET40
          = true;
@@ -63,8 +81,17 @@ public class Configuration
     /// </summary>
     public string ClientSha256 { get; set; } = "";
     
+    /// <summary>
+    /// osu! adds a delay when loading leaderboards.
+    /// This will remove it, and request the leaderboard instantly.
+    /// </summary>
     public bool RemoveScoreFetchingDelay { get; set; } = true;
-    
+
+    /// <summary>
+    /// Usually, when trying to message peppy, a page would pop up, explaining that peppy is a busy man!
+    /// On Titanic!, Levi has the same user id as peppy so this popup would still appear.
+    /// We want users to message him, so this option removes it.
+    /// </summary>
     public bool RemovePeppyDmCheck { get; set; } = true;
     
     /// <summary>
