@@ -4,6 +4,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using TitanicHook.Core.Helpers;
+using TitanicHook.Loader;
 
 namespace TitanicHook.GUI
 {
@@ -83,8 +84,10 @@ namespace TitanicHook.GUI
             LoadOsuInstallation();
             LoadReleases();
             LoadChangelog();
+
 #if !DEBUG
-            CheckForUpdates();
+            if (!OsuLoader.Config.DisableUpdates)
+                CheckForUpdates();
 #endif
 
             // i have honestly no idea what this does but osume included it

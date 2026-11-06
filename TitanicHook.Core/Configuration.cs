@@ -95,6 +95,11 @@ public class Configuration
     public bool RemovePeppyDmCheck { get; set; } = true;
 
     /// <summary>
+    /// Whether to auto-update Titanic!
+    /// </summary>
+    public bool DisableUpdates { get; set; } = false;
+
+    /// <summary>
     /// Gets or sets a value indicating whether the launcher is disabled.
     /// </summary>
     public bool DisableLauncher { get; set; } = false;
@@ -196,6 +201,9 @@ public class Configuration
                 case "RemovePeppyDmCheck":
                     RemovePeppyDmCheck = bool.Parse(splitLine[1]);
                     break;
+                case "DisableUpdates":
+                    DisableUpdates = bool.Parse(splitLine[1]);
+                    break;
                 case "DisableLauncher":
                     DisableLauncher = bool.Parse(splitLine[1]);
                     break;
@@ -231,6 +239,7 @@ public class Configuration
         sw.WriteLine($"ClientSha256={ClientSha256}");
         sw.WriteLine($"RemoveScoreFetchingDelay={RemoveScoreFetchingDelay}");
         sw.WriteLine($"RemovePeppyDmCheck={RemovePeppyDmCheck}");
+        sw.WriteLine($"DisableUpdates={DisableUpdates}");
         sw.WriteLine($"DisableLauncher={DisableLauncher}");
         sw.WriteLine($"ReleaseVersion={ReleaseVersion}");
     }
