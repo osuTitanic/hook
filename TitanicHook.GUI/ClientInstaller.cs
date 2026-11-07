@@ -21,7 +21,7 @@ namespace TitanicHook.GUI
             "TitanicHook.Loader.dll", "TitanicHook.PluginBase.dll", "0Harmony.dll", "ILReader.dll",
         };
 
-        public static void Install(string target, Release release, Action<string, int?> progress)
+        public static bool Install(string target, Release release, Action<string, int?> progress)
         {
             // download url may start with / so we need to prepend the base url in that case
             Uri url = new Uri(new Uri("https://osu.titanic.sh/"), release.DownloadUrl!);
@@ -52,9 +52,12 @@ namespace TitanicHook.GUI
                     if (!release.Matches(executableChecksum))
                         throw new InvalidDataException("The release executable does not match the expected checksum");
 
+                    bool useFallback = Runtime.UsesFallback(executable);
+
                     progress("Switching client...", null);
                     ReplaceFiles(target, extractedPath, stagingPath);
                     RemoveSafe(stagingPath);
+                    return useFallback;
                 }
                 catch
                 {
