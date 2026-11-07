@@ -54,10 +54,10 @@ public static class OsuLoader
             WinApi.InitializeConsole();
 #endif
 
-        PreLaunchChecks.CheckAll();
-
         Logging.UseConsoleLogging = Config.EnableConsole;
         Logging.UseFileLogging = Config.LogToFile;
+
+        PreLaunchChecks.CheckAll();
         
         // Load osu!
         Assembly loaded;
