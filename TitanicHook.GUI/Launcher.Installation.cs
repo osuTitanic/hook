@@ -90,6 +90,9 @@ namespace TitanicHook.GUI
             OsuLoader.Config.HookModernHostMethod = !useFallback;
             OsuLoader.Config.HookCheckCertificate = !useFallback;
 
+            // TODO: Remove settings from osu!.<username>.cfg that are not safe to transfer between versions
+            //       Encountered some issues when switching from e.g. b20141106.14 to b1818
+
             // Check if both launcher & client are on the same framework version
             if (useFallback != launcherUsesFallback)
             {
