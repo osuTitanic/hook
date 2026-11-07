@@ -42,15 +42,6 @@ public class FixLinkFormatterCrash : TitanicPatch
         for (int i = 0; i < final.Count; i++)
         {
             var instr = final[i];
-            /*if (instr.opcode == OpCodes.Ldstr && instr.operand is string s && s == ")[")
-            {
-                // Patch that call with our patched IndexOf
-                var indexOfCall = final[i + 4];
-                Debug.Assert(indexOfCall.opcode == OpCodes.Callvirt && indexOfCall.operand is MethodInfo mi && mi.Name == "IndexOf");
-                
-                indexOfCall.opcode = OpCodes.Call;
-                indexOfCall.operand = AccessTools.Method(typeof(FixLinkFormatterCrash), nameof(PatchedIndexOf));
-            }*/
             if (instr.opcode == OpCodes.Callvirt && instr.operand is MethodInfo method && method.Name == "IndexOf" &&
                 method.GetParameters().Length == 2)
             {
