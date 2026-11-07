@@ -81,6 +81,15 @@ namespace TitanicHook.GUI
             LoadChangelog();
             statusText.Text = "Client installed successfully.";
 
+            // Set config back to its default so that hook can adjust
+            OsuLoader.Config.ClientSha256 = "";
+            OsuLoader.Config.ReleaseVersion = release.Version;
+            OsuLoader.Config.HookTcpConnections = true; // TODO: We can infer that from the release version i think
+            OsuLoader.Config.HookNetLibHeaders = true;
+            OsuLoader.Config.HookNetLibEncoding = true;
+            OsuLoader.Config.HookModernHostMethod = !useFallback;
+            OsuLoader.Config.HookCheckCertificate = !useFallback;
+
             // Check if both launcher & client are on the same framework version
             if (useFallback != launcherUsesFallback)
             {
