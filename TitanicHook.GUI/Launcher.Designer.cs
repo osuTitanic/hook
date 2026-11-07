@@ -1,4 +1,4 @@
-﻿using System.Drawing;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace TitanicHook.GUI
@@ -41,7 +41,7 @@ namespace TitanicHook.GUI
             this.panel2 = new System.Windows.Forms.Panel();
             this.panel5 = new System.Windows.Forms.Panel();
             this.autoStart = new System.Windows.Forms.CheckBox();
-            this.fallbackToggle = new System.Windows.Forms.CheckBox();
+            this.showAtStartup = new System.Windows.Forms.CheckBox();
             this.tabControl = new System.Windows.Forms.TabControl();
             this.tabSelect = new System.Windows.Forms.TabPage();
             this.releaseSplit = new System.Windows.Forms.SplitContainer();
@@ -178,7 +178,7 @@ namespace TitanicHook.GUI
             // panel5
             // 
             this.panel5.Controls.Add(this.autoStart);
-            this.panel5.Controls.Add(this.fallbackToggle);
+            this.panel5.Controls.Add(this.showAtStartup);
             this.panel5.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel5.Location = new System.Drawing.Point(0, 520);
             this.panel5.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
@@ -196,17 +196,17 @@ namespace TitanicHook.GUI
             this.autoStart.Text = "Automatically start osu! after updating";
             this.autoStart.UseVisualStyleBackColor = true;
             // 
-            // fallbackToggle
+            // showAtStartup
             // 
-            this.fallbackToggle.Checked = true;
-            this.fallbackToggle.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.fallbackToggle.Location = new System.Drawing.Point(437, 20);
-            this.fallbackToggle.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.fallbackToggle.Name = "fallbackToggle";
-            this.fallbackToggle.Size = new System.Drawing.Size(205, 23);
-            this.fallbackToggle.TabIndex = 9;
-            this.fallbackToggle.Text = "Use fallback";
-            this.fallbackToggle.UseVisualStyleBackColor = true;
+            this.showAtStartup.Checked = true;
+            this.showAtStartup.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.showAtStartup.Location = new System.Drawing.Point(437, 20);
+            this.showAtStartup.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.showAtStartup.Name = "showAtStartup";
+            this.showAtStartup.Size = new System.Drawing.Size(205, 23);
+            this.showAtStartup.TabIndex = 9;
+            this.showAtStartup.Text = "Show osume at startup";
+            this.showAtStartup.UseVisualStyleBackColor = true;
             // 
             // tabControl
             // 
@@ -505,7 +505,7 @@ namespace TitanicHook.GUI
         private System.Windows.Forms.Label descriptionLabel;
         private System.Windows.Forms.Button selectButton;
         private System.Windows.Forms.TextBox textBox2;
-        private System.Windows.Forms.CheckBox fallbackToggle;
+        private System.Windows.Forms.CheckBox showAtStartup;
         private Label previewText;
     }
 }

@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Windows.Forms;
 using TitanicHook.Core.Helpers;
+using TitanicHook.Loader;
 
 namespace TitanicHook.GUI
 {
@@ -27,13 +28,13 @@ namespace TitanicHook.GUI
             selectButton.Enabled = false;
             buttonStart.Enabled = false;
             buttonStart.Visible = false;
-            fallbackToggle.Enabled = false;
             updateProgress.Visible = true;
             updateProgress.Style = ProgressBarStyle.Marquee;
 
             BackgroundWorker worker = new BackgroundWorker{WorkerReportsProgress=true};
 
-            worker.DoWork += (s, args) => ClientInstaller.Install(
+            // args.Result -> whether client is fallback or not
+            worker.DoWork += (s, args) => args.Result = ClientInstaller.Install(
                 AppDomain.CurrentDomain.BaseDirectory, release,
                 (message, percentage) => worker.ReportProgress(percentage ?? -1, message)
             );
@@ -51,19 +52,19 @@ namespace TitanicHook.GUI
             worker.RunWorkerCompleted += (s, args) =>
             {
                 worker.Dispose();
-                CompleteClientInstall(release, args.Error);
+                CompleteClientInstall(release, args.Error, args.Error == null && (bool)args.Result);
             };
             worker.RunWorkerAsync();
         }
 
-        private void CompleteClientInstall(Release release, Exception? error)
+        private void CompleteClientInstall(Release release, Exception? error, bool useFallback)
         {
             if (IsDisposed || Disposing)
                 return;
 
             installInProgress = false;
-            fallbackToggle.Enabled = true;
             updateProgress.Visible = false;
+            RefreshSelectButton();
 
             if (error != null)
             {
@@ -79,6 +80,26 @@ namespace TitanicHook.GUI
             LoadOsuInstallation(release.Version);
             LoadChangelog();
             statusText.Text = "Client installed successfully.";
+
+            // Check if both launcher & client are on the same framework version
+            if (useFallback != launcherUsesFallback)
+            {
+                if (!OsuLoader.Config.DisableUpdates)
+                {
+                    CheckForUpdates(useFallback, autoStart.Checked);
+                    return;
+                }
+
+                // Updates are disabled :(
+                // Let's tell the user that they should do it instead
+                MessageBox.Show(
+                    this,
+                    "This client uses a different .NET Framework version. " +
+                    "Please download the Titanic! version for .NET Framework " +
+                    (useFallback ? "2.0 (fallback)." : "4.0 (non-fallback)."),
+                    "Titanic!", MessageBoxButtons.OK, MessageBoxIcon.Warning
+                );
+            }
 
             if (autoStart.Checked)
                 OnStartClick(buttonStart, EventArgs.Empty);

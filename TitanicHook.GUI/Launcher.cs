@@ -16,11 +16,7 @@ namespace TitanicHook.GUI
         {
             InitializeComponent();
 
-#if NET20
-            fallbackToggle.Checked = true;
-#else
-            fallbackToggle.Checked = false;
-#endif
+            showAtStartup.Checked = !OsuLoader.Config.DisableLauncher;
 
             changelogBrowser.Dock = DockStyle.Fill;
             statusText.Visible = true;
@@ -33,8 +29,8 @@ namespace TitanicHook.GUI
             Load += OnLoad;
             buttonStart.Click += OnStartClick;
             selectButton.Click += OnSelectClick;
-            fallbackToggle.CheckedChanged += OnFallbackChanged;
-            fallbackToggle.EnabledChanged += (sender, e) => RefreshSelectButton();
+            showAtStartup.CheckedChanged += (sender, e) =>
+                OsuLoader.Config.DisableLauncher = !showAtStartup.Checked;
             changelogBrowser.Navigating += OnBrowserNavigating;
             tabControl.Selecting += OnTabSelecting;
 
@@ -43,6 +39,9 @@ namespace TitanicHook.GUI
 
         private void OnStartClick(object sender, EventArgs e)
         {
+            if (installInProgress || updateInProgress)
+                return;
+
             if (installedOsuPath == null)
             {
                 Logging.Error("osu! installation not located");

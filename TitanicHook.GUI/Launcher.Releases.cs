@@ -196,7 +196,8 @@ namespace TitanicHook.GUI
                 installedOsuPath != null &&
                 installedOsuVersion == release.Version;
 
-            selectButton.Enabled = !installed && !string.IsNullOrEmpty(release?.DownloadUrl);
+            selectButton.Enabled = !installInProgress && !updateInProgress &&
+                !installed && !string.IsNullOrEmpty(release?.DownloadUrl);
             selectButton.Text = installed ? "selected" : "select";
         }
     }
