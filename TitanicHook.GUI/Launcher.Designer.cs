@@ -57,8 +57,9 @@ namespace TitanicHook.GUI
             this.selectButton = new System.Windows.Forms.Button();
             this.tabChangelog = new System.Windows.Forms.TabPage();
             this.tabExtra = new System.Windows.Forms.TabPage();
-            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.extrasDescription = new System.Windows.Forms.TextBox();
             this.extraCheckboxes = new System.Windows.Forms.CheckedListBox();
+            this.installExtrasButton = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
@@ -403,8 +404,9 @@ namespace TitanicHook.GUI
             // tabExtra
             // 
             this.tabExtra.BackColor = System.Drawing.SystemColors.Control;
-            this.tabExtra.Controls.Add(this.textBox2);
             this.tabExtra.Controls.Add(this.extraCheckboxes);
+            this.tabExtra.Controls.Add(this.extrasDescription);
+            this.tabExtra.Controls.Add(this.installExtrasButton);
             this.tabExtra.Location = new System.Drawing.Point(4, 25);
             this.tabExtra.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.tabExtra.Name = "tabExtra";
@@ -413,24 +415,25 @@ namespace TitanicHook.GUI
             this.tabExtra.TabIndex = 2;
             this.tabExtra.Text = "Extras";
             // 
-            // textBox2
-            // 
-            this.textBox2.BackColor = System.Drawing.SystemColors.Control;
-            this.textBox2.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.textBox2.Dock = System.Windows.Forms.DockStyle.Top;
-            this.textBox2.Enabled = false;
-            this.textBox2.Location = new System.Drawing.Point(4, 4);
-            this.textBox2.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.textBox2.Multiline = true;
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(783, 26);
-            this.textBox2.TabIndex = 6;
-            this.textBox2.Text = "Please select any optional packages you would like to install.";
+            // extrasDescription
+            //
+            this.extrasDescription.BackColor = System.Drawing.SystemColors.Control;
+            this.extrasDescription.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.extrasDescription.Dock = System.Windows.Forms.DockStyle.Top;
+            this.extrasDescription.ReadOnly = true;
+            this.extrasDescription.TabStop = false;
+            this.extrasDescription.Location = new System.Drawing.Point(4, 4);
+            this.extrasDescription.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.extrasDescription.Multiline = true;
+            this.extrasDescription.Name = "extrasDescription";
+            this.extrasDescription.Size = new System.Drawing.Size(783, 26);
+            this.extrasDescription.TabIndex = 6;
+            this.extrasDescription.Text = "Please select any optional packages you would like to install.";
             // 
             // extraCheckboxes
             // 
             this.extraCheckboxes.CheckOnClick = true;
-            this.extraCheckboxes.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.extraCheckboxes.Dock = System.Windows.Forms.DockStyle.Fill;
             this.extraCheckboxes.FormattingEnabled = true;
             this.extraCheckboxes.IntegralHeight = false;
             this.extraCheckboxes.Location = new System.Drawing.Point(4, 37);
@@ -438,6 +441,19 @@ namespace TitanicHook.GUI
             this.extraCheckboxes.Name = "extraCheckboxes";
             this.extraCheckboxes.Size = new System.Drawing.Size(783, 452);
             this.extraCheckboxes.TabIndex = 5;
+            this.extraCheckboxes.HorizontalScrollbar = true;
+            this.extraCheckboxes.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.OnExtraItemCheck);
+            //
+            // installExtrasButton
+            //
+            this.installExtrasButton.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.installExtrasButton.Height = 36;
+            this.installExtrasButton.Name = "installExtrasButton";
+            this.installExtrasButton.Text = "Install selected";
+            this.installExtrasButton.Enabled = false;
+            this.installExtrasButton.TabIndex = 7;
+            this.installExtrasButton.UseVisualStyleBackColor = true;
+            this.installExtrasButton.Click += new System.EventHandler(this.OnInstallExtrasClick);
             // 
             // Launcher
             // 
@@ -504,7 +520,8 @@ namespace TitanicHook.GUI
         private System.Windows.Forms.Label releasedLabel;
         private System.Windows.Forms.Label descriptionLabel;
         private System.Windows.Forms.Button selectButton;
-        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.TextBox extrasDescription;
+        private System.Windows.Forms.Button installExtrasButton;
         private System.Windows.Forms.CheckBox showAtStartup;
         private Label previewText;
     }

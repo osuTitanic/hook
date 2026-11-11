@@ -18,7 +18,7 @@ namespace TitanicHook.GUI
             requestedFallback = useFallback ?? launcherUsesFallback;
             startAfterUpdate = autoStartAfterUpdate;
             updateInProgress = true;
-            RefreshSelectButton();
+            RefreshInstallControls();
 
             statusText.Text = "Checking for updates...";
             updateProgress.Style = ProgressBarStyle.Marquee;
@@ -95,7 +95,7 @@ namespace TitanicHook.GUI
 
             buttonStart.Visible = installedOsuPath != null;
             updateInProgress = false;
-            RefreshSelectButton();
+            RefreshInstallControls();
             statusText.Text = message;
         }
     }

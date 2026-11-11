@@ -28,7 +28,7 @@ namespace TitanicHook.GUI
 
         public bool IsInstalled(string target)
         {
-            return File.Exists(ClientInstaller.ResolvePathSafe(target, CheckFilename));
+            return File.Exists(Installer.ResolvePathSafe(target, CheckFilename));
         }
 
         public static Extra[] Parse(string releaseData, string target)
@@ -54,8 +54,8 @@ namespace TitanicHook.GUI
                     description: fields[2].Replace('-', ' ').Trim(),
                     checkFilename: fields[4].Replace('/', Path.DirectorySeparatorChar)
                 );
-                ClientInstaller.ResolvePathSafe(target, package.Filename);
-                ClientInstaller.ResolvePathSafe(target, package.CheckFilename);
+                Installer.ResolvePathSafe(target, package.Filename);
+                Installer.ResolvePathSafe(target, package.CheckFilename);
                 packages.Add(package);
             }
 

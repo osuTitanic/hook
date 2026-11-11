@@ -24,31 +24,15 @@ namespace TitanicHook.GUI
             if (!selectButton.Enabled)
                 return;
 
-            installInProgress = true;
-            selectButton.Enabled = false;
-            buttonStart.Enabled = false;
-            buttonStart.Visible = false;
-            updateProgress.Visible = true;
-            updateProgress.Style = ProgressBarStyle.Marquee;
+            OnInstallationBegin(); // update the ui to show that installation is in progress
 
-            BackgroundWorker worker = new BackgroundWorker{WorkerReportsProgress=true};
-
+            BackgroundWorker worker = new BackgroundWorker { WorkerReportsProgress = true };
             // args.Result -> whether client is fallback or not
-            worker.DoWork += (s, args) => args.Result = ClientInstaller.Install(
+            worker.DoWork += (s, args) => args.Result = Installer.InstallRelease(
                 AppDomain.CurrentDomain.BaseDirectory, release,
                 (message, percentage) => worker.ReportProgress(percentage ?? -1, message)
             );
-            worker.ProgressChanged += (s, args) =>
-            {
-                if (IsDisposed || Disposing)
-                    return;
-
-                statusText.Text = (string)args.UserState;
-                updateProgress.Style = args.ProgressPercentage < 0 ? ProgressBarStyle.Marquee : ProgressBarStyle.Continuous;
-
-                if (args.ProgressPercentage >= 0)
-                    updateProgress.Value = args.ProgressPercentage;
-            };
+            worker.ProgressChanged += OnInstallationProgressChanged;
             worker.RunWorkerCompleted += (s, args) =>
             {
                 worker.Dispose();
@@ -64,7 +48,7 @@ namespace TitanicHook.GUI
 
             installInProgress = false;
             updateProgress.Visible = false;
-            RefreshSelectButton();
+            RefreshInstallControls();
 
             if (error != null)
             {
@@ -78,6 +62,7 @@ namespace TitanicHook.GUI
             }
 
             LoadOsuInstallation(release.Version);
+            RefreshExtraPackages();
             LoadChangelog();
             statusText.Text = "Client installed successfully.";
 
@@ -136,7 +121,7 @@ namespace TitanicHook.GUI
             installedOsuChecksum = ChecksumUtils.CalculateMd5(installedOsuPath);
             installedOsuVersion = version;
             SelectReleaseFromChecksum(installedOsuChecksum);
-            RefreshSelectButton();
+            RefreshInstallControls();
         }
 
         private bool SelectReleaseFromChecksum(string? checksum)
@@ -190,6 +175,34 @@ namespace TitanicHook.GUI
                 // user has not installed a version of osu! yet
                 // so we cannot show them the changelog or extra tabs
                 e.Cancel = true;
+        }
+
+        private void OnInstallationBegin()
+        {
+            installInProgress = true;
+            RefreshInstallControls();
+            buttonStart.Enabled = false;
+            buttonStart.Visible = false;
+            updateProgress.Style = ProgressBarStyle.Marquee;
+            updateProgress.Visible = true;
+        }
+
+        private void OnInstallationProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            if (IsDisposed || Disposing)
+                return;
+
+            statusText.Text = (string)e.UserState;
+            updateProgress.Style = e.ProgressPercentage < 0 ? ProgressBarStyle.Marquee : ProgressBarStyle.Continuous;
+
+            if (e.ProgressPercentage >= 0)
+                updateProgress.Value = e.ProgressPercentage;
+        }
+
+        private void RefreshInstallControls()
+        {
+            RefreshSelectButton();
+            RefreshExtrasState();
         }
     }
 }

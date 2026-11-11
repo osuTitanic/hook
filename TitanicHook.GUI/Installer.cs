@@ -9,10 +9,11 @@ using TitanicHook.Core.Helpers;
 
 namespace TitanicHook.GUI
 {
-    internal static class ClientInstaller
+    internal static class Installer
     {
         private const long MaxDownloadBytes = 1024L * 1024 * 1024; // around 1 gig
         private const string StagingDirectory = ".titanic";
+        private const string StagingDirectoryExtra = ".titanic-extra";
         private static readonly char[] InvalidFileNameChars = Path.GetInvalidFileNameChars();
 
         private static readonly string[] ProtectedFiles = {
@@ -21,7 +22,7 @@ namespace TitanicHook.GUI
             "TitanicHook.Loader.dll", "TitanicHook.PluginBase.dll", "0Harmony.dll", "ILReader.dll",
         };
 
-        public static bool Install(string target, Release release, Action<string, int?> progress)
+        public static bool InstallRelease(string target, Release release, Action<string, int?> progress)
         {
             // download url may start with / so we need to prepend the base url in that case
             Uri url = new Uri(new Uri("https://osu.titanic.sh/"), release.DownloadUrl!);
@@ -40,7 +41,7 @@ namespace TitanicHook.GUI
                     string archivePath = Path.Combine(stagingPath, "release.zip");
                     string extractedPath = Path.Combine(stagingPath, "release");
 
-                    Download(url, archivePath, progress);
+                    Download(url, archivePath, "Downloading client...", progress);
                     progress("Extracting client...", null);
                     Extract(archivePath, extractedPath);
 
@@ -66,6 +67,46 @@ namespace TitanicHook.GUI
                 }
             }
         }
+
+        public static void InstallExtra(string target, Extra package, Action<string, int?> progress)
+        {
+            using (LockInstallation(target))
+            {
+                if (package.IsInstalled(target))
+                    return;
+
+                string stagingPath = Path.Combine(target, StagingDirectoryExtra);
+                Directory.CreateDirectory(stagingPath);
+
+                try
+                {
+                    string downloadPath = Path.Combine(stagingPath, package.Filename);
+
+                    Uri url = new Uri(Extra.ReleaseUrl, package.Filename);
+                    Download(url, downloadPath, "Downloading " + package.Description + "...", progress);
+
+                    if (!string.Equals(ChecksumUtils.CalculateMd5(downloadPath), package.Checksum, StringComparison.OrdinalIgnoreCase))
+                        throw new InvalidDataException("This extra does not match the expected checksum");
+
+                    progress("Installing " + package.Description + "...", null);
+                    string destination = ResolvePathSafe(target, package.CheckFilename);
+
+                    if (string.Equals(Path.GetExtension(package.Filename), ".zip", StringComparison.OrdinalIgnoreCase))
+                        // if we got a zip we want to extract that archive in the installation directory
+                        InstallExtraArchive(target, downloadPath, Path.Combine(stagingPath, "contents"), package.CheckFilename, destination);
+                    else
+                        // otherwise we just copy the file into the installation directory
+                        CopyFile(downloadPath, destination);
+
+                    RemoveSafe(stagingPath);
+                }
+                finally
+                {
+                    RemoveSafe(stagingPath);
+                }
+            }
+        }
+
         public static void TryRecover(string targetPath)
         {
             string stagingPath = Path.Combine(targetPath, StagingDirectory);
@@ -80,9 +121,34 @@ namespace TitanicHook.GUI
             }
         }
 
-        private static void Download(Uri url, string archive, Action<string, int?> progress)
+        private static void InstallExtraArchive(string targetPath, string zipPath, string extractPath, string checkFilename, string destination)
         {
-            progress("Downloading client...", 0);
+            Extract(zipPath, extractPath);
+
+            // a "check file" can be the skin.ini of a skin for example
+            // used to check if the extra was already installed
+            string checkFilePath = ResolvePathSafe(extractPath, checkFilename);
+            if (!File.Exists(checkFilePath))
+                throw new InvalidDataException("The package is missing its installation check file");
+
+            string[] files = Directory.GetFiles(extractPath, "*", SearchOption.AllDirectories);
+            int relativePathStart = extractPath.Length + 1;
+
+            // validate every destination in terms of path traversal and all that other stuff
+            // server should be trusted but uhhh.. we could be compromised or something probably idk
+            foreach (string file in files)
+                ResolvePathSafe(targetPath, file.Substring(relativePathStart));
+
+            foreach (string file in files)
+            {
+                string path = ResolvePathSafe(targetPath, file.Substring(relativePathStart));
+                CopyFile(file, path);
+            }
+        }
+
+        private static void Download(Uri url, string archive, string message, Action<string, int?> progress)
+        {
+            progress(message, 0);
 
             using (WebResponse response = WebRequest.Create(url).GetResponse())
             using (Stream input = response.GetResponseStream())
@@ -95,7 +161,7 @@ namespace TitanicHook.GUI
                 int lastPercentage = 0;
                 if (size <= 0)
                     // can't display a progress bar without the content length
-                    progress("Downloading client...", null);
+                    progress(message, null);
 
                 byte[] buffer = new byte[81920]; // 80 kib
                 long received = 0;
@@ -114,12 +180,13 @@ namespace TitanicHook.GUI
                     int percentage = (int)Math.Min(100, received * 100 / size);
                     if (percentage == lastPercentage)
                         continue;
-                    
-                    progress("Downloading client...", percentage);
+
+                    progress(message, percentage);
                     lastPercentage = percentage;
                 }
             }
         }
+
         private static void Extract(string archive, string destination)
         {
             Directory.CreateDirectory(destination);
@@ -190,12 +257,12 @@ namespace TitanicHook.GUI
                 // ensure the file is not in use before moving it to the backup folder
                 using (File.Open(path, FileMode.Open, FileAccess.Read, FileShare.None)) { }
 
-                MoveFileSafe(path, Path.Combine(backup, file));
+                MoveFile(path, Path.Combine(backup, file));
             }
 
             // move the new files into place
             foreach (string file in newFiles)
-                MoveFileSafe(Path.Combine(releasePath, file), Path.Combine(targetPath, file));
+                MoveFile(Path.Combine(releasePath, file), Path.Combine(targetPath, file));
         }
 
         private static bool IsOsuFile(string file)
@@ -250,13 +317,19 @@ namespace TitanicHook.GUI
             {
                 // restore from backup folder
                 foreach (string path in Directory.GetFiles(backup))
-                    MoveFileSafe(path, ResolvePathSafe(targetPath, Path.GetFileName(path)));
+                    MoveFile(path, ResolvePathSafe(targetPath, Path.GetFileName(path)));
             }
 
             RemoveSafe(stagingPath);
         }
 
-        private static void MoveFileSafe(string source, string destination)
+        private static void CopyFile(string source, string destination)
+        {
+            Directory.CreateDirectory(Path.GetDirectoryName(destination)!);
+            File.Copy(source, destination, true);
+        }
+
+        private static void MoveFile(string source, string destination)
         {
             Directory.CreateDirectory(Path.GetDirectoryName(destination)!);
             File.Move(source, destination);
@@ -278,7 +351,7 @@ namespace TitanicHook.GUI
             }
         }
 
-        private static string ResolvePathSafe(string root, string relative)
+        internal static string ResolvePathSafe(string root, string relative)
         {
             if (string.IsNullOrEmpty(relative) || Path.IsPathRooted(relative))
                 throw new InvalidDataException("Unsafe client file path: " + relative);

@@ -34,7 +34,6 @@ namespace TitanicHook.GUI
             changelogBrowser.Navigating += OnBrowserNavigating;
             tabControl.Selecting += OnTabSelecting;
 
-            // TODO: Implement extras tab
             // TODO: Limit the amount you can drag the client list to the right
             // TODO: Add osu!.db, scores.db and collections.db converter
 
@@ -73,7 +72,7 @@ namespace TitanicHook.GUI
 
             try
             {
-                ClientInstaller.TryRecover(AppDomain.CurrentDomain.BaseDirectory);
+                Installer.TryRecover(AppDomain.CurrentDomain.BaseDirectory);
             }
             catch (Exception ex)
             {
@@ -87,6 +86,7 @@ namespace TitanicHook.GUI
             LoadOsuInstallation();
             LoadReleases();
             LoadChangelog();
+            LoadExtras();
 
 #if !DEBUG
             if (!OsuLoader.Config.DisableUpdates)
@@ -116,19 +116,23 @@ namespace TitanicHook.GUI
                 updater.Dispose();
                 updater = null;
             }
-            
             if (releasesRequest != null)
             {
                 releasesRequest.CancelAsync();
                 releasesRequest.Dispose();
                 releasesRequest = null;
             }
-
             if (screenshotRequest != null)
             {
                 screenshotRequest.CancelAsync();
                 screenshotRequest.Dispose();
                 screenshotRequest = null;
+            }
+            if (extrasRequest != null)
+            {
+                extrasRequest.CancelAsync();
+                extrasRequest.Dispose();
+                extrasRequest = null;
             }
 
             Image image = previewImage.Image;
