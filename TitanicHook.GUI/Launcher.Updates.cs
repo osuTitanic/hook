@@ -70,7 +70,7 @@ namespace TitanicHook.GUI
 
                 // We don't really need to restart directly
                 // Hitting "start osu!" will do the trick as well
-                Updater.Install(update, false);
+                updater!.Install(update, restart: false);
                 launcherUsesFallback = requestedFallback;
 
                 DisplayUpdateStatus("Update installed successfully."); // TODO: perhaps display the version

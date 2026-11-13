@@ -22,11 +22,11 @@ namespace TitanicHook.GUI
             bool launchArgument = args.Length > 0 && args[0] == "-go";
             bool skipLauncher = launchArgument || OsuLoader.Config.DisableLauncher;
 
-            // TODO: If the launcher is disabled, we should check for updates
-            //       in the background and apply them on the next launch.
-
             if (skipLauncher)
             {
+                if (OsuLoader.Config.DisableLauncher && !OsuLoader.Config.DisableUpdates)
+                    Updater.CheckUnattended();
+
                 try
                 {
                     string? defaultPath = OsuFileUtils.FindOsuExecutable(AppDomain.CurrentDomain.BaseDirectory);

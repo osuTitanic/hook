@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
+using System.Threading;
 using System.Windows.Forms;
 using TitanicHook.Core;
 using TitanicHook.Core.Helpers;
@@ -10,6 +11,8 @@ namespace TitanicHook.GUI
 {
     internal sealed class Updater : IDisposable
     {
+        private readonly string executable = Application.ExecutablePath;
+
         private WebClient? request;
         private Action<int?>? onProgress;
         private Action<byte[]?, Exception?>? onCompleted;
@@ -21,7 +24,7 @@ namespace TitanicHook.GUI
 
             try
             {
-                string checksum = ChecksumUtils.CalculateSha256(Application.ExecutablePath);
+                string checksum = ChecksumUtils.CalculateSha256(executable);
                 string variant = useFallback ? "net20" : "net40";
                 string url = Constants.UpdateServer + "/update?type=" + variant + "&checksum=" + checksum;
                 
@@ -63,9 +66,36 @@ namespace TitanicHook.GUI
             completed?.Invoke(e.Error == null ? e.Result : null, e.Error);
         }
 
-        public static void Install(byte[] update, bool restart = true)
+        public static void CheckUnattended()
         {
-            string executable = Application.ExecutablePath;
+            Updater updater = new Updater();
+            ThreadPool.QueueUserWorkItem(
+                _ => updater.Check(Environment.Version.Major < 4, progress => { }, updater.OnBackgroundUpdateCompleted));
+        }
+
+        private void OnBackgroundUpdateCompleted(byte[]? update, Exception? error)
+        {
+            if (error != null)
+            {
+                Logging.Error("Failed to check for updates: " + error);
+                return;
+            }
+
+            if (update == null || update.Length <= 0)
+                return;
+
+            try
+            {
+                Install(update, restart: false);
+            }
+            catch (Exception ex)
+            {
+                Logging.Error("Failed to install update: " + ex);
+            }
+        }
+
+        public void Install(byte[] update, bool restart = true)
+        {
             string suffix = Guid.NewGuid().ToString("N");
             string oldFile = executable + ".old." + suffix;
             string newFile = executable + ".new." + suffix;
