@@ -127,6 +127,10 @@ namespace TitanicHook.GUI
                 try { if (File.Exists(newFile)) File.Delete(newFile); }
                 catch { }
             }
+
+            // Hide our backup executable
+            try { File.SetAttributes(oldFile, File.GetAttributes(oldFile) | FileAttributes.Hidden); }
+            catch { }
         }
 
         public static void CleanupOldVersions()
