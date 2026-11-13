@@ -92,8 +92,7 @@ namespace TitanicHook.GUI
                 MessageBox.Show(
                     this,
                     "This client uses a different .NET Framework version. " +
-                    "Please download the Titanic! version for .NET Framework " +
-                    (useFallback ? "2.0 (fallback)." : "4.0 (non-fallback)."),
+                    "If you experience issues, please download the 'fallback' version of Titanic.",
                     "Titanic!", MessageBoxButtons.OK, MessageBoxIcon.Warning
                 );
             }
