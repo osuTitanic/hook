@@ -79,7 +79,8 @@ namespace TitanicHook.GUI
             //       Encountered some issues when switching from e.g. b20141106.14 to b1818
 
             // Check if both launcher & client are on the same framework version
-            if (useFallback != launcherUsesFallback)
+            // Specifically, if the client is on net40 & the launcher is on net20
+            if (!useFallback && launcherUsesFallback)
             {
                 if (!OsuLoader.Config.DisableUpdates)
                 {
@@ -89,12 +90,12 @@ namespace TitanicHook.GUI
 
                 // Updates are disabled :(
                 // Let's tell the user that they should do it instead
-                // MessageBox.Show(
-                //     this,
-                //     "This client uses a different .NET Framework version. " +
-                //     "If you experience issues, please download the 'fallback' version of Titanic.",
-                //     "Titanic!", MessageBoxButtons.OK, MessageBoxIcon.Warning
-                // );
+                MessageBox.Show(
+                    this,
+                    "This client uses a different .NET Framework version. " +
+                    "If you experience issues, please download the non-fallback version of Titanic.",
+                    "Titanic!", MessageBoxButtons.OK, MessageBoxIcon.Warning
+                );
             }
 
             if (autoStart.Checked)
