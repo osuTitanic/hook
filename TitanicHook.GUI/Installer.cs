@@ -221,9 +221,20 @@ namespace TitanicHook.GUI
         private static void ReplaceFiles(string targetPath, string releasePath, string stagingPath)
         {
             List<string> newFiles = new List<string>();
-            Dictionary<string, bool> affected = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
+            List<string> oldFiles = new List<string>();
 
-            // find all relevant files in the release folder
+            // find all relevant old files
+            foreach (string path in Directory.GetFiles(targetPath))
+            {
+                string file = Path.GetFileName(path);
+
+                if (!IsOsuFile(file))
+                    continue;
+
+                oldFiles.Add(file);
+            }
+
+            // find all relevant new files
             foreach (string path in Directory.GetFiles(releasePath))
             {
                 string file = Path.GetFileName(path);
@@ -232,22 +243,12 @@ namespace TitanicHook.GUI
                     continue;
 
                 newFiles.Add(file);
-                affected[file] = true;
-            }
-
-            // find all relevant files in the target folder
-            foreach (string path in OsuFileUtils.FindOsuExecutables(targetPath))
-            {
-                string file = Path.GetFileName(path);
-
-                if (IsOsuFile(file))
-                    affected[file] = true;
             }
 
             // create a backup of the affected files in case something goes wrong
             string backup = Path.Combine(stagingPath, "backup");
 
-            foreach (string file in affected.Keys)
+            foreach (string file in oldFiles)
             {
                 string path = ResolvePathSafe(targetPath, file);
 
