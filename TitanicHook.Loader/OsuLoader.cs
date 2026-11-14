@@ -3,14 +3,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Windows.Forms;
-using Microsoft.Win32;
 using TitanicHook.Core;
 using TitanicHook.Core.Framework;
 using TitanicHook.Core.Helpers;
@@ -19,67 +15,60 @@ using TitanicHook.Core.OsuInterop;
 
 namespace TitanicHook.Loader;
 
-class Program
+public static class OsuLoader
 {
-    /// <summary>
-    /// Original entry assembly (before hooking)
-    /// </summary>
-    private static Assembly? _originalEntryAssembly;
-    
-    public static Configuration Config;
+    public static Configuration Config = null!;
     public static bool AutoUpdated = false;
-    
+
     /// <summary>
-    /// Small program that will load osu!.exe into memory, execute hooks, and start osu!'s main function
+    /// Loads osu!.exe into memory, applies hooks, and starts osu!'s main function
     /// </summary>
-    /// <param name="args"></param>
-    [STAThread]
-    static void Main(string[] args)
+    /// <param name="osuPath">Path to the osu! executable</param>
+    public static void Start(string osuPath)
     {
-#if !DEBUG
-        // Update check
-        AutoUpdated = Updater.DeleteTempFile();
-        Updater.CheckForUpdates();
-#endif
-        
-        Config = new Configuration(Constants.DefaultConfigName);
+        if (string.IsNullOrEmpty(osuPath) || !File.Exists(osuPath))
+        {
+            Logging.LogAndShowError("Couldn't locate the osu! executable!");
+            return;
+        }
+
+        try
+        {
+            osuPath = Path.GetFullPath(osuPath);
+            Directory.SetCurrentDirectory(Path.GetDirectoryName(osuPath)!);
+        }
+        catch (Exception e)
+        {
+            Logging.LogAndShowError($"Failed to open the osu! directory: {e}");
+            return;
+        }
+
+        if (Config == null)
+        {
+            Config = new Configuration(Constants.DefaultConfigName);
+        }
+
 #if !DEBUG
         // Initialize console if not in debug
         if (Config.EnableConsole)
             WinApi.InitializeConsole();
 #endif
-        
-        PreLaunchChecks.CheckAll();
-        
+
         Logging.UseConsoleLogging = Config.EnableConsole;
         Logging.UseFileLogging = Config.LogToFile;
-        
-        _originalEntryAssembly = Assembly.GetEntryAssembly();
-        if (_originalEntryAssembly == null)
-        {
-            Logging.LogAndShowError("Assembly.GetEntryAssembly() returned null");
-            return;
-        }
+
+        PreLaunchChecks.CheckAll();
         
         // Load osu!
         Assembly loaded;
         try
         {
-            string? path = FindOsuExecutable(Path.GetDirectoryName(_originalEntryAssembly.Location));
-            if (path == null)
-            {
-                Logging.LogAndShowError("Couldn't locate the osu! executable!");
-                Environment.Exit(1);
-            }
-            else
-            {
-                OsuPath = path;
-            }
+            OsuPath = osuPath;
             
             // Remove Mark of the Web which makes it impossible to load assemblies with Assembly.LoadFrom.
             // Have to use Win32 call directly, as .NET's File.Delete does not support alternative data streams.
             WinApi.DeleteFileW(OsuPath + ":Zone.Identifier");
-            
+
             loaded = Assembly.LoadFrom(OsuPath);
         }
         catch (Exception e)
@@ -87,7 +76,7 @@ class Program
             Logging.LogAndShowError($"Failed to load osu!.exe\n {e}");
             return;
         }
-        
+
 #if NET40
         if (loaded.ImageRuntimeVersion == "v2.0.50727")
         {
@@ -95,10 +84,14 @@ class Program
             // https://reedcopsey.com/2011/09/15/setting-uselegacyv2runtimeactivationpolicy-at-runtime/
             ICLRRuntimeInfo clrRuntimeInfo =
                 (ICLRRuntimeInfo)RuntimeEnvironment.GetRuntimeInterfaceAsObject(
-                    Guid.Empty, 
+                    Guid.Empty,
                     typeof(ICLRRuntimeInfo).GUID);
-            
+
             clrRuntimeInfo.BindAsLegacyV2Runtime();
+        } else {
+            // Set the process to be DPI aware
+            // This fixes the resolution for some .NET 4.0 builds released in 2015
+            SetProcessDPIAware();
         }
 #else
         if (loaded.ImageRuntimeVersion != Assembly.GetExecutingAssembly().ImageRuntimeVersion)
@@ -107,7 +100,7 @@ class Program
             return;
         }
 #endif
-        
+
         // Get entry point
         MethodInfo entry = loaded.EntryPoint;
         if (entry == null)
@@ -115,12 +108,14 @@ class Program
             Logging.LogAndShowError("Entry point not found.");
             return;
         }
-        
+
         List<string> FakeArgs = new();
         FakeArgs.Add(OsuPath);
-        if (OsuVersion.GetVersionNumber() >= 20140811)
+
+        int versionNumber = Config.ReleaseVersion > 0 ? Config.ReleaseVersion : OsuVersion.GetVersionNumber();
+        if (versionNumber >= 20140811)
             FakeArgs.Add("-go"); // -go arg will bypass the updater in older builds. Always adding it won't work, osu! will show unknown file message
-        
+
         // Load hooks specific to the loader
         Logging.Info("Loading early hooks");
         PatchManager.Apply(new EntryPointHook(loaded));
@@ -128,13 +123,13 @@ class Program
         // TODO: find out if it's necessary to force the hook to point at loader's icon
         //ExtractIconHook.Initialize(AppDomain.CurrentDomain.FriendlyName);
         PatchManager.Apply(new GetArgsHook(FakeArgs.ToArray()));
-        
+
         // Hook osu!.exe's entrypoint to execute other hooks there
         // This is required because osu!common has to be loaded by osu! for hooking
         // If we would've loaded osu!common manually it wouldn't work
         Logging.Info("Hooking osu!'s main function");
         PatchManager.Apply(new OsuStartHook(entry));
-        
+
         // Start the exe's entry point
         Logging.Info("Starting osu!");
         entry.Invoke(null, new object[] { });
@@ -143,8 +138,8 @@ class Program
     private static void ShowFrameworkMismatch(string osuVer, string hookVer)
     {
         Logging.LogAndShowError($".NET Framework runtime version mismatch!\n" +
-                                $"This version of osu! requires .NET Framework {GetShortFrameworkVer(osuVer)}, this executable of Titanic!Loader is .NET Framework {hookVer}\n" +
-                                $"Get the correct version of Titanic!Loader for this version of osu!.");
+                                $"This version of osu! requires .NET Framework {GetShortFrameworkVer(osuVer)}, this Titanic! launcher uses .NET Framework {GetShortFrameworkVer(hookVer)}\n" +
+                                $"Get the correct launcher version for this version of osu!.");
     }
 
     /// <summary>
@@ -157,23 +152,8 @@ class Program
         return framework.Substring(1, 4);
     }
 
-    /// <summary>
-    /// Finds the osu! executable from a list of valid filenames
-    /// </summary>
-    /// <param name="directory">Directory to search in</param>
-    /// <returns>Path to a first found osu! executable, null if none was found</returns>
-    private static string? FindOsuExecutable(string? directory)
-    {
-        if (directory == null)
-            return null;
-        
-        string[] validFiles =
-            ["osu!.exe", "osu.exe", "osu!test.exe", "osu!public.exe", "osu!shine1.exe", "osu!cuttingedge.exe"];
-        return validFiles.Select(file => Path.Combine(directory, file)).FirstOrDefault(File.Exists);
-    }
-
     internal static string OsuPath = "";
-    
+
     [ComImport]
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     [Guid("BD39D1D2-BA2F-486A-89B0-B4B0CB466891")]
@@ -193,4 +173,7 @@ class Program
         [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
         void BindAsLegacyV2Runtime();
     }
+
+    [DllImport("user32.dll")]
+    public static extern bool SetProcessDPIAware();
 }

@@ -73,13 +73,22 @@ public static class EntryPoint
             if (year >= 2014)
                 Config.HookTcpConnections = false;
         }
+
+        // Launcher is able to get the version directly from titanic, so there's no need to infer it
+        int versionNumber = Config.ReleaseVersion > 0 ? Config.ReleaseVersion : OsuVersion.GetVersionNumber();
         
-        Logging.Info($"osu! version from reflection: {OsuVersion.GetVersion()}");
+        Logging.Info(
+            Config.ReleaseVersion > 0
+            ? $"osu! version from launcher: {Config.ReleaseVersion}"
+            : $"osu! version from reflection: {OsuVersion.GetVersion()}"
+        );
 
         PatchManager.Apply(new WinformSetTitleHook());
-        if (OsuVersion.GetVersionNumber() > 615) PatchManager.Apply(new NowPlayingCommandHook()); // Pre-b615 builds are not doing links in /np, and it caused crashes in some versions
-        if (Config.RemoveScoreFetchingDelay) PatchManager.Apply(new RemoveScoreDelayHook());
+
+        // Pre-b615 builds are not doing links in /np, and it caused crashes in some versions
+        if (versionNumber > 615) PatchManager.Apply(new NowPlayingCommandHook());
         
+        if (Config.RemoveScoreFetchingDelay) PatchManager.Apply(new RemoveScoreDelayHook());
         if (Config.HookTcpConnections) PatchManager.Apply(new TcpClientHook());
         PatchManager.Apply(new DnsHostByNameHook());
         PatchManager.Apply(new StartProcessHook());

@@ -14,37 +14,55 @@ public delegate void ConfigurationNotFoundCallback(string filename, Exception e)
 public class Configuration
 {
     public const int CurrentConfigVersion = 2;
-    
-    // Version of the config file
+
+    /// <summary>
+    /// Version of the config file
+    /// </summary>
     public int Version { get; set; } = CurrentConfigVersion;
-    
-    // Alloc console for logs
+
+    /// <summary>
+    /// Alloc console for logs
+    /// </summary>
     public bool EnableConsole { get; set; } = false;
-    
-    // Log to a file
+
+    /// <summary>
+    /// Log to a file
+    /// </summary>
     public bool LogToFile { get; set; } = false;
-    
-    // Domain of the server (e.g. titanic.sh)
+
+    /// <summary>
+    /// Domain of the server (e.g. titanic.sh)
+    /// </summary>
     public string ServerName { get; set; } = "titanic.sh";
-    
-    // Whether to hook WSAConnect (TCP Bancho)
+
+    /// <summary>
+    /// Whether to hook WSAConnect (TCP Bancho)
+    /// </summary>
     public bool HookTcpConnections { get; set; } = true;
-    
-    // Whether to hook NetLib AddHeaderField
+
+    /// <summary>
+    /// Whether to hook NetLib AddHeaderField
+    /// </summary>
     public bool HookNetLibHeaders { get; set; } = true;
-    
-    // Whether to hook NetLib StringStream ctor
+
+    /// <summary>
+    /// Whether to hook NetLib StringStream ctor
+    /// </summary>
     public bool HookNetLibEncoding { get; set; } = true;
-    
-    // Whether to hook Host header in pWebRequest (.NET Framework 4.x only)
+
+    /// <summary>
+    /// Whether to hook Host header in pWebRequest (.NET Framework 4.x only)
+    /// </summary>
     public bool HookModernHostMethod { get; set; }
 #if NET40
          = true;
 #else
         = false;
 #endif
-    
-    // Whether to hook pWebRequest certificate check (.NET Framework 4.x only)
+
+    /// <summary>
+    /// Gets or sets a value indicating whether certificate validation is hooked.
+    /// </summary>
     public bool HookCheckCertificate { get; set; }
 #if NET40
          = true;
@@ -63,10 +81,34 @@ public class Configuration
     /// </summary>
     public string ClientSha256 { get; set; } = "";
     
+    /// <summary>
+    /// osu! adds a delay when loading leaderboards.
+    /// This will remove it, and request the leaderboard instantly.
+    /// </summary>
     public bool RemoveScoreFetchingDelay { get; set; } = true;
-    
+
+    /// <summary>
+    /// Usually, when trying to message peppy, a page would pop up, explaining that peppy is a busy man!
+    /// On Titanic!, Levi has the same user id as peppy so this popup would still appear.
+    /// We want users to message him, so this option removes it.
+    /// </summary>
     public bool RemovePeppyDmCheck { get; set; } = true;
-    
+
+    /// <summary>
+    /// Whether to auto-update Titanic!
+    /// </summary>
+    public bool DisableUpdates { get; set; } = false;
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the launcher is disabled.
+    /// </summary>
+    public bool DisableLauncher { get; set; } = false;
+
+    /// <summary>
+    /// The version of osu! that was downloaded through the launcher.
+    /// </summary>
+    public int ReleaseVersion { get; set; } = 0;
+
     /// <summary>
     /// Whether it's the first config creation.
     /// This is not written to the config!
@@ -159,6 +201,15 @@ public class Configuration
                 case "RemovePeppyDmCheck":
                     RemovePeppyDmCheck = bool.Parse(splitLine[1]);
                     break;
+                case "DisableUpdates":
+                    DisableUpdates = bool.Parse(splitLine[1]);
+                    break;
+                case "DisableLauncher":
+                    DisableLauncher = bool.Parse(splitLine[1]);
+                    break;
+                case "ReleaseVersion":
+                    ReleaseVersion = int.Parse(splitLine[1]);
+                    break;
             }
         }
     }
@@ -188,6 +239,9 @@ public class Configuration
         sw.WriteLine($"ClientSha256={ClientSha256}");
         sw.WriteLine($"RemoveScoreFetchingDelay={RemoveScoreFetchingDelay}");
         sw.WriteLine($"RemovePeppyDmCheck={RemovePeppyDmCheck}");
+        sw.WriteLine($"DisableUpdates={DisableUpdates}");
+        sw.WriteLine($"DisableLauncher={DisableLauncher}");
+        sw.WriteLine($"ReleaseVersion={ReleaseVersion}");
     }
 
     /// <summary>
