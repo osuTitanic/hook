@@ -30,6 +30,12 @@
 		<Reference Include="System.Xml" />
 	</ItemGroup>
 	
+	<ItemGroup>
+		<EmbeddedResource Update="Launcher.resx">
+			<LogicalName>TitanicHook.GUI.Launcher.resources</LogicalName>
+		</EmbeddedResource>
+	</ItemGroup>
+
 	<PropertyGroup Condition="'$(TargetFramework)' == 'net40'">
 		<AssemblyTitle>Titanic!</AssemblyTitle>
 	</PropertyGroup>
