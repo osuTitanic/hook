@@ -342,6 +342,10 @@ namespace TitanicHook.GUI
             if (!string.Equals(extension, ".dll", StringComparison.OrdinalIgnoreCase) &&
                 !string.Equals(extension, ".exe", StringComparison.OrdinalIgnoreCase))
                 return false;
+            
+            // don't copy osume.exe
+            if (string.Equals(file, "osume.exe", StringComparison.OrdinalIgnoreCase))
+                return false;
 
             string launcherPath = Path.GetFileName(Application.ExecutablePath);
 
