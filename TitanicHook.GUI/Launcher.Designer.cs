@@ -239,6 +239,7 @@ namespace TitanicHook.GUI
             this.releaseSplit.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.releaseSplit.Dock = System.Windows.Forms.DockStyle.Fill;
             this.releaseSplit.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
+            this.releaseSplit.IsSplitterFixed = true;
             this.releaseSplit.Location = new System.Drawing.Point(0, 0);
             this.releaseSplit.Margin = new System.Windows.Forms.Padding(4);
             this.releaseSplit.Name = "releaseSplit";
@@ -252,7 +253,7 @@ namespace TitanicHook.GUI
             // 
             this.releaseSplit.Panel2.Controls.Add(this.details);
             this.releaseSplit.Size = new System.Drawing.Size(791, 493);
-            this.releaseSplit.SplitterDistance = 145;
+            this.releaseSplit.SplitterDistance = 180;
             this.releaseSplit.SplitterWidth = 5;
             this.releaseSplit.TabIndex = 0;
             // 
