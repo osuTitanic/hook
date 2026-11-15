@@ -34,7 +34,6 @@ namespace TitanicHook.GUI
             changelogBrowser.Navigating += OnBrowserNavigating;
             tabControl.Selecting += OnTabSelecting;
 
-            // TODO: Limit the amount you can drag the client list to the right
             // TODO: Add osu!.db, scores.db and collections.db converter
 
             UpdateTabState(enabled: false);
