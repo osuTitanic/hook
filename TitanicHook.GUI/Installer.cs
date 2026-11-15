@@ -278,7 +278,7 @@ namespace TitanicHook.GUI
                     Directory.CreateDirectory(Path.GetDirectoryName(path)!);
 
                     using (var output = new FileStream(path, FileMode.CreateNew))
-                        CopyTo(zip, output);
+                        zip.CopyTo(output);
                 }
             }
         }
@@ -363,16 +363,6 @@ namespace TitanicHook.GUI
                 Path.Combine(targetPath, ".titanic.lock"),
                 FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None, 4096, FileOptions.DeleteOnClose
             );
-        }
-
-        // doesn't exist in .net framework 2 so here's our own scuffed implementation
-        private static void CopyTo(Stream source, Stream destination)
-        {
-            byte[] buffer = new byte[81920];
-
-            int count;
-            while ((count = source.Read(buffer, 0, buffer.Length)) > 0)
-                destination.Write(buffer, 0, count);
         }
 
         private static void RestoreBackup(string targetPath, string stagingPath)
