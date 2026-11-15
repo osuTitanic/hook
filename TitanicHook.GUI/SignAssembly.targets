@@ -4,9 +4,12 @@
     <SignAssemblyAfterBuild>false</SignAssemblyAfterBuild>
     <CertificateName>Open Source Developer</CertificateName>
     <TimeServerUrl>http://time.certum.pl</TimeServerUrl>
-    <OutputAssembly>$(OutputPath)$(AssemblyName).exe</OutputAssembly>
-    <OutputMergedAssembly>$(OutputPath)$(AssemblyName)_merged.exe</OutputMergedAssembly>
     <SignToolPath>signtool.exe</SignToolPath>
+  </PropertyGroup>
+  
+  <PropertyGroup>
+    <OutputAssembly>$(OutputPath)$(AssemblyName).exe</OutputAssembly>
+    <OutputMergedAssembly>$(OutputPath)Titanic!.exe</OutputMergedAssembly>
   </PropertyGroup>
 
   <Target Name="SignMergedAssembly" AfterTargets="ILRepacker" Condition="'$(SignAssemblyAfterBuild)' == 'true' AND '$(Configuration)' == 'Release'">

@@ -30,12 +30,12 @@ public static class PreLaunchChecks
 #elif NET40
             netFrameworkRequired += "4.0";
 #endif
-        string isAllowedString = Program.Config.AllowMono ? "Titanic!Loader will proceed, but might not work as expected" : "Titanic!Loader will now close. Enable AllowMono in configuration file to allow (KEEP IN MIND THAT THIS IS UNSUPPORTED AND WILL CAUSE ISSUES)";
+        string isAllowedString = OsuLoader.Config.AllowMono ? "Titanic! will proceed, but might not work as expected" : "Titanic! will now close. Enable AllowMono in configuration file to allow (KEEP IN MIND THAT THIS IS UNSUPPORTED AND WILL CAUSE ISSUES)";
         Logging.LogAndShowError($"Running on Mono is NOT SUPPORTED and WILL CAUSE ISSUES!\n" +
                                 $"Please install {netFrameworkRequired} in your Wineprefix to continue.\n" +
                                 isAllowedString);
             
-        if (!Program.Config.AllowMono)
+        if (!OsuLoader.Config.AllowMono)
             Environment.Exit(1);
     }
 

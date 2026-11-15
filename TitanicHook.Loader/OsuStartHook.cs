@@ -15,7 +15,7 @@ namespace TitanicHook.Loader;
 /// </summary>
 public class OsuStartHook : TitanicPatch
 {
-    private const string HookName = "sh.Titanic.Hook.OsuStartHook";
+    private new const string HookName = "sh.Titanic.Hook.OsuStartHook";
 
     public OsuStartHook(MethodInfo method) : base(HookName)
     {
@@ -29,7 +29,7 @@ public class OsuStartHook : TitanicPatch
     {
         // Load TitanicHook
         Logging.HookTrigger(HookName);
-        EntryPoint.InitializeHooks(Program.Config, Program.OsuPath, Program.AutoUpdated);
+        EntryPoint.InitializeHooks(OsuLoader.Config, OsuLoader.OsuPath, OsuLoader.AutoUpdated);
     }
     
     #endregion
