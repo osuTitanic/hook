@@ -194,7 +194,8 @@ namespace TitanicHook.GUI
 
             bool installed = release != null &&
                 installedOsuPath != null &&
-                installedOsuVersion == release.Version;
+                installedOsuChecksum != null &&
+                release.Matches(installedOsuChecksum);
 
             selectButton.Enabled = !installInProgress && !updateInProgress &&
                 !installed && !string.IsNullOrEmpty(release?.DownloadUrl);
