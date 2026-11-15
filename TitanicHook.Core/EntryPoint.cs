@@ -123,7 +123,11 @@ public static class EntryPoint
         Logging.Info("All hooked");
         Config.FirstRun = false;
         Config.SaveConfiguration(Config.Filename);
-        string notifMessage = $"Welcome to Titanic! (v{Constants.PatchVersion})";
+        string fallbackString = "";
+#if NET20
+        fallbackString = " fallback";
+#endif
+        string notifMessage = $"Welcome to Titanic! (v{Constants.PatchVersion}{fallbackString})";
         if (autoUpdated)
             notifMessage += "\nUpdated successfully!";
         Notifications.ShowMessage(notifMessage);
