@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "Titanic (Launcher)": {
+      "commandName": "Project"
+    },
+    "Titanic (Loader)": {
+      "commandName": "Project",
+      "commandLineArgs": "-go",
+      "hotReloadEnabled": false
+    }
+  }
+}
