@@ -80,7 +80,7 @@ public static class EntryPoint
         
         Logging.Info(
             Config.ReleaseVersion > 0
-            ? $"osu! version from launcher: {Config.ReleaseVersion}"
+            ? $"osu! version from launcher: b{Config.ReleaseVersion}"
             : $"osu! version from reflection: {OsuVersion.GetVersion()}"
         );
 
