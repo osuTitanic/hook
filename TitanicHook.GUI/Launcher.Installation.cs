@@ -61,7 +61,18 @@ namespace TitanicHook.GUI
                 return;
             }
 
+            int? previousVersion = installedOsuVersion;
             LoadOsuInstallation(release.Version);
+
+            try
+            {
+                Installer.AdjustClientConfig(AppDomain.CurrentDomain.BaseDirectory, previousVersion, release.Version);
+            }
+            catch (Exception ex)
+            {
+                Logging.Error("Failed to adjust osu! config: " + ex.Message);
+            }
+
             RefreshExtraPackages();
             LoadChangelog();
             statusText.Text = "Client installed successfully.";
@@ -74,9 +85,6 @@ namespace TitanicHook.GUI
             OsuLoader.Config.HookNetLibEncoding = true;
             OsuLoader.Config.HookModernHostMethod = !useFallback;
             OsuLoader.Config.HookCheckCertificate = !useFallback;
-
-            // TODO: Remove settings from osu!.<username>.cfg that are not safe to transfer between versions
-            //       Encountered some issues when switching from e.g. b20141106.14 to b1818
 
             // Check if both launcher & client are on the same framework version
             // Specifically, if the client is on net40 & the launcher is on net20

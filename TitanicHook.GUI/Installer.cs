@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using ICSharpCode.SharpZipLib.Zip;
 using TitanicHook.Core.Helpers;
@@ -68,6 +70,69 @@ namespace TitanicHook.GUI
             }
         }
 
+        internal static void AdjustClientConfig(string directory, int? previousVersion, int version)
+        {
+            const int firstUserConfigVersion = 498;
+
+            string username = string.Concat(Environment.UserName.Split(InvalidFileNameChars));
+
+            // Clients before b498 used a single osu!.cfg file for all users,
+            // while newer clients use osu!.<username>.cfg
+            string legacyPath = Path.Combine(directory, "osu!.cfg");
+            string userPath = Path.Combine(directory, "osu!." + username + ".cfg");
+
+            bool clientUsesUserConfig = version >= firstUserConfigVersion;
+            string configPath = clientUsesUserConfig ? userPath : legacyPath;
+            string oldPath = clientUsesUserConfig ? legacyPath : userPath;
+
+            int oldVersion = previousVersion.GetValueOrDefault();
+            bool configNameChanged = oldVersion > 0 &&
+                (oldVersion >= firstUserConfigVersion) != clientUsesUserConfig;
+
+            if (configNameChanged)
+            {
+                // Move osu!.cfg -> osu!.<username>.cfg or vice versa
+                if (File.Exists(oldPath))
+                    MoveFile(oldPath, configPath, overwrite: true);
+            }
+
+            if (!File.Exists(configPath))
+                // we have never launched the client before
+                // no need to adjust the config
+                return;
+
+            string config;
+            Encoding encoding;
+
+            using (StreamReader reader = File.OpenText(configPath))
+            {
+                config = reader.ReadToEnd();
+                encoding = reader.CurrentEncoding;
+            }
+
+            const string settingsToReset =
+                "Width|Height|WidthFullscreen|HeightFullscreen|Renderer";
+
+            const string settingLine =
+                @"(?:\A|(?<=[\r\n]))" +          // Start of the file or immediately after a line break
+                @"[ \t]*" +                      // Optional spaces / tabs before the settings key
+                "(?:" + settingsToReset + ")" +  // Match any one of the listed setting names
+                @"[ \t]*=" +                     // Optional spaces / tabs before the equals sign
+                @"[^\r\n]*" +                    // Match the value to the end of the line
+                @"(?:\r\n|\r|\n|\z)";            // Remove the line break as well / stop at the end of the file
+
+            string updated = Regex.Replace(
+                config,
+                settingLine,
+                "",
+                RegexOptions.Multiline | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+
+            if (updated == config)
+                return;
+
+            File.WriteAllText(configPath, updated, encoding);
+        }
+        
         public static void InstallExtra(string target, Extra package, Action<string, int?> progress)
         {
             using (LockInstallation(target))
@@ -330,8 +395,11 @@ namespace TitanicHook.GUI
             File.Copy(source, destination, true);
         }
 
-        private static void MoveFile(string source, string destination)
+        private static void MoveFile(string source, string destination, bool overwrite = false)
         {
+            if (overwrite && File.Exists(destination))
+                File.Delete(destination);
+
             Directory.CreateDirectory(Path.GetDirectoryName(destination)!);
             File.Move(source, destination);
         }
