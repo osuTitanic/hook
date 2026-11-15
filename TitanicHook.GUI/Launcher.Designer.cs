@@ -52,6 +52,7 @@ namespace TitanicHook.GUI
             this.preview = new System.Windows.Forms.Panel();
             this.previewText = new System.Windows.Forms.Label();
             this.previewImage = new System.Windows.Forms.PictureBox();
+            this.releaseHeader = new System.Windows.Forms.TableLayoutPanel();
             this.versionLabel = new System.Windows.Forms.Label();
             this.releasedLabel = new System.Windows.Forms.Label();
             this.descriptionLabel = new System.Windows.Forms.Label();
@@ -75,6 +76,7 @@ namespace TitanicHook.GUI
             this.content.SuspendLayout();
             this.preview.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.previewImage)).BeginInit();
+            this.releaseHeader.SuspendLayout();
             this.tabChangelog.SuspendLayout();
             this.tabExtra.SuspendLayout();
             this.SuspendLayout();
@@ -271,7 +273,7 @@ namespace TitanicHook.GUI
             this.releases.ShowLines = false;
             this.releases.ShowPlusMinus = false;
             this.releases.ShowRootLines = false;
-            this.releases.Size = new System.Drawing.Size(143, 491);
+            this.releases.Size = new System.Drawing.Size(178, 491);
             this.releases.TabIndex = 0;
             this.releases.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.OnReleaseSelected);
             // 
@@ -285,21 +287,20 @@ namespace TitanicHook.GUI
             this.details.Margin = new System.Windows.Forms.Padding(4);
             this.details.Name = "details";
             this.details.Padding = new System.Windows.Forms.Padding(13, 12, 13, 12);
-            this.details.Size = new System.Drawing.Size(639, 491);
+            this.details.Size = new System.Drawing.Size(604, 491);
             this.details.TabIndex = 0;
             // 
             // content
             // 
             this.content.Controls.Add(this.preview);
-            this.content.Controls.Add(this.versionLabel);
-            this.content.Controls.Add(this.releasedLabel);
+            this.content.Controls.Add(this.releaseHeader);
             this.content.Controls.Add(this.descriptionLabel);
             this.content.Controls.Add(this.selectButton);
             this.content.Dock = System.Windows.Forms.DockStyle.Top;
             this.content.Location = new System.Drawing.Point(13, 12);
             this.content.Margin = new System.Windows.Forms.Padding(4);
             this.content.Name = "content";
-            this.content.Size = new System.Drawing.Size(613, 465);
+            this.content.Size = new System.Drawing.Size(578, 465);
             this.content.TabIndex = 0;
             // 
             // preview
@@ -311,7 +312,7 @@ namespace TitanicHook.GUI
             this.preview.Location = new System.Drawing.Point(0, 0);
             this.preview.Margin = new System.Windows.Forms.Padding(4);
             this.preview.Name = "preview";
-            this.preview.Size = new System.Drawing.Size(613, 283);
+            this.preview.Size = new System.Drawing.Size(578, 283);
             this.preview.TabIndex = 0;
             // 
             // previewText
@@ -323,7 +324,7 @@ namespace TitanicHook.GUI
             this.previewText.Location = new System.Drawing.Point(0, 0);
             this.previewText.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.previewText.Name = "previewText";
-            this.previewText.Size = new System.Drawing.Size(613, 283);
+            this.previewText.Size = new System.Drawing.Size(578, 283);
             this.previewText.TabIndex = 1;
             this.previewText.Text = "Loading preview ...";
             this.previewText.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -334,37 +335,53 @@ namespace TitanicHook.GUI
             this.previewImage.Location = new System.Drawing.Point(0, 0);
             this.previewImage.Margin = new System.Windows.Forms.Padding(4);
             this.previewImage.Name = "previewImage";
-            this.previewImage.Size = new System.Drawing.Size(613, 283);
+            this.previewImage.Size = new System.Drawing.Size(578, 283);
             this.previewImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.previewImage.TabIndex = 0;
             this.previewImage.TabStop = false;
             this.previewImage.Visible = false;
             // 
+            // releaseHeader
+            // 
+            this.releaseHeader.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.releaseHeader.ColumnCount = 4;
+            this.releaseHeader.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.releaseHeader.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.releaseHeader.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.releaseHeader.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.releaseHeader.Controls.Add(this.versionLabel, 1, 0);
+            this.releaseHeader.Controls.Add(this.releasedLabel, 2, 0);
+            this.releaseHeader.Location = new System.Drawing.Point(0, 284);
+            this.releaseHeader.Name = "releaseHeader";
+            this.releaseHeader.RowCount = 1;
+            this.releaseHeader.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.releaseHeader.Size = new System.Drawing.Size(578, 48);
+            this.releaseHeader.TabIndex = 1;
+            // 
             // versionLabel
             // 
-            this.versionLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.versionLabel.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.versionLabel.AutoSize = true;
             this.versionLabel.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.versionLabel.Location = new System.Drawing.Point(4, 284);
+            this.versionLabel.Location = new System.Drawing.Point(233, 11);
             this.versionLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.versionLabel.Name = "versionLabel";
-            this.versionLabel.Size = new System.Drawing.Size(333, 47);
-            this.versionLabel.TabIndex = 1;
+            this.versionLabel.Size = new System.Drawing.Size(85, 25);
+            this.versionLabel.TabIndex = 0;
             this.versionLabel.Text = "Loading";
-            this.versionLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // releasedLabel
             // 
-            this.releasedLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.releasedLabel.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.releasedLabel.AutoSize = true;
             this.releasedLabel.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.releasedLabel.Location = new System.Drawing.Point(292, 284);
+            this.releasedLabel.Location = new System.Drawing.Point(326, 14);
             this.releasedLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.releasedLabel.Name = "releasedLabel";
-            this.releasedLabel.Size = new System.Drawing.Size(320, 48);
-            this.releasedLabel.TabIndex = 2;
+            this.releasedLabel.Size = new System.Drawing.Size(18, 19);
+            this.releasedLabel.TabIndex = 1;
             this.releasedLabel.Text = "...";
-            this.releasedLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // descriptionLabel
             // 
@@ -374,7 +391,7 @@ namespace TitanicHook.GUI
             this.descriptionLabel.Location = new System.Drawing.Point(4, 332);
             this.descriptionLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.descriptionLabel.Name = "descriptionLabel";
-            this.descriptionLabel.Size = new System.Drawing.Size(605, 90);
+            this.descriptionLabel.Size = new System.Drawing.Size(570, 90);
             this.descriptionLabel.TabIndex = 3;
             this.descriptionLabel.Text = "Loading releases ...";
             // 
@@ -386,7 +403,7 @@ namespace TitanicHook.GUI
             this.selectButton.Location = new System.Drawing.Point(4, 426);
             this.selectButton.Margin = new System.Windows.Forms.Padding(4);
             this.selectButton.Name = "selectButton";
-            this.selectButton.Size = new System.Drawing.Size(605, 39);
+            this.selectButton.Size = new System.Drawing.Size(570, 39);
             this.selectButton.TabIndex = 4;
             this.selectButton.Text = "select";
             this.selectButton.UseVisualStyleBackColor = true;
@@ -490,6 +507,8 @@ namespace TitanicHook.GUI
             this.content.ResumeLayout(false);
             this.preview.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.previewImage)).EndInit();
+            this.releaseHeader.ResumeLayout(false);
+            this.releaseHeader.PerformLayout();
             this.tabChangelog.ResumeLayout(false);
             this.tabExtra.ResumeLayout(false);
             this.tabExtra.PerformLayout();
@@ -520,6 +539,7 @@ namespace TitanicHook.GUI
         private System.Windows.Forms.Panel content;
         private System.Windows.Forms.Panel preview;
         private System.Windows.Forms.PictureBox previewImage;
+        private System.Windows.Forms.TableLayoutPanel releaseHeader;
         private System.Windows.Forms.Label versionLabel;
         private System.Windows.Forms.Label releasedLabel;
         private System.Windows.Forms.Label descriptionLabel;
