@@ -84,6 +84,12 @@ public static class EntryPoint
             : $"osu! version from reflection: {OsuVersion.GetVersion()}"
         );
 
+#if NET40
+        // NOTE: This HAS TO BE THE FIRST PATCH THAT WE APPLY BEFORE MAKING OSU LOOKUPS!
+        // TODO: Add an Eazfuscator check.
+        PatchManager.Apply(new FixEazStringDec());
+#endif
+
         PatchManager.Apply(new WinformSetTitleHook());
 
         // Pre-b615 builds are not doing links in /np, and it caused crashes in some versions

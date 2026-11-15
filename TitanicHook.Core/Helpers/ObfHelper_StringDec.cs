@@ -42,6 +42,11 @@ public static partial class ObfHelper
                              m.ReturnType.FullName == "System.String" /*&&*/
                              /*SigScanning.MethodHasNoInlining(m)*/); // TODO: fucked attribute check
     #endregion
+
+    public static MethodInfo? StringObfReference
+    {
+        get => _stringObfReference;
+    }
     
     /// <summary>
     /// Reference to the first found string decryption method
