@@ -75,6 +75,7 @@ public static class EntryPoint
         }
 
         // Launcher is able to get the version directly from titanic, so there's no need to infer it
+        // TODO: Add a helper function for this, so we don't have to repeat this logic in multiple places
         int versionNumber = Config.ReleaseVersion > 0 ? Config.ReleaseVersion : OsuVersion.GetVersionNumber();
         
         Logging.Info(
