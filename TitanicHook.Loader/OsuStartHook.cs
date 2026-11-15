@@ -15,9 +15,9 @@ namespace TitanicHook.Loader;
 /// </summary>
 public class OsuStartHook : TitanicPatch
 {
-    private const string LoaderHookName = "sh.Titanic.Hook.OsuStartHook";
+    private new const string HookName = "sh.Titanic.Hook.OsuStartHook";
 
-    public OsuStartHook(MethodInfo method) : base(LoaderHookName)
+    public OsuStartHook(MethodInfo method) : base(HookName)
     {
         TargetMethods = [method];
         Prefixes = [AccessTools.Method(typeof(OsuStartHook), nameof(OsuStartPrefix))];
@@ -28,7 +28,7 @@ public class OsuStartHook : TitanicPatch
     private static void OsuStartPrefix()
     {
         // Load TitanicHook
-        Logging.HookTrigger(LoaderHookName);
+        Logging.HookTrigger(HookName);
         EntryPoint.InitializeHooks(OsuLoader.Config, OsuLoader.OsuPath, OsuLoader.AutoUpdated);
     }
     
