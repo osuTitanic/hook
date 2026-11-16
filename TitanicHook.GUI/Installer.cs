@@ -111,7 +111,7 @@ namespace TitanicHook.GUI
             }
 
             const string settingsToReset =
-                "Width|Height|WidthFullscreen|HeightFullscreen|Renderer";
+                "Width|Height|WidthFullscreen|HeightFullscreen|Renderer|Fullscreen|FrameSync";
 
             const string settingLine =
                 @"(?:\A|(?<=[\r\n]))" +          // Start of the file or immediately after a line break
