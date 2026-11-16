@@ -209,7 +209,7 @@ namespace TitanicHook.GUI
             this.showAtStartup.Name = "showAtStartup";
             this.showAtStartup.Size = new System.Drawing.Size(205, 23);
             this.showAtStartup.TabIndex = 9;
-            this.showAtStartup.Text = "Show osume at startup";
+            this.showAtStartup.Text = "Show launcher at startup";
             this.showAtStartup.UseVisualStyleBackColor = true;
             // 
             // tabControl
