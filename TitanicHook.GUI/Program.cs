@@ -20,14 +20,14 @@ namespace TitanicHook.GUI
             string configPath = Path.Combine(directory, Constants.DefaultConfigName);
             bool launchOsu = args.Length > 0 && args[0] == "-go";
 
+            Updater.CleanupOldVersions();
+            OsuLoader.Config = new Configuration(configPath);
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
             if (!launchOsu && !FirstRunSafetyCheck(directory, configPath))
                 return;
-
-            Updater.CleanupOldVersions();
-            OsuLoader.Config = new Configuration(configPath);
 
             // pass in -go or disable launcher in config to start osu!
             bool skipLauncher = launchOsu || OsuLoader.Config.DisableLauncher;
@@ -95,10 +95,12 @@ namespace TitanicHook.GUI
                     return true;
 
                 MessageBox.Show(
-                    "This folder already contains other files or folders. " +
-                    "Installing osu! here may replace existing files.\n\n" +
-                    "Create an empty folder for Titanic!, move this launcher into it, then open it again.",
+                    "This folder already contains other files. Installing osu! here may replace existing files.\n\n" +
+                    "Create an empty folder for Titanic!, move the launcher into it, then open it again.",
                     "Titanic!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                // create a config file to prevent this warning from showing again
+                OsuLoader.Config.SaveConfiguration(OsuLoader.Config.Filename);
             }
             catch (IOException ex)
             {
