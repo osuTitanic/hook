@@ -19,6 +19,9 @@ public static class WinApi
     public static extern IntPtr GetStdHandle(int nStdHandle);
 
     [DllImport("kernel32.dll")]
+    public static extern bool SetConsoleOutputCP(uint wCodePageID);
+
+    [DllImport("kernel32.dll")]
     public static extern uint GetACP();
     
     [DllImport("kernel32.dll")]
@@ -29,7 +32,8 @@ public static class WinApi
     
     [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
     public static extern bool DeleteFileW(string lpFileName);
-    
+
+    public const int ENCODING_UTF8 = 65001;
     public const int STD_OUTPUT_HANDLE = -11;
     public const int STD_ERROR_HANDLE = -12;
 
@@ -55,6 +59,9 @@ public static class WinApi
         };
         Console.SetOut(outWriter);
         Console.SetError(errWriter);
+
+        // We should probably add a check if UTF-8 is supported, however I think we can keep it as is and ignore the error that is returned when UTF-8 doesn't exist.
+        SetConsoleOutputCP(ENCODING_UTF8);
     }
 
     /// <summary>
