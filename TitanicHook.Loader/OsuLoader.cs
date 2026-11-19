@@ -48,15 +48,6 @@ public static class OsuLoader
             Config = new Configuration(Constants.DefaultConfigName);
         }
 
-#if !DEBUG
-        // Initialize console if not in debug
-        if (Config.EnableConsole)
-            WinApi.InitializeConsole();
-#endif
-
-        Logging.UseConsoleLogging = Config.EnableConsole;
-        Logging.UseFileLogging = Config.LogToFile;
-
         PreLaunchChecks.CheckAll();
         
         // Load osu!

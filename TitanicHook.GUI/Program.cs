@@ -24,6 +24,15 @@ namespace TitanicHook.GUI
             Updater.CleanupOldVersions();
             OsuLoader.Config = new Configuration(configPath);
 
+#if !DEBUG
+            // Initialize console if not in debug
+            if (OsuLoader.Config.EnableConsole)
+                WinApi.InitializeConsole();
+#endif
+
+            Logging.UseConsoleLogging = OsuLoader.Config.EnableConsole;
+            Logging.UseFileLogging = OsuLoader.Config.LogToFile;
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
@@ -53,15 +62,6 @@ namespace TitanicHook.GUI
                 }
                 return;
             }
-
-#if !DEBUG
-            // Initialize console if not in debug
-            if (OsuLoader.Config.EnableConsole)
-                WinApi.InitializeConsole();
-#endif
-
-            Logging.UseConsoleLogging = OsuLoader.Config.EnableConsole;
-            Logging.UseFileLogging = OsuLoader.Config.LogToFile;
 
             using (Launcher launcher = new Launcher())
             {
