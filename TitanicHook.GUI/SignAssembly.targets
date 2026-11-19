@@ -6,15 +6,19 @@
     <TimeServerUrl>http://time.certum.pl</TimeServerUrl>
     <SignToolPath>signtool.exe</SignToolPath>
   </PropertyGroup>
-  
-  <PropertyGroup>
-    <OutputAssembly>$(OutputPath)$(AssemblyName).exe</OutputAssembly>
-    <OutputMergedAssembly>$(OutputPath)Titanic!.exe</OutputMergedAssembly>
-  </PropertyGroup>
 
-  <Target Name="SignMergedAssembly" AfterTargets="ILRepacker" Condition="'$(SignAssemblyAfterBuild)' == 'true' AND '$(Configuration)' == 'Release'">
-    <Message Text="Signing assemblies with certificate '$(CertificateName)'" Importance="high" />
-    <Exec Command='$(SignToolPath) sign /n "$(CertificateName)" /t $(TimeServerUrl) /fd sha1 /v "$(OutputMergedAssembly)"' 
-          Condition="'$(OS)' == 'Windows_NT'" />
+  <Target Name="SignMergedAssembly"
+    AfterTargets="ILRepacker"
+    Condition="'$(SignAssemblyAfterBuild)' == 'true'
+                   And '$(Configuration)' == 'Release'
+                   And '$(IsCrossTargetingBuild)' != 'true'">
+                   
+    <Error Condition="'$(OutputMergedAssembly)' == '' Or !Exists('$(OutputMergedAssembly)')"
+      Text="ILRepack output is missing. OutputMergedAssembly='$(OutputMergedAssembly)'." />
+
+    <Message Text="Signing $(OutputMergedAssembly)" Importance="high" />
+
+    <Exec
+      Command='"$(SignToolPath)" sign /n "$(CertificateName)" /fd sha256 /tr "$(TimeServerUrl)" /td sha256 /v "$(OutputMergedAssembly)"' />
   </Target>
 </Project>
