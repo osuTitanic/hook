@@ -50,6 +50,15 @@ namespace TitanicHook.GUI
                 return;
             }
 
+#if !DEBUG
+            // Initialize console if not in debug
+            if (OsuLoader.Config.EnableConsole)
+                WinApi.InitializeConsole();
+#endif
+
+            Logging.UseConsoleLogging = OsuLoader.Config.EnableConsole;
+            Logging.UseFileLogging = OsuLoader.Config.LogToFile;
+
             using (Launcher launcher = new Launcher())
             {
                 Application.Run(launcher);
@@ -76,7 +85,7 @@ namespace TitanicHook.GUI
             try
             {
                 string launcherName = Path.GetFileName(Application.ExecutablePath);
-                
+
                 if (File.Exists(configPath))
                     return true;
 
