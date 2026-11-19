@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Net;
 using System.Windows.Forms;
 using TitanicHook.Core;
 using TitanicHook.Core.Helpers;
@@ -31,6 +32,9 @@ namespace TitanicHook.GUI
 
             // pass in -go or disable launcher in config to start osu!
             bool skipLauncher = launchOsu || OsuLoader.Config.DisableLauncher;
+
+            // configure networking before any network requests are made
+            ConfigureNetworking();
 
             if (skipLauncher)
             {
@@ -76,6 +80,34 @@ namespace TitanicHook.GUI
                 catch (Exception ex)
                 {
                     Logging.LogAndShowError("Failed to start osu!: " + ex);
+                }
+            }
+        }
+
+        private static void ConfigureNetworking()
+        {
+            // set some sane defaults for ServicePoints
+            ServicePointManager.Expect100Continue = false;
+            ServicePointManager.DefaultConnectionLimit = 12;
+            ServicePointManager.CheckCertificateRevocationList = false;
+
+            // older frameworks do not define TLS 1.1 and TLS 1.2
+            const SecurityProtocolType Tls12 = (SecurityProtocolType)3072;
+            const SecurityProtocolType Tls11 = (SecurityProtocolType)768;
+            const SecurityProtocolType Tls = SecurityProtocolType.Tls;
+
+            foreach (SecurityProtocolType protocol in new[] { Tls12, Tls11, Tls })
+            {
+                try
+                {
+                    Logging.Info($"Attempting to use protocol {protocol}..");
+                    ServicePointManager.SecurityProtocol = protocol;
+                    Logging.Info($"Success! Using protocol {protocol}");
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    Logging.Info($"Cannot use protocol {protocol}: {ex}");
                 }
             }
         }
