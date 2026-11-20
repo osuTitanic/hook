@@ -20,7 +20,7 @@ namespace TitanicHook.GUI
 
             try
             {
-                extrasRequest = new WebClient { Encoding = Encoding.UTF8 };
+                extrasRequest = UrlHelper.NewWebClient();
                 extrasRequest.DownloadStringCompleted += OnExtrasDownloaded;
                 extrasRequest.DownloadStringAsync(new Uri(Extra.ReleaseUrl, "update"));
             }

@@ -42,7 +42,7 @@ namespace TitanicHook.GUI
 
             try
             {
-                WebClient request = new WebClient();
+                WebClient request = UrlHelper.NewWebClient();
                 screenshotRequest = request;
                 request.DownloadDataCompleted += OnScreenshotDownloaded;
                 request.DownloadDataAsync(new Uri(url));

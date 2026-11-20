@@ -1,11 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Text;
 
 namespace TitanicHook.Core.Helpers;
 
 public class UrlHelper
 {
+    /// <summary>
+    /// Creates a new WebClient instance with correct encoding
+    /// </summary>
+    /// <returns></returns>
+    public static WebClient NewWebClient()
+    {
+        return new WebClient {
+            Encoding = Encoding.UTF8
+        };
+    }
+
     /// <summary>
     /// Returns an url prefixed with http:// or https:// depending on whether TLS 1.2 with Elliptic Curve encryption is supported or not
     /// </summary>

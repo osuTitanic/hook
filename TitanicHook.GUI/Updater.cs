@@ -28,7 +28,7 @@ namespace TitanicHook.GUI
                 string variant = useFallback ? "net20" : "net40";
                 string url = Constants.UpdateServer + "/update?type=" + variant + "&checksum=" + checksum;
                 
-                request = new WebClient();
+                request = UrlHelper.NewWebClient();
                 request.DownloadProgressChanged += OnProgressChanged;
                 request.DownloadDataCompleted += OnDownloaded;
                 request.DownloadDataAsync(new Uri(url));
