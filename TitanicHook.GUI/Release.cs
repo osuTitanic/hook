@@ -1,5 +1,6 @@
 using Newtonsoft.Json;
 using System;
+using TitanicHook.Core.Helpers;
 
 namespace TitanicHook.GUI
 {
@@ -50,7 +51,7 @@ namespace TitanicHook.GUI
                     path.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
                     return path;
 
-                return "https://osu.titanic.sh" + path;
+                return UrlHelper.GetUrl("osu.titanic.sh") + path;
             }
         }
 
@@ -86,6 +87,10 @@ namespace TitanicHook.GUI
 
                 if (string.IsNullOrEmpty(release.Category))
                     release.Category = "Other";
+
+                // Replace https:// with http:// if https is unsupported
+                if (!UrlHelper.IsTlsSupported && (release.DownloadUrl != null && release.DownloadUrl.StartsWith("https://")))
+                    release.DownloadUrl = release.DownloadUrl.Replace("https://", "http://");
             }
             return result;
         }

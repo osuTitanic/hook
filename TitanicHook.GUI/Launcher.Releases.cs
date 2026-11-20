@@ -11,7 +11,7 @@ namespace TitanicHook.GUI
 {
     public partial class Launcher
     {
-        private const string ReleasesUrl = "https://api.titanic.sh/releases/";
+        private static readonly string ReleasesUrl = UrlHelper.GetUrl("api.titanic.sh/releases/");
         private WebClient? releasesRequest;
 
         private void LoadReleases()

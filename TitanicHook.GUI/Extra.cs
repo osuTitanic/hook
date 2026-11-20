@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using TitanicHook.Core.Helpers;
 
 namespace TitanicHook.GUI
 {
     internal sealed class Extra
     {
-        internal static readonly Uri ReleaseUrl = new Uri("https://osu.titanic.sh/release/");
+        internal static readonly Uri ReleaseUrl = UrlHelper.GetUri("osu.titanic.sh/release/");
 
         public string Filename { get; }
         public string Checksum { get; }

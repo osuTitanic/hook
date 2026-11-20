@@ -27,7 +27,7 @@ namespace TitanicHook.GUI
         public static bool InstallRelease(string target, Release release, Action<string, int?> progress)
         {
             // download url may start with / so we need to prepend the base url in that case
-            Uri url = new Uri(new Uri("https://osu.titanic.sh/"), release.DownloadUrl!);
+            Uri url = new Uri(UrlHelper.GetUri("osu.titanic.sh/"), release.DownloadUrl!);
 
             using (LockInstallation(target))
             {

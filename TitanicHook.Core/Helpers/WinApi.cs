@@ -3,6 +3,7 @@
 
 using System;
 using System.IO;
+using System.Management;
 using System.Runtime.InteropServices;
 
 namespace TitanicHook.Core.Helpers;
@@ -62,6 +63,27 @@ public static class WinApi
 
         // We should probably add a check if UTF-8 is supported, however I think we can keep it as is and ignore the error that is returned when UTF-8 doesn't exist.
         SetConsoleOutputCP(ENCODING_UTF8);
+    }
+
+    /// <summary>
+    /// Checks if a specific Windows Update is installed
+    /// </summary>
+    /// <param name="updateId">Name of the update (KBxxxxxxx)</param>
+    /// <returns>Whether the update is installed</returns>
+    internal static bool IsWinUpdateInstalled(string updateId)
+    {
+        string query = $"SELECT * FROM Win32_QuickFixEngineering WHERE HotFixID = '{updateId}'";
+        ManagementObjectSearcher searcher = new ManagementObjectSearcher(query);
+
+        foreach (ManagementObject update in searcher.Get())
+        {
+            if (update != null)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /// <summary>
