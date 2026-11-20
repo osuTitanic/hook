@@ -77,8 +77,6 @@ public class FixLinkFormatterCrash : TitanicPatch
         {
             DoingChatFormatting = false;
         }
-        
-        DoingChatFormatting = false;
 
         return ret;
     }
