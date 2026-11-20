@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -22,8 +23,45 @@ public class FixLinkFormatterCrash : TitanicPatch
     
     public FixLinkFormatterCrash() : base(HookName)
     {
-        TargetMethods = [GetTargetMethod()];
-        Transpilers = [AccessTools.Method(typeof(FixLinkFormatterCrash), nameof(Transpiler))];
+        //TargetMethods = [GetTargetMethod()];
+        TargetMethods = [GetCompareInfoIndexOf(), GetStringIndexOf()];
+        //Transpilers = [AccessTools.Method(typeof(FixLinkFormatterCrash), nameof(Transpiler))];
+        Transpilers = [AccessTools.Method(typeof(FixLinkFormatterCrash), nameof(InternalIndexOfTransplier))];
+    }
+
+    private static MethodInfo? GetCompareInfoIndexOf()
+    {
+        return typeof(CompareInfo)
+            .GetMethods()
+            .Where(m => m.Name == "IndexOf" && m.GetParameters().Length == 6 && m.GetParameters()[1].GetType() == typeof(string))
+            .FirstOrDefault();
+    }
+
+    private static MethodInfo? GetStringIndexOf()
+    {
+        return typeof(string)
+            .GetMethods()
+            .Where(m => m.Name == "IndexOf" && m.GetParameters().Length == 4)
+            .FirstOrDefault();
+    }
+
+    private static IEnumerable<CodeInstruction> InternalIndexOfTransplier(IEnumerable<CodeInstruction> instructions)
+    {
+        List<CodeInstruction> final = new(instructions);
+        for (int i = 0; i < final.Count; i++)
+        {
+            var instr = final[i];
+            if (instr.opcode == OpCodes.Ldstr && instr.operand is string s && s == "ArgumentOutOfRange_Index")
+            {
+                final[i - 1].opcode = OpCodes.Nop;
+                final[i].opcode = OpCodes.Nop;
+                final[i + 1].opcode = OpCodes.Nop;
+                final[i + 2].opcode = OpCodes.Nop;
+                final[i + 3].opcode = OpCodes.Nop;
+            }
+        }
+
+        return final;
     }
 
     private static MethodInfo? GetTargetMethod()
