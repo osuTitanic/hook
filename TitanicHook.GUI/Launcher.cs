@@ -92,13 +92,17 @@ namespace TitanicHook.GUI
                 CheckForUpdates();
 #endif
 
-            // i have honestly no idea what this does but osume included it
-            // i'm assuming this is related to internet explorer, and it's navigation sounds
-            CoInternetSetFeatureEnabled(
-                21, // FEATURE_DISABLE_NAVIGATION_SOUNDS
-                2,  // SET_FEATURE_ON_PROCESS
-                true
-            );
+            OperatingSystem os = Environment.OSVersion;
+            if (os.Version.Build >= 2600) // actually this checks for RTM and we need to check for SP2 for this call but eh
+            {
+                // i have honestly no idea what this does but osume included it
+                // i'm assuming this is related to internet explorer, and it's navigation sounds
+                CoInternetSetFeatureEnabled(
+                    21, // FEATURE_DISABLE_NAVIGATION_SOUNDS
+                    2,  // SET_FEATURE_ON_PROCESS
+                    true
+                );
+            }
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)
