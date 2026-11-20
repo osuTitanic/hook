@@ -104,7 +104,10 @@ public static class EntryPoint
 
 #if NET40
         if (versionNumber >= 659 && versionNumber <= 20120916) // TODO: Determine the actual numbers
+        {
             PatchManager.Apply(new FixLinkFormatterCrash());
+            PatchManager.Apply(new AllowNegativeIndexOfStarts());
+        }
 #endif
 
         if (Config.HookNetLibHeaders) PatchManager.Apply(new AddHeaderFieldHook());

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -20,48 +21,17 @@ public class FixLinkFormatterCrash : TitanicPatch
 {
     private static readonly string HookName = "sh.Titanic.Hook.FixLinkFormatterCrash";
     public override PatchImportance Importance => PatchImportance.None;
+
+    /// <summary>
+    /// Whether it's osu!'s link formatter doing its job in this thread
+    /// </summary>
+    [ThreadStatic]
+    internal static bool DoingChatFormatting = false;
     
     public FixLinkFormatterCrash() : base(HookName)
     {
-        //TargetMethods = [GetTargetMethod()];
-        TargetMethods = [GetCompareInfoIndexOf(), GetStringIndexOf()];
-        //Transpilers = [AccessTools.Method(typeof(FixLinkFormatterCrash), nameof(Transpiler))];
-        Transpilers = [AccessTools.Method(typeof(FixLinkFormatterCrash), nameof(InternalIndexOfTransplier))];
-    }
-
-    private static MethodInfo? GetCompareInfoIndexOf()
-    {
-        return typeof(CompareInfo)
-            .GetMethods()
-            .Where(m => m.Name == "IndexOf" && m.GetParameters().Length == 6 && m.GetParameters()[1].GetType() == typeof(string))
-            .FirstOrDefault();
-    }
-
-    private static MethodInfo? GetStringIndexOf()
-    {
-        return typeof(string)
-            .GetMethods()
-            .Where(m => m.Name == "IndexOf" && m.GetParameters().Length == 4)
-            .FirstOrDefault();
-    }
-
-    private static IEnumerable<CodeInstruction> InternalIndexOfTransplier(IEnumerable<CodeInstruction> instructions)
-    {
-        List<CodeInstruction> final = new(instructions);
-        for (int i = 0; i < final.Count; i++)
-        {
-            var instr = final[i];
-            if (instr.opcode == OpCodes.Ldstr && instr.operand is string s && s == "ArgumentOutOfRange_Index")
-            {
-                final[i - 1].opcode = OpCodes.Nop;
-                final[i].opcode = OpCodes.Nop;
-                final[i + 1].opcode = OpCodes.Nop;
-                final[i + 2].opcode = OpCodes.Nop;
-                final[i + 3].opcode = OpCodes.Nop;
-            }
-        }
-
-        return final;
+        TargetMethods = [GetTargetMethod()];
+        Transpilers = [AccessTools.Method(typeof(FixLinkFormatterCrash), nameof(Transpiler))];
     }
 
     private static MethodInfo? GetTargetMethod()
@@ -81,7 +51,7 @@ public class FixLinkFormatterCrash : TitanicPatch
         {
             var instr = final[i];
             if (instr.opcode == OpCodes.Callvirt && instr.operand is MethodInfo method && method.Name == "IndexOf" &&
-                method.GetParameters().Length == 2)
+                method.GetParameters().Length == 2 && method.GetParameters()[0].ParameterType.FullName == "System.String")
             {
                 // Patch that call with our patched IndexOf
                 instr.opcode = OpCodes.Call;
@@ -96,7 +66,20 @@ public class FixLinkFormatterCrash : TitanicPatch
     {
         Logging.HookTrigger(HookName);
 
-        // For now we're just stubbing that method, as reimplementing the .NET Framework 2.0 behavior would be too troublesome
-        return -1;
+        int ret;
+        try
+        {
+            // Set thread local thingies so that the AllowNegativeIndexOfStarts.ThrowIfNotFromOsu can know to not throw
+            DoingChatFormatting = true;
+            ret = CultureInfo.InvariantCulture.CompareInfo.IndexOf(thisstr, value, startIndex, thisstr.Length - startIndex, CompareOptions.Ordinal);
+        } 
+        finally
+        {
+            DoingChatFormatting = false;
+        }
+        
+        DoingChatFormatting = false;
+
+        return ret;
     }
 }
