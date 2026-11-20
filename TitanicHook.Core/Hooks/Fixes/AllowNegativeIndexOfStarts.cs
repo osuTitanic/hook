@@ -26,7 +26,7 @@ public class AllowNegativeIndexOfStarts : TitanicPatch
     {
         return typeof(CompareInfo)
             .GetMethods()
-            .Where(m => m.Name == "IndexOf" && m.GetParameters().Length == 6 && m.GetParameters()[1].GetType() == typeof(string))
+            .Where(m => m.Name == "IndexOf" && m.GetParameters().Length == 6 && m.GetParameters()[1].ParameterType.FullName == "System.String")
             .FirstOrDefault();
     }
 
