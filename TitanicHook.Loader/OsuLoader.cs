@@ -82,7 +82,9 @@ public static class OsuLoader
         } else {
             // Set the process to be DPI aware
             // This fixes the resolution for some .NET 4.0 builds released in 2015
-            SetProcessDPIAware();
+            OperatingSystem os = Environment.OSVersion;
+            if (os.Version.Major >= 6)
+                SetProcessDPIAware();
         }
 #else
         if (loaded.ImageRuntimeVersion != Assembly.GetExecutingAssembly().ImageRuntimeVersion)
