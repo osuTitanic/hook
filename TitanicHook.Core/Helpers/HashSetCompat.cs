@@ -16,15 +16,9 @@ public class HashSetCompat<T>
 
     public bool Add(T value)
     {
-        try
-        {
-            _dict.Add(value, null);
-        }
-        catch (ArgumentException e)
-        {
-            return false;
-        }
-        
+        if (_dict.ContainsKey(value)) return false;
+
+        _dict.Add(value, null);
         return true;
     }
     
