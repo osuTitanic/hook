@@ -129,7 +129,7 @@ public static class Logging // Holy public static void boilerplate class
     /// <param name="message">Message</param>
     public static void Info(string message)
     {
-        WriteToLog($"[INFO] ({message})");
+        WriteToLog($"[INFO] {message}");
     }
 
     /// <summary>
@@ -138,7 +138,7 @@ public static class Logging // Holy public static void boilerplate class
     /// <param name="message">Message</param>
     public static void Error(string message)
     {
-        WriteToLog($"[ERROR] ({message})");
+        WriteToLog($"[ERROR] {message}");
     }
 
     /// <summary>
@@ -156,7 +156,7 @@ public static class Logging // Holy public static void boilerplate class
     /// <param name="message"></param>
     public static void LogAndShowError(string message)
     {
-        WriteToLog($"[ERROR] ({message})");
+        WriteToLog($"[ERROR] {message}");
         ShowError(message);
     }
 }

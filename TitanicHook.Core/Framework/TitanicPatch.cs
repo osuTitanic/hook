@@ -46,7 +46,7 @@ public abstract class TitanicPatch
             if (method == null)
                 continue;
             
-            Logging.Info($"[{HookName}] Patching ${method.Name}");
+            Logging.Info($"[{HookName}] Patching {method.Name}");
 
             foreach (MethodInfo prefix in Prefixes)
             {
@@ -102,7 +102,7 @@ public abstract class TitanicPatch
             if (constructor == null)
                 continue;
             
-            Logging.Info($"[{HookName}] Patching constructor ${constructor.Name}");
+            Logging.Info($"[{HookName}] Patching constructor {constructor.Name}");
 
             foreach (MethodInfo prefix in Prefixes)
             {
