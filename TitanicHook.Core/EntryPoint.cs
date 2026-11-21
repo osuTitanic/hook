@@ -114,6 +114,8 @@ public static class EntryPoint
         if (Config.HookNetLibEncoding) PatchManager.Apply(new NetLibEncodingHook());
         
         if (Config.RemovePeppyDmCheck) PatchManager.Apply(new AskPeppyFix());
+
+        if (versionNumber > 904) PatchManager.Apply(new RemoveBssSizeCheck());
         
 #if NET40
         PatchManager.Apply(new HostHeaderHook());
