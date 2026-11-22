@@ -103,7 +103,7 @@ public static class EntryPoint
         PatchManager.Apply(new DisableRegistryPatch());
 
 #if NET40
-        if (versionNumber >= 659 && versionNumber <= 20120916) // TODO: Determine the actual numbers
+        if (versionNumber >= 659 && versionNumber <= 20121211)
         {
             PatchManager.Apply(new FixLinkFormatterCrash());
             PatchManager.Apply(new AllowNegativeIndexOfStarts());
