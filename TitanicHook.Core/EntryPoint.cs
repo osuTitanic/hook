@@ -9,6 +9,7 @@ using TitanicHook.Core.Hooks.Fixes;
 using TitanicHook.Core.Hooks.Loading;
 using TitanicHook.Core.Hooks.Misc;
 using TitanicHook.Core.OsuInterop;
+using TitanicHook.Core.OsuInterop.Version;
 using TitanicHook.Core.PluginApi;
 
 namespace TitanicHook.Core;
@@ -74,15 +75,11 @@ public static class EntryPoint
                 Config.HookTcpConnections = false;
         }
 
-        // Launcher is able to get the version directly from titanic, so there's no need to infer it
-        // TODO: Add a helper function for this, so we don't have to repeat this logic in multiple places
-        int versionNumber = Config.ReleaseVersion > 0 ? Config.ReleaseVersion : OsuVersion.GetVersionNumber();
+        if (VersionProvider == null)
+            InitializeVersionProvider(Config);
         
-        Logging.Info(
-            Config.ReleaseVersion > 0
-            ? $"osu! version from launcher: b{Config.ReleaseVersion}"
-            : $"osu! version from reflection: {OsuVersion.GetVersion()}"
-        );
+        Logging.Info($"osu! version from {VersionProvider.GetProviderName()} provider: {VersionProvider.GetVersion()}");
+        int versionNumber = VersionProvider.GetVersionNumber();
 
 #if NET40
         // NOTE: This HAS TO BE THE FIRST PATCH THAT WE APPLY BEFORE MAKING OSU LOOKUPS!
@@ -144,5 +141,28 @@ public static class EntryPoint
         Notifications.ShowMessage(notifMessage);
     }
 
+    public static void InitializeVersionProvider(Configuration config)
+    {
+        bool haveVersionFromConfig = config.ReleaseVersion > 0;
+        if (haveVersionFromConfig)
+        {
+            // Launcher is able to get the version directly from titanic, so there's no need to infer it
+            VersionProvider = new StaticVersionProvider(config.ReleaseVersion);
+        }
+        else
+        {
+            try
+            {
+                VersionProvider = OsuVersionProvider.GetDefaultVersionProvider();
+            }
+            catch (Exception e)
+            {
+                Logging.LogAndShowError("Unable to detect the osu! version! Can't continue");
+                return;
+            }
+        }
+    }
+
     public static Configuration Config = new ();
+    public static OsuVersionProvider VersionProvider = null!;
 }

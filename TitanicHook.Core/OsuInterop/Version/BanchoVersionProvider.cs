@@ -1,25 +1,51 @@
 ﻿// SPDX-License-Identifier: GPL-3.0-or-later
-// SPDX-FileCopyrightText: 2025 Oreeeee
+// SPDX-FileCopyrightText: 2025-2026 Oreeeee
 
+using ClrTest.Reflection;
+using System;
 using System.Linq;
 using System.Net.Sockets;
 using System.Reflection;
 using System.Reflection.Emit;
-using ClrTest.Reflection;
 using TitanicHook.Core.Helpers;
 
-namespace TitanicHook.Core.OsuInterop;
+namespace TitanicHook.Core.OsuInterop.Version;
 
-// Contains stuff to get osu! version through BanchoClient in older builds
-
-public partial class OsuVersion
+/// <summary>
+/// Provides osu! version by scanning references inside Bancho's connection function
+/// </summary>
+public class BanchoVersionProvider : OsuVersionProvider
 {
-    /// <summary>
-    /// Looks for osu! version by BanchoClient Connect IL instructions
-    /// </summary>
-    private static string? GetOsuVersionFromBancho()
+    public override bool CanProvideVersion()
     {
-        MethodInfo? banchoConnect = AssemblyUtils.OsuTypes
+        return banchoConnect != null;
+    }
+
+    public override string GetVersion()
+    {
+        if (!CanProvideVersion())
+            throw new InvalidOperationException("This version provider is unable to provide the version");
+
+        if (_versionCache != null)
+            return _versionCache;
+
+        var reader = new ILReader(banchoConnect);
+        ILInstruction[] instructions = reader.ToArray();
+        if (SigScanning.GetStrings(banchoConnect).Any(s => s.StartsWith("{0}|{1}|{2}")))
+        {
+            // This build used the string template so we can look by that template reliably
+            _versionCache = FindByStringTemplate(instructions) ?? "";
+            return _versionCache;
+        }
+
+        // As a last resort, use a less reliable method of finding it relatively to the (single) newarr opcode
+        _versionCache = FindByNewarrOpcode(instructions) ?? "";
+        return _versionCache;
+    }
+
+    private string? _versionCache = null;
+
+    private MethodInfo? banchoConnect = AssemblyUtils.OsuTypes
             .FirstOrDefault(t => t.IsClass &&
                                  t.IsNotPublic &&
                                  t.IsSealed &&
@@ -31,21 +57,6 @@ public partial class OsuVersion
             .FirstOrDefault(m => m.GetParameters().Length == 0 &&
                                  m.ReturnType.FullName == "System.Void" &&
                                  (SigScanning.GetStrings(m).Any(s => s.StartsWith("{0}|{1}|{2}")) || SigScanning.GetStrings(m).Contains("Connecting to Bancho...")));
-        
-        if (banchoConnect == null)
-            return null;
-        
-        var reader = new ILReader(banchoConnect);
-        ILInstruction[] instructions = reader.ToArray();
-        if (SigScanning.GetStrings(banchoConnect).Any(s => s.StartsWith("{0}|{1}|{2}")))
-        {
-            // This build used the string template so we can look by that template reliably
-            return FindByStringTemplate(instructions);
-        }
-
-        // As a last resort, use a less reliable method of finding it relatively to the (single) newarr opcode
-        return FindByNewarrOpcode(instructions);
-    }
 
     private static string? FindByStringTemplate(ILInstruction[] instructions)
     {
@@ -70,7 +81,7 @@ public partial class OsuVersion
 
                 int arg = loadArg.Int32;
                 string? str = ObfHelper.DecString(arg);
-                
+
                 if (str != null && str.StartsWith("{0}|{1}|{2}"))
                 {
                     nextStringRefIsOsuVersion = true;
@@ -83,7 +94,7 @@ public partial class OsuVersion
             {
                 if (fieldInstr.Field.FieldType.FullName != "System.String")
                     continue;
-                
+
                 object value = fieldInstr.Field.GetValue(null);
                 return value as string;
             }
@@ -96,10 +107,10 @@ public partial class OsuVersion
     {
         for (int i = 0; i < instructions.Length; i++)
         {
-            var instr =  instructions[i];
+            var instr = instructions[i];
             if (instr.OpCode != OpCodes.Newarr)
                 continue;
-            
+
             // We have a newarr opcode so the next ldsfld is the osu! version
             for (int j = i; j < instructions.Length; j++)
             {
@@ -108,7 +119,7 @@ public partial class OsuVersion
                 {
                     if (fieldInstr.Field.FieldType.FullName != "System.String")
                         continue;
-                
+
                     object value = fieldInstr.Field.GetValue(null);
                     return value as string;
                 }

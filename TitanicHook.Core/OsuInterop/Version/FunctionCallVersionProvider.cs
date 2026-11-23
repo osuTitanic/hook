@@ -1,16 +1,38 @@
 ﻿// SPDX-License-Identifier: GPL-3.0-or-later
-// SPDX-FileCopyrightText: 2025 Oreeeee
+// SPDX-FileCopyrightText: 2025-2026 Oreeeee
 
+using System;
+using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Linq;
-using System.Text.RegularExpressions;
 using TitanicHook.Core.Helpers;
 
-namespace TitanicHook.Core.OsuInterop;
+namespace TitanicHook.Core.OsuInterop.Version;
 
-public static partial class OsuVersion
+/// <summary>
+/// Obtains the osu! version through calling a function inside osu! that returns the version
+/// </summary>
+public class FunctionCallVersionProvider : OsuVersionProvider
 {
+    public override bool CanProvideVersion()
+    {
+        return _getVersionRef != null;
+    }
+
+    public override string GetVersion()
+    {
+        if (!CanProvideVersion())
+            throw new InvalidOperationException("This version provider is unable to provide the version");
+
+        if (_versionCache != null)
+            return _versionCache;
+
+        _versionCache = _getVersionRef?.Invoke(null, null) as string ?? "";
+        return _versionCache;
+    }
+
+    private string? _versionCache = null;
+
     /// <summary>
     /// 2015 signature for deobfuscated builds
     /// </summary>
@@ -23,7 +45,7 @@ public static partial class OsuVersion
         OpCodes.Call,
         OpCodes.Ret
     ];
-    
+
     /// <summary>
     /// Old signature for deobfuscated builds
     /// </summary>
@@ -39,7 +61,7 @@ public static partial class OsuVersion
         OpCodes.Call,
         OpCodes.Ret
     ];
-    
+
     /// <summary>
     /// Old old signature for deobfuscated builds
     /// </summary>
@@ -54,7 +76,7 @@ public static partial class OsuVersion
         OpCodes.Call,
         OpCodes.Ret
     ];
-    
+
     /// <summary>
     /// Old old signature for obfuscated builds
     /// </summary>
@@ -68,7 +90,7 @@ public static partial class OsuVersion
         OpCodes.Call,
         OpCodes.Ret
     ];
-    
+
     /// <summary>
     /// 2015 signature for obfuscated builds (works with both Eazfuscator and SA)
     /// </summary>
@@ -81,8 +103,8 @@ public static partial class OsuVersion
         OpCodes.Call,
         OpCodes.Ret
     ];
-    
-    static MethodInfo? _getVersionRef = AssemblyUtils.OsuTypes
+
+    private MethodInfo? _getVersionRef = AssemblyUtils.OsuTypes
         .Where(t => t.IsClass &&
                     t.IsAbstract &&
                     t.IsSealed &&
@@ -91,53 +113,11 @@ public static partial class OsuVersion
         .FirstOrDefault(m => m.GetParameters().Length == 0 &&
                              m.ReturnType.FullName == "System.String" &&
                              SigScanning.CompareMultipleSigs(m, [
-                                 _getVersionSignature, 
-                                 _getVersionSignatureObf, 
-                                 _getVersionSignatureOld, 
-                                 _getVersionSignatureOldOld, 
+                                 _getVersionSignature,
+                                 _getVersionSignatureObf,
+                                 _getVersionSignatureOld,
+                                 _getVersionSignatureOldOld,
                                  _getVersionSignatureOldOldObf
                              ])
         );
-
-    private static string? _osuVersionCache = null;
-
-    /// <summary>
-    /// Gets full name of the build (e.g. b20150101cuttingedge)
-    /// </summary>
-    /// <returns></returns>
-    public static string? GetVersion()
-    {
-        if (_osuVersionCache == "")
-            return null;
-        
-        if (_osuVersionCache != null)
-            return _osuVersionCache;
-
-        if (_getVersionRef != null)
-        {
-            _osuVersionCache = _getVersionRef.Invoke(null, null) as string;
-        }
-        else
-        {
-            _osuVersionCache = GetOsuVersionFromBancho();
-        }
-        return _osuVersionCache;
-    }
-
-    /// <summary>
-    /// Gets version number (e.g. 20150101) from long one (e.g. b20150101cuttingedge)
-    /// </summary>
-    /// <returns></returns>
-    public static int GetVersionNumber()
-    {
-        string? fullVersion = GetVersion();
-        if (string.IsNullOrEmpty(fullVersion))
-            return 0;
-        
-        var match = Regex.Match(fullVersion, @"b(\d{8})"); // This regex only supports 8-digit numbers, might be adjusted if old build numbers are ever needed 
-        if (!match.Success) return 0;
-        
-        string version = match.Groups[1].Value;
-        return int.Parse(version);
-    }
 }

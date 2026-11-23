@@ -105,8 +105,8 @@ public static class OsuLoader
         List<string> FakeArgs = new();
         FakeArgs.Add(OsuPath);
 
-        int versionNumber = Config.ReleaseVersion > 0 ? Config.ReleaseVersion : OsuVersion.GetVersionNumber();
-        if (versionNumber >= 20140811)
+        EntryPoint.InitializeVersionProvider(Config);
+        if (EntryPoint.VersionProvider.GetVersionNumber() >= 20140811)
             FakeArgs.Add("-go"); // -go arg will bypass the updater in older builds. Always adding it won't work, osu! will show unknown file message
 
         // Load hooks specific to the loader
